@@ -1,0 +1,15 @@
+// Project: SandboxGPUs.
+// Author: Ashot Vardanian.
+// Created: 04/09/2019.
+// Copyright: Check "License" file.
+//
+
+#version 450
+layout(std430, binding = 0) buffer lay0 { float x[]; };
+layout(std430, binding = 2) buffer lay2 { float y[]; };
+
+/// gPowSqrt();
+void main() {
+    const uint lId = gl_GlobalInvocationID.x;
+    y[lId] = sqrt(x[lId]);
+}

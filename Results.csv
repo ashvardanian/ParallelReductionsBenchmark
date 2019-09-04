@@ -1,0 +1,762 @@
+Technology,Device,Task.Name,Method,Task.Size,Task.Threads,Task.BatchSize,Duration.Compute,Duration.Total
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,128,256,6.448,7.792
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,128,256,3.669,4.506
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,128,256,2.243,3.857
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,128,256,2.33,5.167
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,128,256,2.331,5.041
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,128,256,2.723,4.913
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,128,256,2.841,4.659
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,128,256,3.124,5.145
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,128,256,9.791,11.93
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,128,256,7.598,10.625
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,128,256,3.952,5.178
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,128,256,4.475,6.318
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,128,256,5.987,8.18
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,128,256,3.467,4.122
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,128,256,4.278,6.573
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,128,256,2.936,4.41
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,256,128,7.069,9.405
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,256,128,4.257,5.154
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,256,128,3.972,5.41
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,256,128,3.526,5.314
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,256,128,3.273,5.897
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,256,128,3.904,5.292
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,256,128,2.768,4.704
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,256,128,3.547,5.306
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,256,128,10.553,14.555
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,256,128,4.588,5.212
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,256,128,4.591,6.092
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,256,128,4.918,6.099
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,256,128,4.493,5.389
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,256,128,5.212,6.211
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,256,128,4.425,5.887
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,256,128,4.942,5.787
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,512,64,4.926,9.381
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,512,64,2.408,5.445
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,512,64,8.623,9.648
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,512,64,3.855,4.713
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,512,64,2.786,4.845
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,512,64,3.995,5.493
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,512,64,2.746,5.167
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,512,64,2.73,4.767
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,512,64,8.476,17.177
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,512,64,5.223,6.374
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,512,64,4.386,6.4
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,512,64,4.245,4.826
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,512,64,4.217,5.604
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,512,64,3.385,5.435
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,512,64,3.456,4.092
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,512,64,3.051,4.071
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,1024,32,4.038,9.444
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,1024,32,2.642,4.38
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,1024,32,1.963,2.834
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,1024,32,3.388,5.905
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,1024,32,2.843,4.136
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,1024,32,2.922,3.358
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,1024,32,3.05,4.951
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,1024,32,2.284,3.07
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,1024,32,12.19,15.366
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,1024,32,5.354,5.833
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,1024,32,4.675,6.339
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,1024,32,3.275,4.195
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,1024,32,2.176,3.758
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,1024,32,1.238,3.108
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,1024,32,3.849,4.542
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,1024,32,3.219,4.804
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,2048,16,7.102,9.391
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,2048,16,6.064,6.617
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,2048,16,2.316,6.664
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,2048,16,11.819,12.303
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,2048,16,4.374,6.388
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,2048,16,2.827,4.568
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,2048,16,3.368,4.625
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,2048,16,7.633,8.896
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,2048,16,8.745,11.35
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,2048,16,6.342,7.757
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,2048,16,3.36,4.875
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,2048,16,4.568,6.772
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,2048,16,2.547,3.362
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,2048,16,2.361,3.262
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,2048,16,2.959,4.381
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,2048,16,4.503,6.121
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,4096,8,13.942,14.729
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,4096,8,11.899,18.488
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,4096,8,14.459,16.004
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,4096,8,12.326,13.882
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,4096,8,10.543,11.954
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,4096,8,11.899,13.042
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,4096,8,8.691,10.59
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,4096,8,11.207,13.64
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,4096,8,12.336,15.106
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,4096,8,6.519,7.895
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,4096,8,5.432,7.741
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,4096,8,3.708,5.551
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,4096,8,5.258,5.953
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,4096,8,7.49,8.792
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,4096,8,5.535,6.824
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,4096,8,3.829,5.814
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,8192,4,38.119,43.939
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,8192,4,35.847,39.492
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,8192,4,40.916,41.906
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,8192,4,31.806,32.643
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,8192,4,32.464,34.021
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,8192,4,28.737,33.999
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,8192,4,27.596,28.822
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,8192,4,33.466,34.506
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,8192,4,14.474,15.841
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,8192,4,16.807,17.542
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,8192,4,9.916,12.865
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,8192,4,8.566,9.644
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,8192,4,10.53,11.892
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,8192,4,11.046,12.196
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,8192,4,11.25,12.795
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,8192,4,9.696,14.723
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,1024,256,16.461,20.114
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,1024,256,9.924,10.926
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,1024,256,9.905,11.743
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,1024,256,8.548,9.458
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,1024,256,6.568,7.022
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,1024,256,3.925,7.285
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,1024,256,2.987,6.738
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,1024,256,4.566,5.161
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,1024,256,20.811,22.512
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,1024,256,9.208,9.852
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,1024,256,9.053,10.793
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,1024,256,8.595,9.403
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,1024,256,4.177,6.169
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,1024,256,6.101,7.098
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,1024,256,9.061,10.305
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,1024,256,6.618,7.156
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,2048,128,10.678,11.66
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,2048,128,9.192,9.952
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,2048,128,9.456,14.745
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,2048,128,8.785,10.06
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,2048,128,9.15,9.861
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,2048,128,8.107,10.08
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,2048,128,6.463,8.202
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,2048,128,7.25,8.921
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,2048,128,16.617,20.083
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,2048,128,10.157,11.914
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,2048,128,9.867,10.746
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,2048,128,6.572,8.306
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,2048,128,5.657,7.473
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,2048,128,7.175,8.884
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,2048,128,8.053,11.142
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,2048,128,6.853,7.412
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,4096,64,18.353,19.543
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,4096,64,27.845,30.08
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,4096,64,25.914,27.723
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,4096,64,18.13,19.067
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,4096,64,15.811,16.404
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,4096,64,8.096,8.715
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,4096,64,13.791,15.172
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,4096,64,9.626,10.428
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,4096,64,17.131,20.747
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,4096,64,11.108,14.399
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,4096,64,13.461,15.76
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,4096,64,8.337,10.455
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,4096,64,9.672,13.661
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,4096,64,5.739,8.994
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,4096,64,9.412,10.62
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,4096,64,11.099,12.142
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,8192,32,64.896,68.336
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,8192,32,76.209,77.361
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,8192,32,78.253,81.952
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,8192,32,38.404,39.504
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,8192,32,55.012,59.364
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,8192,32,36.355,45.895
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,8192,32,35.639,38.411
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,8192,32,35.985,43.833
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,8192,32,33.152,36.097
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,8192,32,32.818,34.271
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,8192,32,16.438,17.37
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,8192,32,12.763,13.458
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,8192,32,8.107,12.591
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,8192,32,9.317,9.852
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,8192,32,7.183,9.917
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,8192,32,9.192,10.242
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,16384,16,61.733,62.234
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,16384,16,11.995,13.04
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,16384,16,15.58,15.945
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,16384,16,12.129,12.726
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,16384,16,12.141,12.805
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,16384,16,14.347,14.881
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,16384,16,12.939,13.878
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,16384,16,11.799,12.525
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,4096,256,43.234,44.084
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,4096,256,33.877,35.312
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,4096,256,29.583,34.066
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,4096,256,25.061,30.201
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,4096,256,29.418,38.993
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,4096,256,31.484,32.79
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,4096,256,27.191,33.521
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,4096,256,23.324,24.088
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,1048576,4096,256,42.135,47.389
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,1048576,4096,256,41.408,42.04
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,1048576,4096,256,33.88,34.752
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,1048576,4096,256,30.974,32.359
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,1048576,4096,256,36.696,37.318
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,1048576,4096,256,23.576,24.425
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,1048576,4096,256,15.454,18.433
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,1048576,4096,256,16.98,17.48
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,8192,128,63.132,65.188
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,8192,128,12.9,13.316
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,8192,128,14.486,14.84
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,8192,128,12.625,13.126
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,8192,128,13.109,13.345
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,8192,128,9.438,9.96
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,8192,128,10.942,11.433
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,8192,128,11.742,12.384
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,1048576,8192,128,13.766,14.644
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,1048576,8192,128,13.116,14.488
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,1048576,8192,128,9.544,10.101
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,1048576,8192,128,10.628,11.55
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,1048576,8192,128,11.129,11.962
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,1048576,8192,128,8.198,11.241
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,1048576,8192,128,11.486,11.912
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,1048576,8192,128,8.872,11.696
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,16384,64,47.024,47.528
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,16384,64,14.218,14.971
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,16384,64,15.481,16.503
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,16384,64,17.01,17.996
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,16384,64,15.965,16.961
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,16384,64,17.37,18.208
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,16384,64,16.067,16.859
+OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,16384,64,15.937,16.431
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,32768,256,128,2.357,2.744
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,32768,256,128,2.527,2.797
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,32768,256,128,8.299,10.863
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,32768,256,128,4.486,6.956
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,32768,256,128,12.789,15.191
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,32768,256,128,6.004,7.514
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,32768,256,128,2.672,4.133
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,32768,256,128,1.699,4.454
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,256,128,3.154,4.703
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,256,128,1.725,2.626
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,32768,256,128,10.084,10.789
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,32768,256,128,1.975,2.467
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,32768,256,128,1.598,2.58
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,32768,256,128,2.134,3.315
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,32768,256,128,1.944,3.157
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,32768,256,128,0.772,1.707
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,32768,256,128,1.865,2.927
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,32768,256,128,0.948,1.935
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,256,128,2.868,3.913
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,256,128,1.539,2.355
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,256,128,1.806,2.971
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,32768,256,128,1.994,2.459
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,32768,256,128,2.222,3.214
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,32768,256,128,1.405,2.723
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,32768,256,128,6.577,9.008
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,32768,256,128,2.428,2.992
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,32768,256,128,2.463,2.976
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,32768,256,128,1.37,1.89
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,32768,256,128,2.712,3.418
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,32768,256,128,1.376,1.943
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,32768,256,128,2.599,3.851
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,32768,256,128,1.958,2.442
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,32768,256,128,5.266,6.328
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,32768,256,128,2.097,3.129
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,32768,256,128,2.135,2.949
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,32768,256,128,2.204,3.261
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,32768,256,128,2.094,3.204
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,32768,256,128,1.072,1.549
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,32768,256,128,2.297,5.627
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,32768,256,128,5.637,6.935
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,32768,256,128,2.585,3.395
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,32768,256,128,1.433,2.71
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,32768,256,128,1.979,3.207
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,32768,256,128,1.011,2.475
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,32768,256,128,2.613,3.715
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,32768,256,128,1.998,3.344
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,32768,256,128,5.729,9.496
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,32768,256,128,3.521,4.028
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,32768,256,128,11.188,11.216
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,32768,256,128,1.548,1.602
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,32768,256,128,0.963,0.998
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,32768,256,128,0.905,0.931
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,32768,256,128,0.847,0.869
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,256,128,10.352,10.369
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,256,128,0.826,0.852
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,256,128,0.671,0.679
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,256,128,0.722,0.733
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,256,128,0.749,0.783
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,32768,2048,16,2.162,2.46
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,32768,2048,16,2.252,2.563
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,32768,2048,16,2.939,4.171
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,32768,2048,16,2.093,2.962
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,32768,2048,16,6.632,8.08
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,32768,2048,16,3.302,4.349
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,32768,2048,16,3.074,4.282
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,32768,2048,16,3.004,4.21
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,2048,16,3.388,4.941
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,2048,16,2.124,3.195
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,32768,2048,16,7.221,8.925
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,32768,2048,16,3.056,3.894
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,32768,2048,16,1.945,3.016
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,32768,2048,16,3.1,4.668
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,32768,2048,16,3.106,4.625
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,32768,2048,16,2.828,4.163
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,32768,2048,16,2.815,4.138
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,32768,2048,16,2.628,3.959
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,2048,16,3.018,3.791
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,2048,16,2.118,3.094
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,2048,16,1.907,3.052
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,32768,2048,16,1.5,3.255
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,32768,2048,16,2.93,4.508
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,32768,2048,16,1.95,2.934
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,32768,2048,16,6.953,8.265
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,32768,2048,16,2.266,3.195
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,32768,2048,16,2.528,3.318
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,32768,2048,16,3.64,4.283
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,32768,2048,16,2.086,3.001
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,32768,2048,16,3.542,4.921
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,32768,2048,16,3.075,4.361
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,32768,2048,16,2.365,3.31
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,32768,2048,16,6.613,7.795
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,32768,2048,16,2.864,4.108
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,32768,2048,16,3.248,4.645
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,32768,2048,16,3.035,4.443
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,32768,2048,16,2.194,3.231
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,32768,2048,16,1.3,1.909
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,32768,2048,16,2.413,3.237
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,32768,2048,16,6.031,7.396
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,32768,2048,16,2.481,2.925
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,32768,2048,16,1.712,3.247
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,32768,2048,16,2.299,3.576
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,32768,2048,16,2.27,3.529
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,32768,2048,16,2.1,3.543
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,32768,2048,16,1.111,2.259
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,32768,2048,16,5.839,6.717
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,32768,2048,16,2.146,2.581
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,32768,2048,16,2.389,2.41
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,32768,2048,16,0.539,0.558
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,32768,2048,16,0.439,0.47
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,32768,2048,16,0.445,0.463
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,32768,2048,16,0.511,0.529
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,2048,16,1.656,1.676
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,2048,16,0.851,0.872
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,2048,16,0.621,0.645
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,2048,16,0.581,0.611
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,2048,16,0.586,0.612
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,32768,32768,1,1.123,1.339
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,32768,32768,1,1.099,1.448
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,32768,32768,1,3.847,4.522
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,32768,32768,1,1.915,2.469
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,32768,32768,1,6.103,7.063
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,32768,32768,1,3.489,3.957
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,32768,32768,1,1.362,2.597
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,32768,32768,1,1.634,3.149
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,32768,1,5.634,6.764
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,32768,1,3.271,4.224
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,32768,32768,1,9.888,10.442
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,32768,32768,1,2.965,3.503
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,32768,32768,1,1.293,2.392
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,32768,32768,1,1.967,3.298
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,32768,32768,1,1.991,3.083
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,32768,32768,1,2.188,3.437
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,32768,32768,1,1.779,3.132
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,32768,32768,1,1.59,2.956
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,32768,1,3.344,5.503
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,32768,1,3.126,3.651
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,32768,1,2.098,3.938
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,32768,32768,1,1.937,3.99
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,32768,32768,1,2.899,4.012
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,32768,32768,1,2.695,3.72
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,32768,32768,1,6.436,7.244
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,32768,32768,1,2.414,2.85
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,32768,32768,1,3.064,3.246
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,32768,32768,1,2.76,3.181
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,32768,32768,1,2.852,3.326
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,32768,32768,1,2.941,3.547
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,32768,32768,1,1.381,2.541
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,32768,32768,1,2.091,2.938
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,32768,32768,1,5.824,8.15
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,32768,32768,1,2.172,3.177
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,32768,32768,1,1.725,3.088
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,32768,32768,1,1.468,2.669
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,32768,32768,1,10.939,12.658
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,32768,32768,1,3.311,4.112
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,32768,32768,1,4.497,5.229
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,32768,32768,1,9.764,11.164
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,32768,32768,1,2.92,3.816
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,32768,32768,1,3.139,3.545
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,32768,32768,1,1.457,2.594
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,32768,32768,1,1.28,2.245
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,32768,32768,1,5.635,6.516
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,32768,32768,1,2.365,3.999
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,32768,32768,1,6.564,7.15
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,32768,32768,1,2.527,3.333
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,32768,32768,1,2.18,2.206
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,32768,32768,1,0.62,0.652
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,32768,32768,1,0.545,0.56
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,32768,32768,1,0.57,0.637
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,32768,32768,1,0.863,0.885
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,32768,32768,1,1.6,1.617
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,32768,32768,1,0.884,0.915
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,32768,32768,1,0.882,0.906
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,32768,32768,1,0.688,0.716
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,32768,32768,1,0.638,0.666
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,32768,1,1,0.528,0.528
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,32768,1,1,0.503,0.503
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,32768,1,1,0.57,0.57
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,32768,1,1,0.899,0.899
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,32768,1,1,1.1,1.1
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,262144,2048,128,11.098,12.481
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,262144,2048,128,10.164,11.186
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,262144,2048,128,4.135,5.436
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,262144,2048,128,4.402,6.514
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,262144,2048,128,6.461,7.475
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,262144,2048,128,4.159,5.419
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,262144,2048,128,14.396,21.8
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,262144,2048,128,15.332,24.474
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,2048,128,8.221,10.343
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,2048,128,5.974,7.348
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,262144,2048,128,6.182,6.909
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,262144,2048,128,7.712,8.421
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,262144,2048,128,10.851,17.967
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,262144,2048,128,12.304,20.603
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,262144,2048,128,10.971,18.314
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,262144,2048,128,11.963,19.559
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,262144,2048,128,12.003,19.835
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,262144,2048,128,9.905,17.863
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,2048,128,8.037,9.787
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,2048,128,8.505,9.202
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,2048,128,2.409,4.158
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,262144,2048,128,5.826,8.002
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,262144,2048,128,2.887,4.224
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,262144,2048,128,4.337,6.822
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,262144,2048,128,5.848,8.76
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,262144,2048,128,3.943,5.596
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,262144,2048,128,4.082,5.619
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,262144,2048,128,4.263,5.312
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,262144,2048,128,2.344,4.935
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,262144,2048,128,3.805,4.862
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,262144,2048,128,13.731,20.231
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,262144,2048,128,4.611,6.538
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,262144,2048,128,5.918,6.93
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,262144,2048,128,13.45,22.014
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,262144,2048,128,13.687,22.044
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,262144,2048,128,14.216,21.764
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,262144,2048,128,6.47,7.8
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,262144,2048,128,4.516,5.393
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,262144,2048,128,3.612,5.002
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,262144,2048,128,5.964,8.006
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,262144,2048,128,3.425,5.494
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,262144,2048,128,4.973,6.551
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,262144,2048,128,10.715,18.301
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,262144,2048,128,10.516,19.636
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,262144,2048,128,4.074,5.683
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,262144,2048,128,5.516,6.253
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,262144,2048,128,5.565,6.499
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,262144,2048,128,3.138,3.646
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,262144,2048,128,2.355,2.503
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,262144,2048,128,0.928,1.121
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,262144,2048,128,0.881,1.091
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,262144,2048,128,1.053,1.298
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,262144,2048,128,0.93,1.129
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,2048,128,2.489,2.7
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,2048,128,1.161,1.321
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,2048,128,0.897,1.023
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,2048,128,1.152,1.277
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,2048,128,0.938,1.101
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,262144,16384,16,14.48,15.249
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,262144,16384,16,15.107,16.545
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,262144,16384,16,6.106,8.035
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,262144,16384,16,3.433,4.94
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,262144,16384,16,6.793,7.474
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,262144,16384,16,3.793,5.261
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,262144,16384,16,17.48,23.927
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,262144,16384,16,18.957,26.439
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,16384,16,7.349,9.154
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,16384,16,4.343,6.219
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,262144,16384,16,7.007,9.316
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,262144,16384,16,4.405,5.889
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,262144,16384,16,13.658,21.306
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,262144,16384,16,15.936,24.661
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,262144,16384,16,16.088,24.11
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,262144,16384,16,16.188,24.803
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,262144,16384,16,15.678,23.704
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,262144,16384,16,15.799,24.539
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,16384,16,7.821,9.36
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,16384,16,2.877,4.252
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,16384,16,4.102,5.968
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,262144,16384,16,3.515,4.979
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,262144,16384,16,3.971,5.775
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,262144,16384,16,4.326,5.785
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,262144,16384,16,7.591,9.374
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,262144,16384,16,3.857,5.647
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,262144,16384,16,4.108,5.739
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,262144,16384,16,6.242,7.286
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,262144,16384,16,3.204,5.604
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,262144,16384,16,2.188,4.787
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,262144,16384,16,17.095,24.342
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,262144,16384,16,4.462,6.518
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,262144,16384,16,7.829,8.571
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,262144,16384,16,16.391,23.72
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,262144,16384,16,18.97,27.429
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,262144,16384,16,15.385,22.796
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,262144,16384,16,5.474,7.098
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,262144,16384,16,3.519,4.943
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,262144,16384,16,3.289,4.763
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,262144,16384,16,6.906,8.351
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,262144,16384,16,5.014,5.951
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,262144,16384,16,4.773,5.567
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,262144,16384,16,11.249,18.415
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,262144,16384,16,12.918,20.415
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,262144,16384,16,6.044,7.595
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,262144,16384,16,2.294,5.371
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,262144,16384,16,5.702,6.721
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,262144,16384,16,4.277,5.585
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,262144,16384,16,2.526,2.74
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,262144,16384,16,1.058,1.305
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,262144,16384,16,1.103,1.527
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,262144,16384,16,0.996,1.114
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,262144,16384,16,0.956,1.09
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,16384,16,1.925,2.058
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,16384,16,1.454,1.535
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,16384,16,1.113,1.232
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,16384,16,1.103,1.3
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,16384,16,1.094,1.296
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,262144,262144,1,4.394,5.901
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,262144,262144,1,4.707,5.717
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,262144,262144,1,7.367,8.425
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,262144,262144,1,5.515,6.595
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,262144,262144,1,6.41,7.155
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,262144,262144,1,4.991,6.107
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,262144,262144,1,4.908,13.365
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,262144,262144,1,5.12,12.865
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,262144,1,10.544,11.18
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,262144,1,5.319,5.886
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,262144,262144,1,5.653,7.072
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,262144,262144,1,5.92,7.112
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,262144,262144,1,4.927,13.451
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,262144,262144,1,6.573,14.416
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,262144,262144,1,9.101,16.825
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,262144,262144,1,8.648,16.14
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,262144,262144,1,6.047,13.959
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,262144,262144,1,7.945,15.797
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,262144,1,8.437,9.617
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,262144,1,6.598,7.464
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,262144,1,6.244,6.944
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,262144,262144,1,5.637,6.377
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,262144,262144,1,5.186,6.089
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,262144,262144,1,6.422,7.189
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,262144,262144,1,6.262,7.079
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,262144,262144,1,4.7,5.295
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,262144,262144,1,4.433,5.126
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,262144,262144,1,5.533,6.083
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,262144,262144,1,4.507,5.064
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,262144,262144,1,4.437,5.471
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,262144,262144,1,4.815,11.748
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,262144,262144,1,6.391,7.319
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,262144,262144,1,5.963,7.594
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,262144,262144,1,9.652,16.837
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,262144,262144,1,5.258,13.632
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,262144,262144,1,4.891,13.02
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,262144,262144,1,7.304,7.903
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,262144,262144,1,4.889,5.38
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,262144,262144,1,6.27,6.854
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,262144,262144,1,6.168,7.039
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,262144,262144,1,4.884,6.484
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,262144,262144,1,5.953,7.401
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,262144,262144,1,4.737,12.905
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,262144,262144,1,5.259,13.639
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,262144,262144,1,7.55,8.193
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,262144,262144,1,4.902,6.377
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,262144,262144,1,6.777,7.791
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,262144,262144,1,5.35,6.886
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,262144,262144,1,3.563,3.775
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,262144,262144,1,0.888,1.067
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,262144,262144,1,1.073,1.205
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,262144,262144,1,0.841,1.001
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,262144,262144,1,1.123,1.269
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,262144,262144,1,2.125,2.263
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,262144,262144,1,1.031,1.181
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,262144,262144,1,1.027,1.274
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,262144,262144,1,1.73,1.992
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,262144,262144,1,1.132,1.289
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,262144,1,1,4.125,4.125
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,262144,1,1,3.75,3.75
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,262144,1,1,4.331,4.331
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,262144,1,1,6.825,6.825
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,262144,1,1,8.562,8.562
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,1048576,8192,128,36.664,41.779
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,1048576,8192,128,33.99,38.413
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,1048576,8192,128,6.371,8.659
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,1048576,8192,128,4.39,7.005
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,1048576,8192,128,6.731,9.493
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,1048576,8192,128,5.34,8.027
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,1048576,8192,128,46.142,73.347
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,1048576,8192,128,49.449,77.122
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,8192,128,8.708,11.25
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,8192,128,6.376,9.208
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,1048576,8192,128,7.781,10.469
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,1048576,8192,128,6.775,9.308
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,1048576,8192,128,36.421,63.306
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,1048576,8192,128,43.778,70.405
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,1048576,8192,128,51.593,82.53
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,1048576,8192,128,50.071,78.175
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,1048576,8192,128,42.476,69.92
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,1048576,8192,128,41.647,68.744
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,8192,128,8.391,11.635
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,8192,128,4.037,6.436
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,8192,128,4.654,7.392
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,1048576,8192,128,5.911,8.323
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,1048576,8192,128,5.739,8.182
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,1048576,8192,128,5.207,7.56
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,1048576,8192,128,6.063,8.987
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,1048576,8192,128,4.504,6.742
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,1048576,8192,128,5.118,7.812
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,1048576,8192,128,5.122,8.582
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,1048576,8192,128,4.241,7.017
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,1048576,8192,128,5.157,8.986
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,1048576,8192,128,53.075,80.857
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,1048576,8192,128,5.476,7.746
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,1048576,8192,128,5.696,8.397
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,1048576,8192,128,51.771,80.303
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,1048576,8192,128,48.99,75.71
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,1048576,8192,128,48.881,75.908
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,1048576,8192,128,6.626,9.663
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,1048576,8192,128,4.908,7.257
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,1048576,8192,128,4.576,7.307
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,1048576,8192,128,5.854,9.767
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,1048576,8192,128,5.582,7.669
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,1048576,8192,128,5.146,7.127
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,1048576,8192,128,37.409,65.508
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,1048576,8192,128,41.145,68.654
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,1048576,8192,128,6.529,9.438
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,1048576,8192,128,5.148,7.624
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,1048576,8192,128,7.235,10.269
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,1048576,8192,128,4.905,7.499
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,1048576,8192,128,3.637,5.007
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,1048576,8192,128,2.203,3.2
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,1048576,8192,128,1.819,2.684
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,1048576,8192,128,1.881,2.876
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,1048576,8192,128,2.034,3.12
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,8192,128,2.915,3.538
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,8192,128,4.499,5.654
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,8192,128,2.094,2.839
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,8192,128,1.848,2.526
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,8192,128,1.78,2.595
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,1048576,65536,16,45.353,50.406
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,1048576,65536,16,46.997,52.262
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,1048576,65536,16,8.984,11.087
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,1048576,65536,16,4.372,6.772
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,1048576,65536,16,6.747,10.241
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,1048576,65536,16,5.157,8.21
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,1048576,65536,16,69.399,96.353
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,1048576,65536,16,66.421,93.492
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,65536,16,9.524,12.942
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,65536,16,6.661,10.006
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,1048576,65536,16,8.219,10.614
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,1048576,65536,16,7.542,10.429
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,1048576,65536,16,42.448,72.045
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,1048576,65536,16,62.609,90.578
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,1048576,65536,16,60.914,87.983
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,1048576,65536,16,59.396,86.864
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,1048576,65536,16,55.355,85.387
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,1048576,65536,16,49.711,78.329
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,65536,16,8.407,11.118
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,65536,16,4.107,6.189
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,65536,16,4.551,6.57
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,1048576,65536,16,5.173,9.307
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,1048576,65536,16,5.494,9.564
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,1048576,65536,16,5.228,8.107
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,1048576,65536,16,7.796,11.837
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,1048576,65536,16,4.841,7.298
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,1048576,65536,16,4.67,8.109
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,1048576,65536,16,4.861,7.858
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,1048576,65536,16,4.836,7.724
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,1048576,65536,16,4.837,7.537
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,1048576,65536,16,76.149,104.308
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,1048576,65536,16,5.707,8.694
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,1048576,65536,16,6.284,8.952
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,1048576,65536,16,83.893,112.054
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,1048576,65536,16,71.313,100.609
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,1048576,65536,16,75.825,106.423
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,1048576,65536,16,6.902,9.83
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,1048576,65536,16,4.826,7.709
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,1048576,65536,16,5.62,8.642
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,1048576,65536,16,6.704,10.07
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,1048576,65536,16,5.28,7.37
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,1048576,65536,16,4.749,7.324
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,1048576,65536,16,57.626,85.051
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,1048576,65536,16,54.575,82.636
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,1048576,65536,16,6.338,9.246
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,1048576,65536,16,4.103,6.809
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,1048576,65536,16,6.211,9.768
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,1048576,65536,16,5.364,8.041
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,1048576,65536,16,3.642,4.814
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,1048576,65536,16,1.714,2.877
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,1048576,65536,16,1.879,2.584
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,1048576,65536,16,1.637,2.814
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,1048576,65536,16,2.158,3.312
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,65536,16,3.526,4.34
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,65536,16,4.023,4.903
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,65536,16,1.729,2.915
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,65536,16,1.602,2.75
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,65536,16,1.533,2.64
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,1048576,1048576,1,14.564,18.739
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,1048576,1048576,1,13.522,16.535
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,1048576,1048576,1,6.18,10.411
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulConst,1048576,1048576,1,3.707,6.413
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddConst,1048576,1048576,1,5.803,7.83
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulConst,1048576,1048576,1,3.895,10.6
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddArr,1048576,1048576,1,15.331,46.877
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulArr,1048576,1048576,1,13.897,43.032
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,1048576,1,9.866,13.025
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,1048576,1,7.065,9.022
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmAddArr,1048576,1048576,1,8.383,12.815
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gArithmMulArr,1048576,1048576,1,5.94,9.366
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,1048576,1048576,1,17.818,46.975
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,1048576,1048576,1,20.432,45.25
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,1048576,1048576,1,30.647,55.864
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosNative,1048576,1048576,1,28.858,57.878
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPi,1048576,1048576,1,19.488,43.687
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCosPiManual,1048576,1048576,1,26.996,52.523
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,1048576,1,14.165,17.991
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,1048576,1,5.064,8.691
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,1048576,1,5.192,7.236
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosNative,1048576,1048576,1,4.271,7.527
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPi,1048576,1048576,1,5.293,9.475
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gTrigCosPiManual,1048576,1048576,1,5.046,8.86
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowSqrt,1048576,1048576,1,6.924,10.184
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowExp,1048576,1048576,1,5.318,8.438
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCos,1048576,1048576,1,5.722,8.719
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosNative,1048576,1048576,1,5.69,8.806
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPi,1048576,1048576,1,5.74,9.553
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gTrigCosPiManual,1048576,1048576,1,5.569,8.86
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowFltExp,1048576,1048576,1,30.339,60.402
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowFltExp,1048576,1048576,1,6.422,9.555
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowFltExp,1048576,1048576,1,5.571,8.158
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowPositiveBase,1048576,1048576,1,27.283,53.83
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowIntExp,1048576,1048576,1,14.427,41.47
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowInverseIntExp,1048576,1048576,1,14.302,41.289
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowPositiveBase,1048576,1048576,1,5.047,8.916
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowIntExp,1048576,1048576,1,5.003,7.018
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gPowInverseIntExp,1048576,1048576,1,4.354,7.714
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowPositiveBase,1048576,1048576,1,5.597,8.833
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowIntExp,1048576,1048576,1,5.332,8.756
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gPowInverseIntExp,1048576,1048576,1,5.735,8.955
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConst,1048576,1048576,1,16.98,45.624
+OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gMulAddConstManual,1048576,1048576,1,13.847,42.077
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConst,1048576,1048576,1,5.884,8.604
+OpenCL,Intel(R) HD Graphics 630,DataParallel,gMulAddConstManual,1048576,1048576,1,4.316,6.317
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConst,1048576,1048576,1,6.391,9.622
+OpenCL,AMD Radeon Pro 560 Compute Engine,DataParallel,gMulAddConstManual,1048576,1048576,1,4.638,7.719
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmMulArr,1048576,1048576,1,3.334,4.536
+Vulkan,AMD Radeon Pro 560,DataParallel,gArithmAddArr,1048576,1048576,1,1.842,3.044
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowSqrt,1048576,1048576,1,2.018,2.67
+Vulkan,AMD Radeon Pro 560,DataParallel,gPowExp,1048576,1048576,1,2.248,3.424
+Vulkan,AMD Radeon Pro 560,DataParallel,gTrigCos,1048576,1048576,1,2.099,3.35
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmMulArr,1048576,1048576,1,2.965,4.123
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gArithmAddArr,1048576,1048576,1,3.743,4.802
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowSqrt,1048576,1048576,1,1.629,2.678
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gPowExp,1048576,1048576,1,1.596,2.71
+Vulkan,Intel(R) HD Graphics 630,DataParallel,gTrigCos,1048576,1048576,1,1.584,2.626
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,1048576,1,1,13.929,13.929
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,1048576,1,1,13.57,13.57
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowSqrt,1048576,1,1,15.713,15.713
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gPowExp,1048576,1,1,25.718,25.718
+CPU,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gTrigCos,1048576,1,1,32.013,32.013
