@@ -7,7 +7,7 @@
 #pragma once
 #include "HelperAliasis.hpp"
 #include "ComputeGraph.hpp"
-#define pFilePath(aFileName) "/Users/ashvardanian/CodeMine/UNUM/Apps/SandboxAPU/" aFileName
+#define pFilePath(aFileName) "/Users/YourUsername/SandboxGPUs/" aFileName
 
 namespace nAV {
         
