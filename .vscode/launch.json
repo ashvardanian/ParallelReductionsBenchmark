@@ -2,9 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "GDB C++: Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build Debug",
+            "program": "${workspaceFolder}/debug/reduce_bench"
+        },
+        {
             "name": "CUDA C++: Launch",
             "type": "cuda-gdb",
             "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build Debug",
             "program": "${workspaceFolder}/debug/reduce_bench"
         }
     ]
