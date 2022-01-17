@@ -27,5 +27,13 @@ All the classical Google Benchmark arguments are supported, including `--benchma
 All the needed library dependencies will be automatically fetched.
 
 ```sh
-mkdir -p build && cd build && cmake .. && make && ./reduce_bench && cd ..
+mkdir -p release && cd release && cmake .. && make && ./reduce_bench && cd ..
 ```
+
+To debug or introspect, procedure is similar:
+
+```sh
+mkdir -p debug && cd debug && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && cd ..
+```
+
+And then run your favorite debugger.
