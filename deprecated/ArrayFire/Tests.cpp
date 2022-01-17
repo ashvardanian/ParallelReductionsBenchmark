@@ -8,15 +8,13 @@
 #include "HelperAliasis.hpp"
 #include "HelperMethods.hpp"
 
-#include <arrayfire.h>
 #include <af/array.h>
+#include <arrayfire.h>
 
 using namespace nAF;
 
 template <typename aFuncRun>
-void gForMethod(sBenchDescription xBench, sStr xMethod,
-                SArr<sBenchResult> & yResults,
-                sStr xDevName,
+void gForMethod(sBenchDescription xBench, sStr xMethod, SArr<sBenchResult> &yResults, sStr xDevName,
                 aFuncRun xFuncRun) {
     sBenchResult lResultCPU;
     lResultCPU.mTechnology = "ArrayFire";
@@ -25,20 +23,17 @@ void gForMethod(sBenchDescription xBench, sStr xMethod,
     lResultCPU.mTask.mSizeBatch = 0;
     lResultCPU.mTask.mCountThreads = 0;
     lResultCPU.mMethod = xMethod;
-    lResultCPU.mDurationTotal = GMeasureTime([&] {
-        lResultCPU.mCheckSum = xFuncRun();
-    });
+    lResultCPU.mDurationTotal = GMeasureTime([&] { lResultCPU.mCheckSum = xFuncRun(); });
     lResultCPU.mDurationCompute = lResultCPU.mDurationTotal;
     yResults.push_back(lResultCPU);
 }
 
-template <typename aFuncRun>
-void gForEachDevice(aFuncRun xFuncRun) {
-    for (bInt32 lDevID = 0; lDevID < af::getDeviceCount(); lDevID ++) {
+template <typename aFuncRun> void gForEachDevice(aFuncRun xFuncRun) {
+    for (bInt32 lDevID = 0; lDevID < af::getDeviceCount(); lDevID++) {
         af::setDevice(lDevID);
         sStr lDev;
         {
-            char lName[129] = { 0 };
+            char lName[129] = {0};
             af::deviceInfo(lName, nullptr, nullptr, nullptr);
             lDev = lName;
         }
@@ -46,16 +41,13 @@ void gForEachDevice(aFuncRun xFuncRun) {
     }
 }
 
-void nAF::gBenchParallel(sBenchDescription xBench,
-                         SArr<sReal> const & xArrFullCPU,
-                         SArr<sBenchResult> & yResults) {
+void nAF::gBenchParallel(sBenchDescription xBench, SArr<sReal> const &xArrFullCPU, SArr<sBenchResult> &yResults) {
     SArr<sReal> lArrOnCPU(xBench.mSize);
     gForEachDevice([&](sStr lDev) {
-        
-        af::array lBuffA { static_cast<dim_t>(xBench.mSize), xArrFullCPU.data() };
-        af::array lBuffB { static_cast<dim_t>(xBench.mSize), xArrFullCPU.data() };
-        af::array lBuffOnCPU { static_cast<dim_t>(xBench.mSize) };
-        
+        af::array lBuffA{static_cast<dim_t>(xBench.mSize), xArrFullCPU.data()};
+        af::array lBuffB{static_cast<dim_t>(xBench.mSize), xArrFullCPU.data()};
+        af::array lBuffOnCPU{static_cast<dim_t>(xBench.mSize)};
+
         gForMethod(xBench, "gArithmAddConst", yResults, lDev, [&] {
             lBuffOnCPU = lBuffA + M_PI;
             lBuffOnCPU.host(lArrOnCPU.data());
@@ -86,21 +78,14 @@ void nAF::gBenchParallel(sBenchDescription xBench,
             lBuffOnCPU.host(lArrOnCPU.data());
             return lArrOnCPU.front();
         });
-        gForMethod(xBench, "gReduceSimple", yResults, lDev, [&] {
-            return af::sum<bFlt32>(lBuffA);
-        });
+        gForMethod(xBench, "reduce_simple", yResults, lDev, [&] { return af::sum<bFlt32>(lBuffA); });
     });
 }
 
-void nAF::gBenchReduce(sBenchDescription xBench,
-                       SArr<sReal> const & xArrFullCPU,
-                       SArr<sBenchResult> & yResults) {
+void nAF::gBenchReduce(sBenchDescription xBench, SArr<sReal> const &xArrFullCPU, SArr<sBenchResult> &yResults) {
     SArr<sReal> lArrOnCPU(xBench.mSize);
     gForEachDevice([&](sStr lDev) {
-        
-        af::array lBuff { static_cast<dim_t>(xBench.mSize), xArrFullCPU.data() };
-        gForMethod(xBench, "gReduceSimple", yResults, lDev, [&] {
-            return af::sum<bFlt32>(lBuff);
-        });
+        af::array lBuff{static_cast<dim_t>(xBench.mSize), xArrFullCPU.data()};
+        gForMethod(xBench, "reduce_simple", yResults, lDev, [&] { return af::sum<bFlt32>(lBuff); });
     });
 }

@@ -1,228 +1,228 @@
 Technology,Device,Task.Name,Method,Task.Size,Task.Threads,Task.BatchSize,Duration.Compute,Duration.Total
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,128,256,6.448,7.792
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,128,256,3.669,4.506
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,128,256,2.243,3.857
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,128,256,2.33,5.167
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,128,256,2.331,5.041
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,128,256,2.723,4.913
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,128,256,2.841,4.659
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,128,256,3.124,5.145
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,128,256,9.791,11.93
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,128,256,7.598,10.625
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,128,256,3.952,5.178
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,128,256,4.475,6.318
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,128,256,5.987,8.18
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,128,256,3.467,4.122
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,128,256,4.278,6.573
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,128,256,2.936,4.41
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,256,128,7.069,9.405
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,256,128,4.257,5.154
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,256,128,3.972,5.41
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,256,128,3.526,5.314
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,256,128,3.273,5.897
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,256,128,3.904,5.292
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,256,128,2.768,4.704
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,256,128,3.547,5.306
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,256,128,10.553,14.555
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,256,128,4.588,5.212
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,256,128,4.591,6.092
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,256,128,4.918,6.099
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,256,128,4.493,5.389
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,256,128,5.212,6.211
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,256,128,4.425,5.887
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,256,128,4.942,5.787
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,512,64,4.926,9.381
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,512,64,2.408,5.445
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,512,64,8.623,9.648
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,512,64,3.855,4.713
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,512,64,2.786,4.845
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,512,64,3.995,5.493
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,512,64,2.746,5.167
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,512,64,2.73,4.767
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,512,64,8.476,17.177
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,512,64,5.223,6.374
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,512,64,4.386,6.4
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,512,64,4.245,4.826
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,512,64,4.217,5.604
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,512,64,3.385,5.435
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,512,64,3.456,4.092
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,512,64,3.051,4.071
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,1024,32,4.038,9.444
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,1024,32,2.642,4.38
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,1024,32,1.963,2.834
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,1024,32,3.388,5.905
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,1024,32,2.843,4.136
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,1024,32,2.922,3.358
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,1024,32,3.05,4.951
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,1024,32,2.284,3.07
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,1024,32,12.19,15.366
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,1024,32,5.354,5.833
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,1024,32,4.675,6.339
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,1024,32,3.275,4.195
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,1024,32,2.176,3.758
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,1024,32,1.238,3.108
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,1024,32,3.849,4.542
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,1024,32,3.219,4.804
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,2048,16,7.102,9.391
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,2048,16,6.064,6.617
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,2048,16,2.316,6.664
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,2048,16,11.819,12.303
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,2048,16,4.374,6.388
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,2048,16,2.827,4.568
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,2048,16,3.368,4.625
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,2048,16,7.633,8.896
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,2048,16,8.745,11.35
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,2048,16,6.342,7.757
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,2048,16,3.36,4.875
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,2048,16,4.568,6.772
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,2048,16,2.547,3.362
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,2048,16,2.361,3.262
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,2048,16,2.959,4.381
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,2048,16,4.503,6.121
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,4096,8,13.942,14.729
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,4096,8,11.899,18.488
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,4096,8,14.459,16.004
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,4096,8,12.326,13.882
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,4096,8,10.543,11.954
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,4096,8,11.899,13.042
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,4096,8,8.691,10.59
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,4096,8,11.207,13.64
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,4096,8,12.336,15.106
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,4096,8,6.519,7.895
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,4096,8,5.432,7.741
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,4096,8,3.708,5.551
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,4096,8,5.258,5.953
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,4096,8,7.49,8.792
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,4096,8,5.535,6.824
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,4096,8,3.829,5.814
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,32768,8192,4,38.119,43.939
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,32768,8192,4,35.847,39.492
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,32768,8192,4,40.916,41.906
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,32768,8192,4,31.806,32.643
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,32768,8192,4,32.464,34.021
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,32768,8192,4,28.737,33.999
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,32768,8192,4,27.596,28.822
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,32768,8192,4,33.466,34.506
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,32768,8192,4,14.474,15.841
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,32768,8192,4,16.807,17.542
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,32768,8192,4,9.916,12.865
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,32768,8192,4,8.566,9.644
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,32768,8192,4,10.53,11.892
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,32768,8192,4,11.046,12.196
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,32768,8192,4,11.25,12.795
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,32768,8192,4,9.696,14.723
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,1024,256,16.461,20.114
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,1024,256,9.924,10.926
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,1024,256,9.905,11.743
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,1024,256,8.548,9.458
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,1024,256,6.568,7.022
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,1024,256,3.925,7.285
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,1024,256,2.987,6.738
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,1024,256,4.566,5.161
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,1024,256,20.811,22.512
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,1024,256,9.208,9.852
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,1024,256,9.053,10.793
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,1024,256,8.595,9.403
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,1024,256,4.177,6.169
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,1024,256,6.101,7.098
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,1024,256,9.061,10.305
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,1024,256,6.618,7.156
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,2048,128,10.678,11.66
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,2048,128,9.192,9.952
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,2048,128,9.456,14.745
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,2048,128,8.785,10.06
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,2048,128,9.15,9.861
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,2048,128,8.107,10.08
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,2048,128,6.463,8.202
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,2048,128,7.25,8.921
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,2048,128,16.617,20.083
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,2048,128,10.157,11.914
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,2048,128,9.867,10.746
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,2048,128,6.572,8.306
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,2048,128,5.657,7.473
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,2048,128,7.175,8.884
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,2048,128,8.053,11.142
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,2048,128,6.853,7.412
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,4096,64,18.353,19.543
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,4096,64,27.845,30.08
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,4096,64,25.914,27.723
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,4096,64,18.13,19.067
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,4096,64,15.811,16.404
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,4096,64,8.096,8.715
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,4096,64,13.791,15.172
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,4096,64,9.626,10.428
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,4096,64,17.131,20.747
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,4096,64,11.108,14.399
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,4096,64,13.461,15.76
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,4096,64,8.337,10.455
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,4096,64,9.672,13.661
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,4096,64,5.739,8.994
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,4096,64,9.412,10.62
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,4096,64,11.099,12.142
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,8192,32,64.896,68.336
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,8192,32,76.209,77.361
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,8192,32,78.253,81.952
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,8192,32,38.404,39.504
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,8192,32,55.012,59.364
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,8192,32,36.355,45.895
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,8192,32,35.639,38.411
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,8192,32,35.985,43.833
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,262144,8192,32,33.152,36.097
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,262144,8192,32,32.818,34.271
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,262144,8192,32,16.438,17.37
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,262144,8192,32,12.763,13.458
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,262144,8192,32,8.107,12.591
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,262144,8192,32,9.317,9.852
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,262144,8192,32,7.183,9.917
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,262144,8192,32,9.192,10.242
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,262144,16384,16,61.733,62.234
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,262144,16384,16,11.995,13.04
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,262144,16384,16,15.58,15.945
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,262144,16384,16,12.129,12.726
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,262144,16384,16,12.141,12.805
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,262144,16384,16,14.347,14.881
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,262144,16384,16,12.939,13.878
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,262144,16384,16,11.799,12.525
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,4096,256,43.234,44.084
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,4096,256,33.877,35.312
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,4096,256,29.583,34.066
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,4096,256,25.061,30.201
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,4096,256,29.418,38.993
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,4096,256,31.484,32.79
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,4096,256,27.191,33.521
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,4096,256,23.324,24.088
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,1048576,4096,256,42.135,47.389
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,1048576,4096,256,41.408,42.04
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,1048576,4096,256,33.88,34.752
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,1048576,4096,256,30.974,32.359
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,1048576,4096,256,36.696,37.318
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,1048576,4096,256,23.576,24.425
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,1048576,4096,256,15.454,18.433
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,1048576,4096,256,16.98,17.48
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,8192,128,63.132,65.188
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,8192,128,12.9,13.316
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,8192,128,14.486,14.84
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,8192,128,12.625,13.126
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,8192,128,13.109,13.345
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,8192,128,9.438,9.96
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,8192,128,10.942,11.433
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,8192,128,11.742,12.384
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceSimple,1048576,8192,128,13.766,14.644
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWModulo,1048576,8192,128,13.116,14.488
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceInSharedMem,1048576,8192,128,9.544,10.101
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWSequentialAddressing,1048576,8192,128,10.628,11.55
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduce2Steps,1048576,8192,128,11.129,11.962
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceUnrolled,1048576,8192,128,8.198,11.241
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceFullyUnrolled,1048576,8192,128,11.486,11.912
-OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,gReduceWBrentsTh,1048576,8192,128,8.872,11.696
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceSimple,1048576,16384,64,47.024,47.528
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWModulo,1048576,16384,64,14.218,14.971
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceInSharedMem,1048576,16384,64,15.481,16.503
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWSequentialAddressing,1048576,16384,64,17.01,17.996
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduce2Steps,1048576,16384,64,15.965,16.961
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceUnrolled,1048576,16384,64,17.37,18.208
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceFullyUnrolled,1048576,16384,64,16.067,16.859
-OpenCL,Intel(R) HD Graphics 630,Reduction,gReduceWBrentsTh,1048576,16384,64,15.937,16.431
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,128,256,6.448,7.792
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,128,256,3.669,4.506
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,128,256,2.243,3.857
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,128,256,2.33,5.167
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,128,256,2.331,5.041
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,128,256,2.723,4.913
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,128,256,2.841,4.659
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,128,256,3.124,5.145
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,128,256,9.791,11.93
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,128,256,7.598,10.625
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,128,256,3.952,5.178
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,128,256,4.475,6.318
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,128,256,5.987,8.18
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,128,256,3.467,4.122
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,128,256,4.278,6.573
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,128,256,2.936,4.41
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,256,128,7.069,9.405
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,256,128,4.257,5.154
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,256,128,3.972,5.41
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,256,128,3.526,5.314
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,256,128,3.273,5.897
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,256,128,3.904,5.292
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,256,128,2.768,4.704
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,256,128,3.547,5.306
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,256,128,10.553,14.555
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,256,128,4.588,5.212
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,256,128,4.591,6.092
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,256,128,4.918,6.099
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,256,128,4.493,5.389
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,256,128,5.212,6.211
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,256,128,4.425,5.887
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,256,128,4.942,5.787
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,512,64,4.926,9.381
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,512,64,2.408,5.445
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,512,64,8.623,9.648
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,512,64,3.855,4.713
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,512,64,2.786,4.845
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,512,64,3.995,5.493
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,512,64,2.746,5.167
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,512,64,2.73,4.767
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,512,64,8.476,17.177
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,512,64,5.223,6.374
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,512,64,4.386,6.4
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,512,64,4.245,4.826
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,512,64,4.217,5.604
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,512,64,3.385,5.435
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,512,64,3.456,4.092
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,512,64,3.051,4.071
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,1024,32,4.038,9.444
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,1024,32,2.642,4.38
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,1024,32,1.963,2.834
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,1024,32,3.388,5.905
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,1024,32,2.843,4.136
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,1024,32,2.922,3.358
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,1024,32,3.05,4.951
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,1024,32,2.284,3.07
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,1024,32,12.19,15.366
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,1024,32,5.354,5.833
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,1024,32,4.675,6.339
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,1024,32,3.275,4.195
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,1024,32,2.176,3.758
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,1024,32,1.238,3.108
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,1024,32,3.849,4.542
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,1024,32,3.219,4.804
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,2048,16,7.102,9.391
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,2048,16,6.064,6.617
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,2048,16,2.316,6.664
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,2048,16,11.819,12.303
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,2048,16,4.374,6.388
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,2048,16,2.827,4.568
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,2048,16,3.368,4.625
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,2048,16,7.633,8.896
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,2048,16,8.745,11.35
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,2048,16,6.342,7.757
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,2048,16,3.36,4.875
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,2048,16,4.568,6.772
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,2048,16,2.547,3.362
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,2048,16,2.361,3.262
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,2048,16,2.959,4.381
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,2048,16,4.503,6.121
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,4096,8,13.942,14.729
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,4096,8,11.899,18.488
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,4096,8,14.459,16.004
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,4096,8,12.326,13.882
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,4096,8,10.543,11.954
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,4096,8,11.899,13.042
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,4096,8,8.691,10.59
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,4096,8,11.207,13.64
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,4096,8,12.336,15.106
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,4096,8,6.519,7.895
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,4096,8,5.432,7.741
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,4096,8,3.708,5.551
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,4096,8,5.258,5.953
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,4096,8,7.49,8.792
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,4096,8,5.535,6.824
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,4096,8,3.829,5.814
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,32768,8192,4,38.119,43.939
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,32768,8192,4,35.847,39.492
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,32768,8192,4,40.916,41.906
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,32768,8192,4,31.806,32.643
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,32768,8192,4,32.464,34.021
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,32768,8192,4,28.737,33.999
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,32768,8192,4,27.596,28.822
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,32768,8192,4,33.466,34.506
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,32768,8192,4,14.474,15.841
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,32768,8192,4,16.807,17.542
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,32768,8192,4,9.916,12.865
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,32768,8192,4,8.566,9.644
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,32768,8192,4,10.53,11.892
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,32768,8192,4,11.046,12.196
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,32768,8192,4,11.25,12.795
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,32768,8192,4,9.696,14.723
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,262144,1024,256,16.461,20.114
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,262144,1024,256,9.924,10.926
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,262144,1024,256,9.905,11.743
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,262144,1024,256,8.548,9.458
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,262144,1024,256,6.568,7.022
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,262144,1024,256,3.925,7.285
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,262144,1024,256,2.987,6.738
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,262144,1024,256,4.566,5.161
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,262144,1024,256,20.811,22.512
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,262144,1024,256,9.208,9.852
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,262144,1024,256,9.053,10.793
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,262144,1024,256,8.595,9.403
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,262144,1024,256,4.177,6.169
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,262144,1024,256,6.101,7.098
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,262144,1024,256,9.061,10.305
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,262144,1024,256,6.618,7.156
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,262144,2048,128,10.678,11.66
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,262144,2048,128,9.192,9.952
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,262144,2048,128,9.456,14.745
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,262144,2048,128,8.785,10.06
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,262144,2048,128,9.15,9.861
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,262144,2048,128,8.107,10.08
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,262144,2048,128,6.463,8.202
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,262144,2048,128,7.25,8.921
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,262144,2048,128,16.617,20.083
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,262144,2048,128,10.157,11.914
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,262144,2048,128,9.867,10.746
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,262144,2048,128,6.572,8.306
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,262144,2048,128,5.657,7.473
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,262144,2048,128,7.175,8.884
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,262144,2048,128,8.053,11.142
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,262144,2048,128,6.853,7.412
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,262144,4096,64,18.353,19.543
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,262144,4096,64,27.845,30.08
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,262144,4096,64,25.914,27.723
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,262144,4096,64,18.13,19.067
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,262144,4096,64,15.811,16.404
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,262144,4096,64,8.096,8.715
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,262144,4096,64,13.791,15.172
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,262144,4096,64,9.626,10.428
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,262144,4096,64,17.131,20.747
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,262144,4096,64,11.108,14.399
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,262144,4096,64,13.461,15.76
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,262144,4096,64,8.337,10.455
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,262144,4096,64,9.672,13.661
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,262144,4096,64,5.739,8.994
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,262144,4096,64,9.412,10.62
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,262144,4096,64,11.099,12.142
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,262144,8192,32,64.896,68.336
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,262144,8192,32,76.209,77.361
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,262144,8192,32,78.253,81.952
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,262144,8192,32,38.404,39.504
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,262144,8192,32,55.012,59.364
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,262144,8192,32,36.355,45.895
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,262144,8192,32,35.639,38.411
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,262144,8192,32,35.985,43.833
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,262144,8192,32,33.152,36.097
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,262144,8192,32,32.818,34.271
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,262144,8192,32,16.438,17.37
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,262144,8192,32,12.763,13.458
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,262144,8192,32,8.107,12.591
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,262144,8192,32,9.317,9.852
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,262144,8192,32,7.183,9.917
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,262144,8192,32,9.192,10.242
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,262144,16384,16,61.733,62.234
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,262144,16384,16,11.995,13.04
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,262144,16384,16,15.58,15.945
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,262144,16384,16,12.129,12.726
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,262144,16384,16,12.141,12.805
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,262144,16384,16,14.347,14.881
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,262144,16384,16,12.939,13.878
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,262144,16384,16,11.799,12.525
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,1048576,4096,256,43.234,44.084
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,1048576,4096,256,33.877,35.312
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,1048576,4096,256,29.583,34.066
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,1048576,4096,256,25.061,30.201
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,1048576,4096,256,29.418,38.993
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,1048576,4096,256,31.484,32.79
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,1048576,4096,256,27.191,33.521
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,1048576,4096,256,23.324,24.088
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,1048576,4096,256,42.135,47.389
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,1048576,4096,256,41.408,42.04
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,1048576,4096,256,33.88,34.752
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,1048576,4096,256,30.974,32.359
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,1048576,4096,256,36.696,37.318
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,1048576,4096,256,23.576,24.425
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,1048576,4096,256,15.454,18.433
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,1048576,4096,256,16.98,17.48
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,1048576,8192,128,63.132,65.188
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,1048576,8192,128,12.9,13.316
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,1048576,8192,128,14.486,14.84
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,1048576,8192,128,12.625,13.126
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,1048576,8192,128,13.109,13.345
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,1048576,8192,128,9.438,9.96
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,1048576,8192,128,10.942,11.433
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,1048576,8192,128,11.742,12.384
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_simple,1048576,8192,128,13.766,14.644
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_modulo,1048576,8192,128,13.116,14.488
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_in_shared,1048576,8192,128,9.544,10.101
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_sequential_addressing,1048576,8192,128,10.628,11.55
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_bi_step,1048576,8192,128,11.129,11.962
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled,1048576,8192,128,8.198,11.241
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_unrolled_fully,1048576,8192,128,11.486,11.912
+OpenCL,AMD Radeon Pro 560 Compute Engine,Reduction,reduce_w_brents_theorem,1048576,8192,128,8.872,11.696
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_simple,1048576,16384,64,47.024,47.528
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_modulo,1048576,16384,64,14.218,14.971
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_in_shared,1048576,16384,64,15.481,16.503
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_sequential_addressing,1048576,16384,64,17.01,17.996
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_bi_step,1048576,16384,64,15.965,16.961
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled,1048576,16384,64,17.37,18.208
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_unrolled_fully,1048576,16384,64,16.067,16.859
+OpenCL,Intel(R) HD Graphics 630,Reduction,reduce_w_brents_theorem,1048576,16384,64,15.937,16.431
 OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmAddConst,32768,256,128,2.357,2.744
 OpenCL,Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz,DataParallel,gArithmMulConst,32768,256,128,2.527,2.797
 OpenCL,Intel(R) HD Graphics 630,DataParallel,gArithmAddConst,32768,256,128,8.299,10.863
