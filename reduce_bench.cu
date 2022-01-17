@@ -60,7 +60,10 @@ int main(int argc, char **argv) {
         }
     }
 
-    bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
+    if (cuda_device_count())
+        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
+    else
+        fmt::print("No CUDA capable devices found!\n");
 
     bm::Initialize(&argc, argv);
     bm::RunSpecifiedBenchmarks();

@@ -28,6 +28,14 @@ __global__ void cuda_block_sum(float *d_sum, float *d_data) {
         d_sum[blockIdx.x] = temp[0];
 }
 
+inline static size_t cuda_device_count() {
+    int count;
+    auto error = cudaGetDeviceCount(&count);
+    if (error != cudaSuccess)
+        return 0;
+    return static_cast<size_t>(count);
+}
+
 struct cuda_t {
     thrust::device_vector<float> on_gpu;
     cuda_t(float const *b, float const *e) : on_gpu(b, e) {}
