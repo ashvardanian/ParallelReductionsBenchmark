@@ -43,9 +43,9 @@ int main(int argc, char **argv) {
                    tgt.language_version);
 
     // Register and run all the benchmarks.
-    // bm::RegisterBenchmark("cpu_baseline", &automatic<cpu_baseline_t>)->MinTime(10);
-    // bm::RegisterBenchmark("cpu_avx2", &automatic<cpu_avx2_t>)->MinTime(10);
-    // bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_baseline", &automatic<cpu_baseline_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_avx2", &automatic<cpu_avx2_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10);
 
     std::vector<size_t> group_sizes = {8, 32, 128};
     for (auto tgt : ocl_targets) {
