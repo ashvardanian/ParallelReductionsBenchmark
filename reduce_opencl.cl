@@ -4,24 +4,21 @@
 // Copyright: Check "License" file.
 //
 
-typedef float f32_t;
-typedef int idx_t;
-
 /**
  *  Most of the algorithms here have follwong properties:
  *  - takes log(n) steps for n input elements,
  *  - uses n threads,
  *  - only works for power-of-2 arrays.
  */
-__kernel void reduce_simple(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                            __local f32_t *buffer) {
-    idx_t const idx_global = get_global_id(0);
-    idx_t const idx_in_block = get_local_id(0);
+__kernel void reduce_simple(__global float const *inputs, __global float *outputs, ulong const n,
+                            __local float *buffer) {
+    ulong const idx_global = get_global_id(0);
+    ulong const idx_in_block = get_local_id(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
 
     barrier(CLK_LOCAL_MEM_FENCE);
-    idx_t block_size = get_local_size(0);
-    idx_t block_size_half = block_size / 2;
+    ulong block_size = get_local_size(0);
+    ulong block_size_half = block_size / 2;
     while (block_size_half > 0) {
         if (idx_in_block < block_size_half) {
             buffer[idx_in_block] += buffer[idx_in_block + block_size_half];
@@ -46,15 +43,15 @@ __kernel void reduce_simple(__global f32_t const *inputs, __global f32_t *output
  *  inactivity means that no whole warps are active, which is also very
  *  inefficient.
  */
-__kernel void reduce_w_modulo(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                              __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_global_id(0);
+__kernel void reduce_w_modulo(__global float const *inputs, __global float *outputs, ulong const n,
+                              __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_global_id(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory.
-    for (idx_t i = 1; i < get_local_size(0); i *= 2) {
+    for (ulong i = 1; i < get_local_size(0); i *= 2) {
         // Modulo arithmetic is slow!
         if ((idx_in_block % (2 * i)) == 0)
             buffer[idx_in_block] += buffer[idx_in_block + i];
@@ -70,16 +67,16 @@ __kernel void reduce_w_modulo(__global f32_t const *inputs, __global f32_t *outp
  *  This version uses contiguous threads, but its interleaved
  *  addressing results in many shared memory bank conflicts.
  */
-__kernel void reduce_in_shared(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                               __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_global_id(0);
+__kernel void reduce_in_shared(__global float const *inputs, __global float *outputs, ulong const n,
+                               __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_global_id(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory..
-    for (idx_t i = 1; i < get_local_size(0); i *= 2) {
-        idx_t const index = 2 * i * idx_in_block;
+    for (ulong i = 1; i < get_local_size(0); i *= 2) {
+        ulong const index = 2 * i * idx_in_block;
         if (index < get_local_size(0))
             buffer[index] += buffer[index + i];
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -94,15 +91,15 @@ __kernel void reduce_in_shared(__global f32_t const *inputs, __global f32_t *out
  *  This version uses sequential addressing.
  *  No divergence or bank conflicts.
  */
-__kernel void reduce_w_sequential_addressing(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                                             __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_global_id(0);
+__kernel void reduce_w_sequential_addressing(__global float const *inputs, __global float *outputs, ulong const n,
+                                             __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_global_id(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Do reduction in shared mem.
-    for (idx_t i = get_local_size(0) / 2; i > 0; i >>= 1) {
+    for (ulong i = get_local_size(0) / 2; i > 0; i >>= 1) {
         if (idx_in_block < i)
             buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -117,10 +114,10 @@ __kernel void reduce_w_sequential_addressing(__global f32_t const *inputs, __glo
  *  This version uses n/2 threads - it performs the first level
  *  of reduction when reading from global memory.
  */
-__kernel void reduce_bi_step(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                             __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
+__kernel void reduce_bi_step(__global float const *inputs, __global float *outputs, ulong const n,
+                             __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
 
     // Perform first level of reduction,
@@ -131,7 +128,7 @@ __kernel void reduce_bi_step(__global f32_t const *inputs, __global f32_t *outpu
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory.
-    for (idx_t i = get_local_size(0) / 2; i > 0; i >>= 1) {
+    for (ulong i = get_local_size(0) / 2; i > 0; i >>= 1) {
         if (idx_in_block < i)
             buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -146,11 +143,11 @@ __kernel void reduce_bi_step(__global f32_t const *inputs, __global f32_t *outpu
  *  Unrolls the last warp to avoid synchronization where
  *  where its not needed.
  */
-__kernel void reduce_unrolled(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                              __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
-    idx_t const block_size = get_local_size(0);
+__kernel void reduce_unrolled(__global float const *inputs, __global float *outputs, ulong const n,
+                              __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
+    ulong const block_size = get_local_size(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
 
     // Perform first level of reduction,
@@ -163,7 +160,7 @@ __kernel void reduce_unrolled(__global f32_t const *inputs, __global f32_t *outp
 
     // Perform reduction in the shared memory.
 #pragma unroll 1
-    for (idx_t i = get_local_size(0) / 2; i > 32; i >>= 1) {
+    for (ulong i = get_local_size(0) / 2; i > 32; i >>= 1) {
         if (idx_in_block < i)
             buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -195,11 +192,11 @@ __kernel void reduce_unrolled(__global f32_t const *inputs, __global f32_t *outp
  *  statement in the host code to handle all the different thread block sizes at
  *  compile time.
  */
-__kernel void reduce_unrolled_fully(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                                    __local f32_t *buffer) {
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
-    idx_t const block_size = get_local_size(0);
+__kernel void reduce_unrolled_fully(__global float const *inputs, __global float *outputs, ulong const n,
+                                    __local float *buffer) {
+    ulong const idx_in_block = get_local_id(0);
+    ulong const idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
+    ulong const block_size = get_local_size(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
 
     // Perform first level of reduction,
@@ -253,12 +250,12 @@ __kernel void reduce_unrolled_fully(__global f32_t const *inputs, __global f32_t
  *  This reduces the overall cost of the algorithm while keeping
  *  the work complexity O(n) and the step complexity O(log n).
  */
-__kernel void reduce_w_brents_theorem(__global f32_t const *inputs, __global f32_t *outputs, idx_t const n,
-                                      __local f32_t *buffer) {
-    idx_t const block_size = get_local_size(0);
-    idx_t const idx_in_block = get_local_id(0);
-    idx_t idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
-    idx_t const grid_size = block_size * 2 * get_num_groups(0);
+__kernel void reduce_w_brents_theorem(__global float const *inputs, __global float *outputs, ulong const n,
+                                      __local float *buffer) {
+    ulong const block_size = get_local_size(0);
+    ulong const idx_in_block = get_local_id(0);
+    ulong idx_global = get_group_id(0) * (get_local_size(0) * 2) + get_local_id(0);
+    ulong const grid_size = block_size * 2 * get_num_groups(0);
     buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
 
     // We reduce multiple elements per thread.

@@ -40,30 +40,21 @@ struct opencl_t {
     size_t const items_per_thread = 0;
 
   private:
-    cl_context context;
-    cl_command_queue command_queue;
-    cl_program program;
-    cl_kernel kernel;
+    cl_context context = NULL;
+    cl_command_queue queue = NULL;
+    cl_program program = NULL;
+    cl_kernel kernel = NULL;
 
     /**
      * The main dataset pre-copied to target device.
      */
-    cl_mem dataset;
+    cl_mem dataset = NULL;
     /**
      * Global memory for partial sums outputs.
      * Size: |threads| * sizeof(float).
      */
-    cl_mem global_outputs;
+    cl_mem global_outputs = NULL;
     std::vector<float> returned_outputs;
-    /**
-     * A constant that stores `cl_int` length of `dataset`.
-     */
-    cl_int dataset_size;
-    /**
-     * Temporary `__local` memory buffer.
-     * Size: |threads| * sizeof(float).
-     */
-    cl_mem local_buffers;
 
   public:
     opencl_t(float const *b, float const *e, opencl_target_t target, size_t items_per_thread_ = 64,
@@ -83,25 +74,25 @@ struct opencl_t {
         context = clCreateContext(NULL, 1, &target.device, NULL, NULL, &ret);
 
         // Create a command queue
-        command_queue = clCreateCommandQueue(context, target.device, 0, &ret);
+        queue = clCreateCommandQueue(context, target.device, 0, &ret);
 
         // Create memory buffers on the device for each vector
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clCreateBuffer.html
         dataset = clCreateBuffer(context, CL_MEM_READ_ONLY, count_items * sizeof(float), NULL, &ret);
         global_outputs = clCreateBuffer(context, CL_MEM_READ_WRITE, count_threads * sizeof(float), NULL, &ret);
-        dataset_size = static_cast<cl_int>(count_items);
-        local_buffers = clCreateBuffer(context, CL_MEM_HOST_NO_ACCESS, count_threads * sizeof(float), NULL, &ret);
         returned_outputs.resize(count_threads);
 
-        // Move the `dataset to GPU`
-        ret = clEnqueueWriteBuffer(command_queue, dataset, CL_TRUE, 0, count_items * sizeof(float), b, 0, NULL, NULL);
+        // Move the `dataset` to GPU.
+        // We don't need to explicitly finish the queue, as this transfer is blocking.
+        // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueReadBuffer.html
+        ret = clEnqueueWriteBuffer(queue, dataset, CL_TRUE, 0, count_items * sizeof(float), b, 0, NULL, NULL);
 
         // Create a program from the kernel source
         char const *source_cstr = source_str.c_str();
         size_t const source_size = source_str.size();
         program = clCreateProgramWithSource(context, 1, &source_cstr, &source_size, &ret);
 
-        // The third parameter is the list of deives.
+        // The third parameter is the list of devices.
         // If it's NULL, the program executable is built for all devices
         // associated with program for which a source or binary has been loaded.
         //
@@ -117,10 +108,12 @@ struct opencl_t {
         kernel = clCreateKernel(program, kernel_name_cstr, &ret);
 
         // Set the arguments of the kernel
+        auto dataset_size = static_cast<cl_ulong>(count_items);
+        auto local_buffers_size = count_threads * sizeof(float);
         ret = clSetKernelArg(kernel, 0, sizeof(dataset), (void *)&dataset);
         ret = clSetKernelArg(kernel, 1, sizeof(global_outputs), (void *)&global_outputs);
         ret = clSetKernelArg(kernel, 2, sizeof(dataset_size), (void *)&dataset_size);
-        ret = clSetKernelArg(kernel, 3, sizeof(local_buffers), (void *)&local_buffers);
+        ret = clSetKernelArg(kernel, 3, local_buffers_size, NULL);
 
         if (ret != 0)
             throw std::logic_error(opencl_error_name(ret));
@@ -128,14 +121,14 @@ struct opencl_t {
 
     ~opencl_t() {
         cl_int ret = 0;
-        ret = clFlush(command_queue);
-        ret = clFinish(command_queue);
-        ret = clReleaseKernel(kernel);
-        ret = clReleaseProgram(program);
+        ret = clFlush(queue);
+        ret = clFinish(queue);
+
         ret = clReleaseMemObject(dataset);
         ret = clReleaseMemObject(global_outputs);
-        ret = clReleaseMemObject(local_buffers);
-        ret = clReleaseCommandQueue(command_queue);
+        ret = clReleaseKernel(kernel);
+        ret = clReleaseProgram(program);
+        ret = clReleaseCommandQueue(queue);
         ret = clReleaseContext(context);
 
         if (ret != 0)
@@ -146,10 +139,13 @@ struct opencl_t {
 
     float operator()() {
         cl_int ret = 0;
-        ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &count_items, &items_per_thread, 0, NULL, NULL);
-        ret = clEnqueueReadBuffer(command_queue, global_outputs, CL_TRUE, 0, returned_outputs.size() * sizeof(float),
+        ret = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &count_items, &items_per_thread, 0, NULL, NULL);
+        ret = clFlush(queue);
+
+        // We don't need to explicitly finish the queue, as this transfer is blocking.
+        // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueReadBuffer.html
+        ret = clEnqueueReadBuffer(queue, global_outputs, CL_TRUE, 0, returned_outputs.size() * sizeof(float),
                                   returned_outputs.data(), 0, NULL, NULL);
-        ret = clFinish(command_queue);
 
         if (ret != 0)
             throw std::logic_error(opencl_error_name(ret));
