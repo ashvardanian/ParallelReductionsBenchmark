@@ -37,3 +37,8 @@ mkdir -p debug && cd debug && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && cd ..
 ```
 
 And then run your favorite debugger.
+
+Optional backends:
+
+* To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md): `apt-get install intel-opencl-icd`.
+* To run on integrated Intel GPU, follow [this guide](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/prerequisites.html).
