@@ -53,9 +53,8 @@ include_directories(BEFORE ${thrust_SOURCE_DIR})
 
 # Define the CUDA architectures.
 # Empty value is forbidden.
-if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-    set(CMAKE_CUDA_ARCHITECTURES 75)
-endif()
+set(CMAKE_CUDA_ARCHITECTURES OFF)
+string(APPEND CMAKE_CUDA_FLAGS " -arch=sm_75")
 project(gpgpu_frameworks LANGUAGES CXX CUDA)
 
 set(CMAKE_CUDA_STANDARD 17)
