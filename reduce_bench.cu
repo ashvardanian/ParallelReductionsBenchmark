@@ -42,6 +42,14 @@ int main(int argc, char **argv) {
         fmt::print("- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
                    tgt.language_version);
 
+    if (cuda_device_count()) {
+        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_blocks", &automatic<cuda_gt<cuda_kernel_t::blocks_k>>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_warps", &automatic<cuda_gt<cuda_kernel_t::warps_k>>)->MinTime(10);
+    }
+    else
+        fmt::print("No CUDA capable devices found!\n");
+
     // Register and run all the benchmarks.
     bm::RegisterBenchmark("cpu_baseline", &automatic<cpu_baseline_t>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2", &automatic<cpu_avx2_t>)->MinTime(10);
@@ -60,10 +68,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (cuda_device_count())
-        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
-    else
-        fmt::print("No CUDA capable devices found!\n");
 
     bm::Initialize(&argc, argv);
     bm::RunSpecifiedBenchmarks();
