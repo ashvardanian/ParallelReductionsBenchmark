@@ -6,95 +6,81 @@
 
 namespace av {
 
-static constexpr int warp_size_k = 32;
-
 /**
- * @brief Using CUDA warp-level primitives on Nvidia Kepler GPUs and newer.
+ * @brief Uses global memory for partial sums.
  *
  * Reading:
  * https://sodocumentation.net/cuda/topic/6566/parallel-reduction--e-g--how-to-sum-an-array-
  * https://stackoverflow.com/inputs/25584577
  * https://stackoverflow.com/q/12733084
- * https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
- * https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-kepler-shuffle/
- * https://devblogs.nvidia.com/parallelforall/faster-parallel-reductions-kepler/
+ * https://stackoverflow.com/q/44278317
  */
-template <int block_size_ak = 1024>
-__global__ void reduce_2step_blocks(const float *inputs, int input_size, float *outputs) {
-    int const thread_idx = threadIdx.x;
-    int gthread_idx = thread_idx + blockIdx.x * block_size_ak;
-    int const grid_size = block_size_ak * gridDim.x;
-    float sum = 0;
-    for (int i = gthread_idx; i < input_size; i += grid_size)
-        sum += inputs[i];
+__global__ void cu_recude_blocks(const float *inputs, int input_size, float *outputs) {
+    extern __shared__ float shared[];
+    unsigned int const tid = threadIdx.x;
 
-    __shared__ float shared_buffer[block_size_ak];
-    shared_buffer[thread_idx] = sum;
+    shared[tid] = inputs[threadIdx.x + blockDim.x * blockIdx.x];
     __syncthreads();
-    for (int size = block_size_ak >> 1; size > 0; size >>= 1) {
-        if (thread_idx < size)
-            shared_buffer[thread_idx] += shared_buffer[thread_idx + size];
+
+    // Reduce into `shared` memory
+    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+        if (tid < s)
+            shared[tid] += shared[tid + s];
         __syncthreads();
     }
-    if (thread_idx == 0)
-        outputs[blockIdx.x] = shared_buffer[0];
+
+    // Export only the first result in each block
+    if (tid == 0)
+        outputs[blockIdx.x] = shared[0];
 }
 
-inline __device__ float warp_reduce(float volatile *shared_buffer) {
-    int lane_in_warp = threadIdx.x & (warp_size_k - 1);
-    if (lane_in_warp < 16) {
-        shared_buffer[lane_in_warp] += shared_buffer[lane_in_warp + 16];
-        shared_buffer[lane_in_warp] += shared_buffer[lane_in_warp + 8];
-        shared_buffer[lane_in_warp] += shared_buffer[lane_in_warp + 4];
-        shared_buffer[lane_in_warp] += shared_buffer[lane_in_warp + 2];
-        shared_buffer[lane_in_warp] += shared_buffer[lane_in_warp + 1];
-    }
-    return shared_buffer[0];
+__inline__ __device__ float cu_reduce_warp(float val) {
+    // The `__shfl_down_sync` replaces `__shfl_down`
+    // https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
+    val += __shfl_down_sync(0xffffffff, val, 16);
+    val += __shfl_down_sync(0xffffffff, val, 8);
+    val += __shfl_down_sync(0xffffffff, val, 4);
+    val += __shfl_down_sync(0xffffffff, val, 2);
+    val += __shfl_down_sync(0xffffffff, val, 1);
+    return val;
 }
 
-template <int block_size_ak = 1024>
-__global__ void reduce_2step_warps(float const *inputs, int input_size, float *out) {
-    int idx = threadIdx.x;
+/**
+ * @brief Uses warp shuffles on Kepler and newer architectures.
+ * Source: https://developer.nvidia.com/blog/faster-parallel-reductions-kepler/
+ * More reading:
+ * https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
+ * https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-kepler-shuffle/
+ */
+__global__ void cu_reduce_warps(float const *inputs, int input_size, float *outputs) {
     float sum = 0;
-    for (int i = idx; i < input_size; i += block_size_ak)
+    for (unsigned int i = blockIdx.x * blockDim.x + threadIdx.x; i < input_size; i += blockDim.x * gridDim.x)
         sum += inputs[i];
-    __shared__ float r[block_size_ak];
-    r[idx] = sum;
-    warp_reduce(&r[idx & ~(warp_size_k - 1)]);
-    __syncthreads();
-    if (idx < warp_size_k) {
-        r[idx] = idx * warp_size_k < block_size_ak ? r[idx * warp_size_k] : 0;
-        warp_reduce(r);
-        if (idx == 0)
-            *out = r[0];
-    }
-}
 
-inline __device__ float registers_reduce(float value) {
-    value += __shfl_down(value, 1);
-    value += __shfl_down(value, 2);
-    value += __shfl_down(value, 4);
-    value += __shfl_down(value, 8);
-    value += __shfl_down(value, 16);
-    return __shfl(value, 0);
-}
+    // Shared mem for 32 partial sums
+    __shared__ float shared[32];
+    unsigned int lane = threadIdx.x % warpSize;
+    unsigned int wid = threadIdx.x / warpSize;
 
-template <int block_size_ak = 1024>
-__global__ void reduce_2step_registers(float const *inputs, int input_size, float *out) {
-    int idx = threadIdx.x;
-    float sum = 0;
-    for (int i = idx; i < input_size; i += block_size_ak)
-        sum += inputs[i];
-    __shared__ float r[block_size_ak];
-    r[idx] = sum;
-    warp_reduce(&r[idx & ~(warp_size_k - 1)]);
+    // Each warp performs partial reduction
+    sum = cu_reduce_warp(sum);
+
+    // Write reduced value to shared memory
+    if (lane == 0)
+        shared[wid] = sum;
+
+    // Wait for all partial reductions
     __syncthreads();
-    if (idx < warp_size_k) {
-        r[idx] = idx * warp_size_k < block_size_ak ? r[idx * warp_size_k] : 0;
-        warp_reduce(r);
-        if (idx == 0)
-            *out = r[0];
-    }
+
+    // Read from shared memory only if that warp existed
+    sum = (threadIdx.x < blockDim.x / warpSize) ? shared[lane] : 0;
+
+    // Final reduce within first warp
+    if (wid == 0)
+        sum = cu_reduce_warp(sum);
+
+    if (threadIdx.x == 0)
+        outputs[blockIdx.x] = sum;
 }
 
 inline static size_t cuda_device_count() {
@@ -108,26 +94,36 @@ inline static size_t cuda_device_count() {
 enum class cuda_kernel_t {
     blocks_k,
     warps_k,
-    registers_k,
 };
 
 template <cuda_kernel_t kernel_ak> struct cuda_gt {
-    static constexpr int grid_size_k = 64;
-    static constexpr int block_size_k = 1024;
+    static constexpr int max_block_size_k = 1024;
+    static constexpr int threads = 512;
+    int blocks = max_block_size_k;
     thrust::device_vector<float> gpu_inputs;
     thrust::device_vector<float> gpu_partial_sums;
     thrust::host_vector<float> cpu_partial_sums;
 
     cuda_gt(float const *b, float const *e)
-        : gpu_inputs(b, e), gpu_partial_sums(grid_size_k), cpu_partial_sums(grid_size_k) {}
+        : blocks(std::min<int>(((e - b) + threads - 1) / threads, max_block_size_k)), gpu_inputs(b, e),
+          gpu_partial_sums(max_block_size_k), cpu_partial_sums(max_block_size_k) {}
 
     float operator()() {
-        // Accumulate partial results, then reduce them further to inputs single scalar.
-        auto kernel = kernel_ak == cuda_kernel_t::blocks_k ? &reduce_2step_blocks<block_size_k>
-                                                           : &reduce_2step_warps<block_size_k>;
-        kernel<<<grid_size_k, block_size_k>>>(gpu_inputs.data().get(), gpu_inputs.size(),
-                                              gpu_partial_sums.data().get());
-        kernel<<<1, block_size_k>>>(gpu_partial_sums.data().get(), grid_size_k, gpu_partial_sums.data().get());
+
+        bool is_blocks = kernel_ak == cuda_kernel_t::blocks_k;
+        auto kernel = is_blocks ? &cu_recude_blocks : &cu_reduce_warps;
+
+        // Accumulate partial results...
+        int shared_memory = is_blocks ? threads * sizeof(float) : 0;
+        kernel<<<blocks, threads, shared_memory>>>(gpu_inputs.data().get(), gpu_inputs.size(),
+                                                   gpu_partial_sums.data().get());
+
+        // Then reduce them further to inputs single scalar
+        shared_memory = is_blocks ? max_block_size_k * sizeof(float) : 0;
+        kernel<<<1, max_block_size_k, shared_memory>>>(gpu_partial_sums.data().get(), blocks,
+                                                       gpu_partial_sums.data().get());
+
+        // Sync all queues and fetch results
         cudaDeviceSynchronize();
         cpu_partial_sums = gpu_partial_sums;
         return cpu_partial_sums[0];
