@@ -53,6 +53,25 @@
         "regex": "cpp",
         "forward_list": "cpp",
         "list": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "codecvt": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "ratio": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp",
+        "mutex": "cpp",
+        "shared_mutex": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp"
     }
 }
