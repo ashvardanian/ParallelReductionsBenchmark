@@ -53,8 +53,6 @@ include_directories(BEFORE ${thrust_SOURCE_DIR})
 
 # Define the CUDA architectures.
 # Empty value is forbidden.
-set(CMAKE_CUDA_ARCHITECTURES OFF)
-string(APPEND CMAKE_CUDA_FLAGS " -arch=sm_75")
 project(gpgpu_frameworks LANGUAGES CXX CUDA)
 
 set(CMAKE_CUDA_STANDARD 17)
@@ -69,7 +67,8 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_61 --expt-relaxed-constexpr --extended-lambda -march=native")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-lambda -march=native")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
 
 # Add CUDA and Thrust dependencies
 find_package(CUDA REQUIRED)
@@ -79,4 +78,5 @@ find_package(OpenCL)
 # https://developer.nvidia.com/blog/building-cuda-applications-cmake/
 add_executable(reduce_bench reduce_bench.cu)
 set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(reduce_bench PROPERTIES CUDA_ARCHITECTURES "86")
 target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL)
