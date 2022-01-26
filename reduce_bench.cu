@@ -9,17 +9,28 @@
 
 using namespace av;
 namespace bm = benchmark;
-std::vector<float> dataset;
+static std::vector<float> dataset;
 
-template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
-    for (auto _ : state)
-        bm::DoNotOptimize(accumulator());
+template <typename accumulator_at> void generic(bm::State &state, accumulator_at accumulator) {
+    double const sum_expected = dataset.size() * 1.0;
+    double sum = 0;
+    double error = 0;
+    for (auto _ : state) {
+        sum = accumulator();
+        bm::DoNotOptimize(sum);
+        error = std::abs(sum_expected - sum)/sum_expected;
+    }
 
-    state.counters["bytes/s"] = bm::Counter(state.iterations() * dataset.size() * sizeof(float), bm::Counter::kIsRate);
+    auto total_ops = state.iterations() * dataset.size();
+    state.counters["adds/s"] = bm::Counter(total_ops, bm::Counter::kIsRate);
+    state.counters["bytes/s"] = bm::Counter(total_ops * sizeof(float), bm::Counter::kIsRate);
+    state.counters["error,%"] = bm::Counter(error * 100);
 }
 
-template <typename accumulator_at> void automatic(bm::State &state) {
-    accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
+template <typename accumulator_at> 
+void automatic(bm::State &state) {
+    std::fill(dataset.begin(), dataset.end(), 1.f);
+    accumulator_at acc {dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
 
@@ -34,7 +45,15 @@ int main(int argc, char **argv) {
         elements = static_cast<size_t>(std::atol(argv[1]));
     }
     dataset.resize(elements);
-    std::fill(dataset.begin(), dataset.end(), float(0.5));
+    std::fill(dataset.begin(), dataset.end(), 1.f);
+
+    // Register and run all the benchmarks.
+    bm::RegisterBenchmark("cpu_baseline:f32", &automatic<cpu_baseline_gt<float>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_baseline:f64", &automatic<cpu_baseline_gt<double>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10);
 
     // Log available backends.
     auto ocl_targets = opencl_targets();
@@ -44,16 +63,12 @@ int main(int argc, char **argv) {
 
     if (cuda_device_count()) {
         bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
-        bm::RegisterBenchmark("cuda_blocks", &automatic<cuda_gt<cuda_kernel_t::blocks_k>>)->MinTime(10);
-        bm::RegisterBenchmark("cuda_warps", &automatic<cuda_gt<cuda_kernel_t::warps_k>>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_tensors", &automatic<cuda_tensors_t>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_warps", &automatic<cuda_warps_t>)->MinTime(10);
+        // bm::RegisterBenchmark("cuda_blocks", &automatic<cuda_blocks_t>)->MinTime(10);
     }
     else
         fmt::print("No CUDA capable devices found!\n");
-
-    // Register and run all the benchmarks.
-    bm::RegisterBenchmark("cpu_baseline", &automatic<cpu_baseline_t>)->MinTime(10);
-    bm::RegisterBenchmark("cpu_avx2", &automatic<cpu_avx2_t>)->MinTime(10);
-    bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10);
 
     std::vector<size_t> group_sizes = {8, 32, 128};
     for (auto tgt : ocl_targets) {
