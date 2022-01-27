@@ -30,7 +30,6 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
 }
 
 template <typename accumulator_at> void automatic(bm::State &state) {
-    std::fill(dataset.begin(), dataset.end(), 1.f);
     accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
@@ -41,7 +40,7 @@ int main(int argc, char **argv) {
     size_t elements = 0;
     if (argc <= 1) {
         fmt::print("You did not feed the size of arrays, so we will use a 1GB array!\n");
-        elements = 1024 * 1024 * 1024 / sizeof(float);
+        elements = 1024ull * 1024ull * 1024ull / sizeof(float);
     } else {
         elements = static_cast<size_t>(std::atol(argv[1]));
     }
