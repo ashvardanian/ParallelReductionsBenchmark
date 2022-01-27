@@ -50,6 +50,10 @@ int main(int argc, char **argv) {
     // Register and run all the benchmarks.
     bm::RegisterBenchmark("cpu_baseline:f32", &automatic<cpu_baseline_gt<float>>)->MinTime(10);
     bm::RegisterBenchmark("cpu_baseline:f64", &automatic<cpu_baseline_gt<double>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_par:f32", &automatic<cpu_par_gt<float>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_par:f64", &automatic<cpu_par_gt<double>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_par_unseq:f32", &automatic<cpu_par_unseq_gt<float>>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_par_unseq:f64", &automatic<cpu_par_unseq_gt<double>>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10);

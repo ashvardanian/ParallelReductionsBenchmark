@@ -51,6 +51,19 @@ if(NOT thrust_POPULATED)
 endif()
 include_directories(BEFORE ${thrust_SOURCE_DIR})
 
+# We need TBB for Parallel CPU Algorithms in GCC.
+# https://github.com/oneapi-src/oneTBB/blob/onetbb_2021/cmake/README.md
+FetchContent_Declare(
+    TBB
+    GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
+    GIT_TAG        v2021.5.0
+)
+FetchContent_Populate(TBB)
+if(NOT TBB_POPULATED)
+    include_directories(BEFORE ${TBB_SOURCE_DIR})
+endif()
+# FetchContent_MakeAvailable(TBB)
+
 # Define the CUDA architectures.
 # Empty value is forbidden.
 project(gpgpu_frameworks LANGUAGES CXX CUDA)
@@ -74,9 +87,10 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
 find_package(CUDA REQUIRED)
 find_package(OpenMP)
 find_package(OpenCL)
+find_package(TBB)
 
 # https://developer.nvidia.com/blog/building-cuda-applications-cmake/
 add_executable(reduce_bench reduce_bench.cu)
 set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(reduce_bench PROPERTIES CUDA_ARCHITECTURES "86")
-target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL)
+target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL TBB::tbb)
