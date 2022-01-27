@@ -4,15 +4,14 @@ It contains various educational examples and benchmarks of GPU backends.
 The older versions also included data-parallel operations and dense matrix multiplications (GEMM), but now it's just fast reductions.
 Aside from basline `std::accumulate` it compares:
 
-* [AVX2] manually written single-threaded, but SIMD-parallel code.
-* [OpenMP]() `reduction` clause.
-* [Thrust]() with it's `thrust::reduce`.
-* [CUDA]() kernels with block-reductions, warp-reductions and even `wmma::` Tensor Core extensions.
-* [OpenCL](tree/master/Shared/OpenCL) kernels, eight of them.
-* [Vulkan](tree/master/Shared/Vulkan) queues for SPIR-V kernels.
-* [SyCL](tree/master/Shared/TriSYCL).
+* AVX2 manually written single-threaded, but SIMD-parallel code.
+* OpenMP `reduction` clause.
+* Thrust with it's `thrust::reduce`.
+* CUDA kernels with warp-reductions.
+* OpenCL kernels, eight of them.
+* Parallel STL algorithms in GCC with Intel oneTBB.
 
-Previously it also compared [ArrayFire] and [Halide].
+Previously it also compared ArrayFire, Halide, Vulkan queues for SPIR-V kernels and SyCL.
 Examples were collected from early 2010s until 2019, and later updated in 2022.
 
 * [Lecture Slides](blob/master/Presentation.pdf) from 2019.
@@ -40,5 +39,5 @@ And then run your favorite debugger.
 
 Optional backends:
 
-* To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md): `apt-get install intel-opencl-icd`.
+* To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md) on CPUs: `apt-get install intel-opencl-icd`.
 * To run on integrated Intel GPU, follow [this guide](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/prerequisites.html).
