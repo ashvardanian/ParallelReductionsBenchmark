@@ -2,8 +2,8 @@
 #include <execution>   // `std::execution::par_unseq`
 #include <immintrin.h> // AVX2 intrinsics
 #include <numeric>     // `std::accumulate`
-#include <thread>      // `std::thread`
 #include <omp.h>       // `#pragma omp`
+#include <thread>      // `std::thread`
 
 namespace av {
 
@@ -34,7 +34,7 @@ template <typename accumulator_at = float> struct cpu_par_unseq_gt {
 
 /**
  * @brief Single-threaded, but SIMD parallel reductions,
- * that accumulate 256 bits worth of data on every logic step.
+ * that accumulate 256 bits worth of data on every logic thread.
  *
  * Links:
  * https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX,AVX2&text=add_ps
@@ -130,31 +130,36 @@ struct cpu_avx2_f64_t {
 
 struct cpu_avx2_f64_by32_t {
 
+    static constexpr size_t threads_k = 64;
+
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
+    std::vector<std::thread> threads_;
 
-    double operator()() const noexcept {
+    struct thread_task_t {
+        float const *const begin_;
+        float const *const end_;
+        double &output_;
+        inline void operator()() const noexcept { output_ = cpu_avx2_f64_t{begin_, end_}(); }
+    };
+
+    double operator()() {
         auto it = begin_;
-        size_t const threads_cnt = 32;
-        size_t const step = (end_ - begin_) / threads_cnt;
+        double running_sums[threads_k]{0};
+        size_t const count_per_thread = (end_ - begin_) / threads_k;
 
-        // SIMD-parallel summation stage
-        std::vector<std::thread> threads;
-        std::vector<double> running_sums(threads_cnt, 0.0);
-        for (size_t i = 0; i < threads_cnt; ++i) {
-            auto cpu_avx2_f64_sum = [](auto begin, size_t step, double& result) {
-                cpu_avx2_f64_t cpu_avx2_f64 = {begin, begin + step};
-                result = cpu_avx2_f64();
-            };
-            threads.push_back(std::thread(cpu_avx2_f64_sum, it, step, std::ref(running_sums[i])));
-            it += step;
-        }
+        // Start the threads
+        threads_.reserve(threads_k);
+        for (size_t i = 0; i < threads_k; ++i, it += count_per_thread)
+            threads_.emplace_back(thread_task_t{it, it + count_per_thread, running_sums[i]});
 
+        // Accumulate sums from each thread.
         double running_sum = 0;
-        for (size_t i = 0; i < threads_cnt; ++i) {
-            threads[i].join();
+        for (size_t i = 0; i < threads_k; ++i) {
+            threads_[i].join();
             running_sum += running_sums[i];
         }
+        threads_.clear();
 
         for (; it != end_; ++it)
             running_sum += *it;
