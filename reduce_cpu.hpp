@@ -1,5 +1,8 @@
+#pragma once
+#include <execution>   // `std::execution::par_unseq`
 #include <immintrin.h> // AVX2 intrinsics
 #include <numeric>     // `std::accumulate`
+#include <omp.h>       // `#pragma omp`
 
 namespace av {
 
@@ -8,6 +11,24 @@ template <typename accumulator_at = float> struct cpu_baseline_gt {
     float const *const end_ = nullptr;
 
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
+};
+
+template <typename accumulator_at = float> struct cpu_par_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    accumulator_at operator()() const noexcept {
+        return std::reduce(std::execution::par, begin_, end_, accumulator_at(0));
+    }
+};
+
+template <typename accumulator_at = float> struct cpu_par_unseq_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    accumulator_at operator()() const noexcept {
+        return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0));
+    }
 };
 
 /**
@@ -118,10 +139,9 @@ struct cpu_openmp_t {
     float operator()() const noexcept {
         float sum = 0;
         size_t const n = end_ - begin_;
-        auto const ptr = begin_;
-#pragma omp parallel for reduction(+ : sum)
-        for (size_t i = 0; i < n; i++)
-            sum = sum + ptr[i];
+#pragma omp parallel for default(shared) reduction(+ : sum)
+        for (size_t i = 0; i != n; i++)
+            sum += begin_[i];
         return sum;
     }
 };

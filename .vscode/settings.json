@@ -72,6 +72,11 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "strstream": "cpp",
+        "scoped_allocator": "cpp",
+        "cfenv": "cpp"
     }
 }
