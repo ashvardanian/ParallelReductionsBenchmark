@@ -11,13 +11,12 @@ using namespace av;
 namespace bm = benchmark;
 static std::vector<float> dataset;
 
-template <typename accumulator_at> void generic(bm::State &state, accumulator_at accumulator) {
+template <typename accumulator_at> void generic(bm::State &state, accumulator_at&& accumulator) {
     double const sum_expected = dataset.size() * 1.0;
     double sum = 0;
     double error = 0;
     for (auto _ : state) {
-        sum = accumulator();
-        bm::DoNotOptimize(sum);
+        bm::DoNotOptimize(sum = accumulator());
         error = std::abs(sum_expected - sum)/sum_expected;
     }
 

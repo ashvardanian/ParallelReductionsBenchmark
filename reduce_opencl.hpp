@@ -65,12 +65,22 @@ struct opencl_t {
         std::string source_str;
         {
             std::ifstream t("reduce_opencl.cl");
+            if (!t.is_open())
+                throw std::logic_error("Could not open file\n");
             std::stringstream buffer;
             buffer << t.rdbuf();
             source_str = buffer.str();
         }
 
         cl_int ret = 0;
+
+        size_t sz;
+
+        clGetDeviceInfo(target.device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &sz, NULL);
+        if (sz < items_per_thread_)
+            throw std::logic_error(
+                fmt::format("Max work group size: {} ====> Given work group size: {}\n", sz, items_per_thread_));
+
         context = clCreateContext(NULL, 1, &target.device, NULL, NULL, &ret);
 
         // Create a command queue
