@@ -11,7 +11,7 @@ using namespace av;
 namespace bm = benchmark;
 static std::vector<float> dataset;
 
-template <typename accumulator_at> void generic(bm::State &state, accumulator_at accumulator) {
+template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
     double const sum_expected = dataset.size() * 1.0;
     double sum = 0;
     double error = 0;
@@ -73,11 +73,10 @@ int main(int argc, char **argv) {
     } else
         fmt::print("No CUDA capable devices found!\n");
 
-    std::vector<size_t> group_sizes = {8, 32, 128};
     for (auto tgt : ocl_targets) {
         for (auto kernel_name : opencl_t::kernels_k) {
-            for (auto group_size : group_sizes) {
-                auto name = fmt::format("opencl-{} on {} split by {}", kernel_name, tgt.device_name, group_size);
+            for (auto group_size : opencl_wg_sizes) {
+                auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
                 bm::RegisterBenchmark(name.c_str(), [=](bm::State &state) {
                     opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt, group_size, kernel_name);
                     generic(state, ocl);

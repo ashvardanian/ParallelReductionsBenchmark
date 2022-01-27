@@ -24,6 +24,9 @@ struct opencl_target_t {
     cl_uint compute_units;
 };
 
+static int opencl_wg_sizes[] = {64, 128, 256, 512, 1024};
+static int const opencl_max_threads = 12000;
+
 inline char const *opencl_error_name(cl_int);
 inline std::vector<opencl_target_t> opencl_targets();
 
@@ -37,7 +40,7 @@ struct opencl_t {
 
     size_t const count_items = 0;
     size_t const count_threads = 0;
-    size_t const items_per_thread = 0;
+    size_t const threads_per_group = 0;
 
   private:
     cl_context context = NULL;
@@ -57,20 +60,30 @@ struct opencl_t {
     std::vector<float> returned_outputs;
 
   public:
-    opencl_t(float const *b, float const *e, opencl_target_t target, size_t items_per_thread_ = 64,
+    opencl_t(float const *b, float const *e, opencl_target_t target, size_t threads_per_group_ = 64,
              char const *kernel_name_cstr = kernels_k[0])
-        : count_items(e - b), count_threads(count_items / items_per_thread_), items_per_thread(items_per_thread_) {
-
+        : count_items(e - b), count_threads(opencl_max_threads/threads_per_group_ * threads_per_group_),
+          threads_per_group(threads_per_group_) {
         // Load the kernel source code into the array source_str
         std::string source_str;
         {
             std::ifstream t("reduce_opencl.cl");
+            if (!t.is_open())
+                throw std::logic_error("Could not open file\n");
             std::stringstream buffer;
             buffer << t.rdbuf();
             source_str = buffer.str();
         }
 
         cl_int ret = 0;
+
+        size_t sz;
+
+        clGetDeviceInfo(target.device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &sz, NULL);
+        if (sz < threads_per_group_)
+            throw std::logic_error(
+                fmt::format("Max work group size: {} ====> Given work group size: {}\n", sz, threads_per_group_));
+
         context = clCreateContext(NULL, 1, &target.device, NULL, NULL, &ret);
 
         // Create a command queue
@@ -107,7 +120,7 @@ struct opencl_t {
         // Create the OpenCL kernel
         kernel = clCreateKernel(program, kernel_name_cstr, &ret);
 
-        // Set the arguments of the kernel
+        // Set the arguments of the kernel 
         auto dataset_size = static_cast<cl_ulong>(count_items);
         auto local_buffers_size = count_threads * sizeof(float);
         ret = clSetKernelArg(kernel, 0, sizeof(dataset), (void *)&dataset);
@@ -139,7 +152,11 @@ struct opencl_t {
 
     float operator()() {
         cl_int ret = 0;
-        ret = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &count_items, &items_per_thread, 0, NULL, NULL);
+        size_t global_ws_offset = 0;
+        ret = clEnqueueNDRangeKernel(queue, kernel, 1, &global_ws_offset, &count_threads, &threads_per_group, 0, NULL,
+                                     NULL);
+        if (ret != 0)
+            throw std::logic_error(opencl_error_name(ret));
         ret = clFlush(queue);
 
         // We don't need to explicitly finish the queue, as this transfer is blocking.
