@@ -12,7 +12,7 @@ namespace bm = benchmark;
 static std::vector<float> dataset;
 
 template <typename accumulator_at> void generic(bm::State &state, accumulator_at accumulator) {
-    double const sum_expected = dataset.size() * 1.0;
+    double const sum_expected = dataset.size() * 0.001;
     double sum = 0;
     double error = 0;
     for (auto _ : state) {
@@ -29,7 +29,7 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
 
 template <typename accumulator_at> 
 void automatic(bm::State &state) {
-    std::fill(dataset.begin(), dataset.end(), 1.f);
+    std::fill(dataset.begin(), dataset.end(), 0.001);
     accumulator_at acc {dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
