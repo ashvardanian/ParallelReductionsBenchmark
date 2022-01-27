@@ -1,15 +1,15 @@
-# Parallel GPU Reductions, from Unum with ❤️
+# Parallel Reductions on CPUs & GPUs
 
-It contains various educational examples and benchmarks of GPU backends.
-The older versions also included data-parallel operations and dense matrix multiplications (GEMM), but now it's just fast reductions.
+This repo contains educational examples and benchmarks of GPU backends.
+The older versions also included data-parallel operations and dense matrix multiplications (GEMM), but now it's just fast parallel reductions.
 Aside from basline `std::accumulate` it compares:
 
-* AVX2 manually written single-threaded, but SIMD-parallel code.
+* AVX2 single-threaded, but SIMD-parallel code.
 * OpenMP `reduction` clause.
 * Thrust with it's `thrust::reduce`.
 * CUDA kernels with warp-reductions.
 * OpenCL kernels, eight of them.
-* Parallel STL algorithms in GCC with Intel oneTBB.
+* Parallel STL `<algorithm>`s in GCC with Intel oneTBB.
 
 Previously it also compared ArrayFire, Halide, Vulkan queues for SPIR-V kernels and SyCL.
 Examples were collected from early 2010s until 2019, and later updated in 2022.
@@ -19,7 +19,7 @@ Examples were collected from early 2010s until 2019, and later updated in 2022.
 * [JetBrains Talk](https://youtu.be/BUtHOftDm_Y) in Germany & Russia in 2019.
 * [C++ Armenia Talk]() in 2022.
 
-## Build & Run on 1 Line
+## Build & Run in 1 Line
 
 Following script will, by default, generate a 1GB array of numbers, and reduce them using every available backend.
 All the classical Google Benchmark arguments are supported, including `--benchmark_filter=opencl`.
