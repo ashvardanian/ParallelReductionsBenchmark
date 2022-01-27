@@ -49,6 +49,10 @@ int main(int argc, char **argv) {
     dataset.resize(elements);
     std::fill(dataset.begin(), dataset.end(), 1.f);
 
+    bm::RegisterBenchmark("cuda_cub", &automatic<cuda_cub_t>)->MinTime(10);
+    bm::RegisterBenchmark("cuda_warps", &automatic<cuda_warps_t>)->MinTime(10);
+    bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
+
     // Register and run all the benchmarks.
     bm::RegisterBenchmark("cpu_baseline:f32", &automatic<cpu_baseline_gt<float>>)->MinTime(10);
     bm::RegisterBenchmark("cpu_baseline:f64", &automatic<cpu_baseline_gt<double>>)->MinTime(10);
@@ -68,9 +72,9 @@ int main(int argc, char **argv) {
                    tgt.language_version);
 
     if (cuda_device_count()) {
-        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
         bm::RegisterBenchmark("cuda_cub", &automatic<cuda_cub_t>)->MinTime(10);
         bm::RegisterBenchmark("cuda_warps", &automatic<cuda_warps_t>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
         // bm::RegisterBenchmark("cuda_tensors", &automatic<cuda_tensors_t>)->MinTime(10);
         // bm::RegisterBenchmark("cuda_blocks", &automatic<cuda_blocks_t>)->MinTime(10);
     } else
