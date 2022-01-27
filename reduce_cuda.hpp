@@ -178,7 +178,7 @@ struct cuda_cub_t {
 
     cuda_cub_t(float const *b, float const *e) : gpu_inputs(b, e), gpu_sums(1), cpu_sums(1) {
         // CUB can't handle large arrays with over 2 billion elements!
-        assert(gpu_inputs.size() < std::numeric_limit<int>::max());
+        assert(gpu_inputs.size() < std::numeric_limits<int>::max());
     }
 
     float operator()() {
