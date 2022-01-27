@@ -11,7 +11,8 @@ using namespace unum;
 namespace bm = benchmark;
 static std::vector<float> dataset;
 
-template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
+template <typename accumulator_at>
+void generic(bm::State &state, accumulator_at&& accumulator) {
     double const sum_expected = dataset.size() * 1.0;
     double sum = 0;
     double error = 0;
@@ -29,14 +30,15 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
     }
 }
 
-template <typename accumulator_at> void automatic(bm::State &state) {
-    accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
+template <typename accumulator_at> 
+void automatic(bm::State &state) {
+    accumulator_at acc {dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
 
 int main(int argc, char **argv) {
 
-    // Parse configuration parameters
+    // Parse configuration parameters.
     size_t elements = 0;
     if (argc <= 1) {
         fmt::print("You did not feed the size of arrays, so we will use a 1GB array!\n");
@@ -85,11 +87,9 @@ int main(int argc, char **argv) {
     //                                   [=](bm::State &state) {
     //                                       opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt,
     //                                       group_size,
-    //                                                    kernel_name);
+    //                                       kernel_name);
     //                                       generic(state, ocl);
-    //                                   })
-    //                 ->MinTime(10)
-    //                 ->UseRealTime();
+    //                                   })->MinTime(10)->UseRealTime();
     //         }
     //     }
     // }
