@@ -5,7 +5,7 @@
 #include <omp.h>       // `#pragma omp`
 #include <thread>      // `std::thread`
 
-namespace av {
+namespace unum {
 
 template <typename accumulator_at = float> struct cpu_baseline_gt {
     float const *const begin_ = nullptr;
@@ -148,22 +148,22 @@ struct cpu_avx2_f64_by32_t {
         double running_sums[threads_k]{0};
         size_t const count_per_thread = (end_ - begin_) / threads_k;
 
-        // Start the threads
+        // Start the child threads
         threads_.reserve(threads_k);
-        for (size_t i = 0; i < threads_k; ++i, it += count_per_thread)
+        for (size_t i = 0; i + 1 < threads_k; ++i, it += count_per_thread)
             threads_.emplace_back(thread_task_t{it, it + count_per_thread, running_sums[i]});
 
-        // Accumulate sums from each thread.
+        // This thread lives by its own rules :)
         double running_sum = 0;
-        for (size_t i = 0; i < threads_k; ++i) {
-            threads_[i].join();
+        thread_task_t{it, it + count_per_thread, running_sum}();
+
+        // Accumulate sums from child threads.
+        for (size_t i = 1; i < threads_k; ++i) {
+            threads_[i - 1].join();
             running_sum += running_sums[i];
         }
+
         threads_.clear();
-
-        for (; it != end_; ++it)
-            running_sum += *it;
-
         return running_sum;
     }
 };
@@ -187,4 +187,4 @@ struct cpu_openmp_t {
     }
 };
 
-} // namespace av
+} // namespace unum

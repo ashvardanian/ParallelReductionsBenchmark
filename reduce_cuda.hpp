@@ -10,7 +10,7 @@
 
 using namespace nvcuda;
 
-namespace av {
+namespace unum {
 
 struct cuda_base_t {
     static constexpr int max_block_size_k = 1024;
@@ -209,4 +209,4 @@ struct cuda_cub_t {
     }
 };
 
-} // namespace av
+} // namespace unum
