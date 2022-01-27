@@ -18,7 +18,7 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
     for (auto _ : state) {
         sum = accumulator();
         bm::DoNotOptimize(sum);
-        error = std::abs(sum_expected - sum)/sum_expected;
+        error = std::abs(sum_expected - sum) / sum_expected;
     }
 
     auto total_ops = state.iterations() * dataset.size();
@@ -27,10 +27,9 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
     state.counters["error,%"] = bm::Counter(error * 100);
 }
 
-template <typename accumulator_at> 
-void automatic(bm::State &state) {
+template <typename accumulator_at> void automatic(bm::State &state) {
     std::fill(dataset.begin(), dataset.end(), 1.f);
-    accumulator_at acc {dataset.data(), dataset.data() + dataset.size()};
+    accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
 
@@ -67,11 +66,11 @@ int main(int argc, char **argv) {
 
     if (cuda_device_count()) {
         bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10);
-        bm::RegisterBenchmark("cuda_tensors", &automatic<cuda_tensors_t>)->MinTime(10);
+        bm::RegisterBenchmark("cuda_cub", &automatic<cuda_cub_t>)->MinTime(10);
         bm::RegisterBenchmark("cuda_warps", &automatic<cuda_warps_t>)->MinTime(10);
+        // bm::RegisterBenchmark("cuda_tensors", &automatic<cuda_tensors_t>)->MinTime(10);
         // bm::RegisterBenchmark("cuda_blocks", &automatic<cuda_blocks_t>)->MinTime(10);
-    }
-    else
+    } else
         fmt::print("No CUDA capable devices found!\n");
 
     std::vector<size_t> group_sizes = {8, 32, 128};
@@ -86,7 +85,6 @@ int main(int argc, char **argv) {
             }
         }
     }
-
 
     bm::Initialize(&argc, argv);
     bm::RunSpecifiedBenchmarks();
