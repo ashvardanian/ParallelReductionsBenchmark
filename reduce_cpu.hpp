@@ -136,7 +136,7 @@ struct cpu_avx2_f64_by32_t {
     double operator()() const noexcept {
         auto it = begin_;
         size_t const threads_cnt = 32;
-        size_t step = (end_ - begin_) / threads_cnt;
+        size_t const step = (end_ - begin_) / threads_cnt;
 
         // SIMD-parallel summation stage
         std::vector<std::thread> threads;
