@@ -139,7 +139,7 @@ struct cpu_openmp_t {
         float sum = 0;
         size_t const n = end_ - begin_;
         auto const ptr = begin_;
-#pragma omp parallel for reduction(+ : sum)
+#pragma omp parallel for default(shared) reduction(+ : sum)
         for (size_t i = 0; i < n; i++)
             sum = sum + ptr[i];
         return sum;

@@ -84,6 +84,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-la
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
 
 # Add CUDA and Thrust dependencies
+find_package(Threads REQUIRED)
 find_package(CUDA REQUIRED)
 find_package(OpenMP)
 find_package(OpenCL)
@@ -93,4 +94,4 @@ find_package(TBB)
 add_executable(reduce_bench reduce_bench.cu)
 set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(reduce_bench PROPERTIES CUDA_ARCHITECTURES "86")
-target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL TBB::tbb)
+target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL OpenMP::OpenMP_CXX TBB::tbb)
