@@ -2,6 +2,7 @@
 #include <execution>   // `std::execution::par_unseq`
 #include <immintrin.h> // AVX2 intrinsics
 #include <numeric>     // `std::accumulate`
+#include <omp.h>       // `#pragma omp`
 
 namespace av {
 
@@ -138,10 +139,9 @@ struct cpu_openmp_t {
     float operator()() const noexcept {
         float sum = 0;
         size_t const n = end_ - begin_;
-        auto const ptr = begin_;
 #pragma omp parallel for default(shared) reduction(+ : sum)
-        for (size_t i = 0; i < n; i++)
-            sum = sum + ptr[i];
+        for (size_t i = 0; i != n; i++)
+            sum += begin_[i];
         return sum;
     }
 };
