@@ -5,7 +5,7 @@
 #include <omp.h>       // `#pragma omp`
 #include <thread>      // `std::thread`
 
-namespace av {
+namespace unum {
 
 template <typename accumulator_at = float> struct cpu_baseline_gt {
     float const *const begin_ = nullptr;
@@ -187,4 +187,4 @@ struct cpu_openmp_t {
     }
 };
 
-} // namespace av
+} // namespace unum

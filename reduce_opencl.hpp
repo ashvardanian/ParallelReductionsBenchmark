@@ -11,7 +11,7 @@
 #include <CL/cl.h>
 #endif
 
-namespace av {
+namespace unum {
 
 struct opencl_target_t {
     std::string device_name;
@@ -62,7 +62,7 @@ struct opencl_t {
   public:
     opencl_t(float const *b, float const *e, opencl_target_t target, size_t threads_per_group_ = 64,
              char const *kernel_name_cstr = kernels_k[0])
-        : count_items(e - b), count_threads(opencl_max_threads/threads_per_group_ * threads_per_group_),
+        : count_items(e - b), count_threads(opencl_max_threads / threads_per_group_ * threads_per_group_),
           threads_per_group(threads_per_group_) {
         // Load the kernel source code into the array source_str
         std::string source_str;
@@ -120,7 +120,7 @@ struct opencl_t {
         // Create the OpenCL kernel
         kernel = clCreateKernel(program, kernel_name_cstr, &ret);
 
-        // Set the arguments of the kernel 
+        // Set the arguments of the kernel
         auto dataset_size = static_cast<cl_ulong>(count_items);
         auto local_buffers_size = count_threads * sizeof(float);
         ret = clSetKernelArg(kernel, 0, sizeof(dataset), (void *)&dataset);
@@ -316,4 +316,4 @@ inline char const *opencl_error_name(cl_int code) {
     // clang-format on
 }
 
-} // namespace av
+} // namespace unum

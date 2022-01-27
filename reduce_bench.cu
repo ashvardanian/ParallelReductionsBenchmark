@@ -7,7 +7,7 @@
 #include "reduce_cuda.hpp"
 #include "reduce_opencl.hpp"
 
-using namespace av;
+using namespace unum;
 namespace bm = benchmark;
 static std::vector<float> dataset;
 
@@ -77,21 +77,22 @@ int main(int argc, char **argv) {
         fmt::print("No CUDA capable devices found!\n");
 
     // OpenCL
-    for (auto tgt : ocl_targets) {
-        for (auto kernel_name : opencl_t::kernels_k) {
-            for (auto group_size : opencl_wg_sizes) {
-                auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
-                bm::RegisterBenchmark(name.c_str(),
-                                      [=](bm::State &state) {
-                                          opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt, group_size,
-                                                       kernel_name);
-                                          generic(state, ocl);
-                                      })
-                    ->MinTime(10)
-                    ->UseRealTime();
-            }
-        }
-    }
+    // for (auto tgt : ocl_targets) {
+    //     for (auto kernel_name : opencl_t::kernels_k) {
+    //         for (auto group_size : opencl_wg_sizes) {
+    //             auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
+    //             bm::RegisterBenchmark(name.c_str(),
+    //                                   [=](bm::State &state) {
+    //                                       opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt,
+    //                                       group_size,
+    //                                                    kernel_name);
+    //                                       generic(state, ocl);
+    //                                   })
+    //                 ->MinTime(10)
+    //                 ->UseRealTime();
+    //         }
+    //     }
+    // }
 
     bm::Initialize(&argc, argv);
     bm::RunSpecifiedBenchmarks();
