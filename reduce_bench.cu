@@ -56,6 +56,7 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10);
     bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10);
+    bm::RegisterBenchmark("cpu_avx2:f64:by32", &automatic<cpu_avx2_f64_by32_t>)->MinTime(10);;
     bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10);
 
     // Log available backends.

@@ -2,6 +2,7 @@
 #include <execution>   // `std::execution::par_unseq`
 #include <immintrin.h> // AVX2 intrinsics
 #include <numeric>     // `std::accumulate`
+#include <thread>      // `std::thread`
 #include <omp.h>       // `#pragma omp`
 
 namespace av {
@@ -120,6 +121,41 @@ struct cpu_avx2_f64_t {
         running_sums = _mm256_hadd_pd(running_sums, running_sums);
         running_sums = _mm256_hadd_pd(running_sums, running_sums);
         auto running_sum = _mm256_cvtsd_f64(running_sums);
+        for (; it != end_; ++it)
+            running_sum += *it;
+
+        return running_sum;
+    }
+};
+
+struct cpu_avx2_f64_by32_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    double operator()() const noexcept {
+        auto it = begin_;
+        size_t const threads_cnt = 32;
+        size_t step = (end_ - begin_) / threads_cnt;
+
+        // SIMD-parallel summation stage
+        std::vector<std::thread> threads;
+        std::vector<double> running_sums(threads_cnt, 0.0);
+        for (size_t i = 0; i < threads_cnt; ++i) {
+            auto cpu_avx2_f64_sum = [](auto begin, size_t step, double& result) {
+                cpu_avx2_f64_t cpu_avx2_f64 = {begin, begin + step};
+                result = cpu_avx2_f64();
+            };
+            threads.push_back(std::thread(cpu_avx2_f64_sum, it, step, std::ref(running_sums[i])));
+            it += step;
+        }
+
+        double running_sum = 0;
+        for (size_t i = 0; i < threads_cnt; ++i) {
+            threads[i].join();
+            running_sum += running_sums[i];
+        }
+
         for (; it != end_; ++it)
             running_sum += *it;
 
