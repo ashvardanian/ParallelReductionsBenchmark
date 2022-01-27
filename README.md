@@ -23,7 +23,8 @@ Examples were collected from early 2010s until 2019, and later updated in 2022.
 
 Following script will, by default, generate a 1GB array of numbers, and reduce them using every available backend.
 All the classical Google Benchmark arguments are supported, including `--benchmark_filter=opencl`.
-All the needed library dependencies will be automatically fetched.
+All the needed library dependencies will be automatically fetched: GTest, GBench, Intel oneTBB, FMT and Thrust with CUB.
+It's expected, that you build this on an x86 machine with CUDA drivers installed.
 
 ```sh
 mkdir -p release && cd release && cmake .. && make && ./reduce_bench && cd ..
