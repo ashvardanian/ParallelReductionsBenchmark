@@ -10,31 +10,33 @@
  *  - uses n threads,
  *  - only works for power-of-2 arrays.
  */
-__kernel void reduce_simple(__global float const *inputs, __global float *outputs, ulong const n,
-                            __local float *buffer) {
-    ulong const idx_global = get_global_id(0);
-    ulong const idx_in_block = get_local_id(0);
-    buffer[idx_in_block] = (idx_global < n) ? inputs[idx_global] : 0;
+__kernel void reduce_simple(__global float const *inputs, __global float *outputs, __local float *buffer) {
+    uint global_item_id = get_global_id(0);
+    uint local_item_id = get_local_id(0);
+    uint items_count = get_global_size(0);
+    uint items_per_group = get_local_size(0);
+
+    // First iteration: Copy from global to local
+    buffer[local_item_id] = inputs[global_item_id];
 
     barrier(CLK_LOCAL_MEM_FENCE);
-    ulong block_size = get_local_size(0);
-    ulong block_size_half = block_size / 2;
-    while (block_size_half > 0) {
-        if (idx_in_block < block_size_half) {
-            buffer[idx_in_block] += buffer[idx_in_block + block_size_half];
-            // Check for uneven block division.
-            if ((block_size_half * 2) < block_size) {
-                if (idx_in_block == 0)
-                    buffer[idx_in_block] += buffer[idx_in_block + (block_size - 1)];
-            }
-        }
+    for (uint stride = items_per_group / 2; stride > 0; stride /= 2) {
+        // First n work-items read from second n work-items (n=stride)
+        if (local_item_id < stride)
+            buffer[local_item_id] += buffer[local_item_id + stride];
+
         barrier(CLK_LOCAL_MEM_FENCE);
-        block_size = block_size_half;
-        block_size_half = block_size / 2;
     }
 
-    if (idx_in_block == 0)
+    // Last iteration: write result to n-th position in global x array (n=work-group id)
+    if (local_item_id == 0)
         outputs[get_group_id(0)] = buffer[0];
+
+    barrier(CLK_LOCAL_MEM_FENCE);
+    if (global_item_id == 0) {
+        for (uint i = 1; i < items_count / items_per_group; ++i)
+            outputs[0] += outputs[i];
+    }
 }
 
 /**

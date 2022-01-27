@@ -40,7 +40,7 @@ struct opencl_t {
 
     size_t const count_items = 0;
     size_t const count_threads = 0;
-    size_t const threads_per_group = 0;
+    size_t const items_per_group = 0;
 
   private:
     cl_context context = NULL;
@@ -60,14 +60,14 @@ struct opencl_t {
     std::vector<float> returned_outputs;
 
   public:
-    opencl_t(float const *b, float const *e, opencl_target_t target, size_t threads_per_group_ = 64,
+    opencl_t(float const *b, float const *e, opencl_target_t target, size_t items_per_group_ = 1024,
              char const *kernel_name_cstr = kernels_k[0])
-        : count_items(e - b), count_threads(opencl_max_threads/threads_per_group_ * threads_per_group_),
-          threads_per_group(threads_per_group_) {
+        : count_items(e - b), count_threads((opencl_max_threads / items_per_group_) * items_per_group_),
+          items_per_group(items_per_group_) {
         // Load the kernel source code into the array source_str
         std::string source_str;
         {
-            std::ifstream t("reduce_opencl.cl");
+            std::ifstream t("../reduce_opencl.cl");
             if (!t.is_open())
                 throw std::logic_error("Could not open file\n");
             std::stringstream buffer;
@@ -75,35 +75,37 @@ struct opencl_t {
             source_str = buffer.str();
         }
 
-        cl_int ret = 0;
+        {
+            size_t max_work_group_size = 0;
+            clGetDeviceInfo(target.device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &max_work_group_size, NULL);
+            if (max_work_group_size < items_per_group_)
+                throw std::logic_error(fmt::format("Max work group size: {} ====> Given work group size: {}\n",
+                                                   max_work_group_size, items_per_group_));
+        }
 
-        size_t sz;
-
-        clGetDeviceInfo(target.device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &sz, NULL);
-        if (sz < threads_per_group_)
-            throw std::logic_error(
-                fmt::format("Max work group size: {} ====> Given work group size: {}\n", sz, threads_per_group_));
-
-        context = clCreateContext(NULL, 1, &target.device, NULL, NULL, &ret);
+        cl_int status = 0;
+        context = clCreateContext(NULL, 1, &target.device, NULL, NULL, &status);
 
         // Create a command queue
-        queue = clCreateCommandQueue(context, target.device, 0, &ret);
+        queue = clCreateCommandQueue(context, target.device, 0, &status);
 
         // Create memory buffers on the device for each vector
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clCreateBuffer.html
-        dataset = clCreateBuffer(context, CL_MEM_READ_ONLY, count_items * sizeof(float), NULL, &ret);
-        global_outputs = clCreateBuffer(context, CL_MEM_READ_WRITE, count_threads * sizeof(float), NULL, &ret);
+        dataset = clCreateBuffer(context, CL_MEM_READ_ONLY, count_items * sizeof(float), NULL, &status);
+        global_outputs = clCreateBuffer(context, CL_MEM_READ_WRITE,
+                                        ((count_items + items_per_group_ - 1) / items_per_group_) * sizeof(float), NULL,
+                                        &status);
         returned_outputs.resize(count_threads);
 
         // Move the `dataset` to GPU.
         // We don't need to explicitly finish the queue, as this transfer is blocking.
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueReadBuffer.html
-        ret = clEnqueueWriteBuffer(queue, dataset, CL_TRUE, 0, count_items * sizeof(float), b, 0, NULL, NULL);
+        status = clEnqueueWriteBuffer(queue, dataset, CL_TRUE, 0, count_items * sizeof(float), b, 0, NULL, NULL);
 
         // Create a program from the kernel source
         char const *source_cstr = source_str.c_str();
         size_t const source_size = source_str.size();
-        program = clCreateProgramWithSource(context, 1, &source_cstr, &source_size, &ret);
+        program = clCreateProgramWithSource(context, 1, &source_cstr, &source_size, &status);
 
         // The third parameter is the list of devices.
         // If it's NULL, the program executable is built for all devices
@@ -115,57 +117,56 @@ struct opencl_t {
         // with -cl-opt-disable.
         //
         // Docs: https://www.khronos.org/registry/OpenCL/sdk/1.0/docs/man/xhtml/clBuildProgram.html
-        ret = clBuildProgram(program, 1, &target.device, NULL, NULL, NULL);
+        status = clBuildProgram(program, 1, &target.device, NULL, NULL, NULL);
 
         // Create the OpenCL kernel
-        kernel = clCreateKernel(program, kernel_name_cstr, &ret);
+        kernel = clCreateKernel(program, kernel_name_cstr, &status);
 
-        // Set the arguments of the kernel 
+        // Set the arguments of the kernel
         auto dataset_size = static_cast<cl_ulong>(count_items);
-        auto local_buffers_size = count_threads * sizeof(float);
-        ret = clSetKernelArg(kernel, 0, sizeof(dataset), (void *)&dataset);
-        ret = clSetKernelArg(kernel, 1, sizeof(global_outputs), (void *)&global_outputs);
-        ret = clSetKernelArg(kernel, 2, sizeof(dataset_size), (void *)&dataset_size);
-        ret = clSetKernelArg(kernel, 3, local_buffers_size, NULL);
+        auto local_buffers_size = items_per_group * sizeof(float);
+        status = clSetKernelArg(kernel, 0, sizeof(dataset), &dataset);
+        status = clSetKernelArg(kernel, 1, sizeof(global_outputs), &global_outputs);
+        status = clSetKernelArg(kernel, 2, local_buffers_size, NULL);
 
-        if (ret != 0)
-            throw std::logic_error(opencl_error_name(ret));
+        if (status != 0)
+            throw std::logic_error(opencl_error_name(status));
     }
 
     ~opencl_t() {
-        cl_int ret = 0;
-        ret = clFlush(queue);
-        ret = clFinish(queue);
+        cl_int status = 0;
+        status = clFlush(queue);
+        status = clFinish(queue);
 
-        ret = clReleaseMemObject(dataset);
-        ret = clReleaseMemObject(global_outputs);
-        ret = clReleaseKernel(kernel);
-        ret = clReleaseProgram(program);
-        ret = clReleaseCommandQueue(queue);
-        ret = clReleaseContext(context);
+        status = clReleaseMemObject(dataset);
+        status = clReleaseMemObject(global_outputs);
+        status = clReleaseKernel(kernel);
+        status = clReleaseProgram(program);
+        status = clReleaseCommandQueue(queue);
+        status = clReleaseContext(context);
 
-        if (ret != 0)
+        if (status != 0)
             // We probably shouldn't throw in the destructor :)
-            //     throw std::logic_error(opencl_error_name(ret));
-            (void)ret;
+            //     throw std::logic_error(opencl_error_name(status));
+            (void)status;
     }
 
     float operator()() {
-        cl_int ret = 0;
+        cl_int status = 0;
         size_t global_ws_offset = 0;
-        ret = clEnqueueNDRangeKernel(queue, kernel, 1, &global_ws_offset, &count_threads, &threads_per_group, 0, NULL,
-                                     NULL);
-        if (ret != 0)
-            throw std::logic_error(opencl_error_name(ret));
-        ret = clFlush(queue);
+        status =
+            clEnqueueNDRangeKernel(queue, kernel, 1, &global_ws_offset, &count_items, &items_per_group, 0, NULL, NULL);
+        if (status != 0)
+            throw std::logic_error(opencl_error_name(status));
+        status = clFlush(queue);
 
         // We don't need to explicitly finish the queue, as this transfer is blocking.
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueReadBuffer.html
-        ret = clEnqueueReadBuffer(queue, global_outputs, CL_TRUE, 0, returned_outputs.size() * sizeof(float),
-                                  returned_outputs.data(), 0, NULL, NULL);
+        status = clEnqueueReadBuffer(queue, global_outputs, CL_TRUE, 0, returned_outputs.size() * sizeof(float),
+                                         returned_outputs.data(), 0, NULL, NULL);
 
-        if (ret != 0)
-            throw std::logic_error(opencl_error_name(ret));
+        if (status != 0)
+            throw std::logic_error(opencl_error_name(status));
 
         return returned_outputs.front();
     }
