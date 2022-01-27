@@ -14,11 +14,14 @@ static std::vector<float> dataset;
 template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
     double const sum_expected = dataset.size() * 1.0;
     double sum = 0;
+    double sums = 0;
     double error = 0;
     for (auto _ : state) {
         sum = accumulator();
         bm::DoNotOptimize(sum);
         error = std::abs(sum_expected - sum) / sum_expected;
+        sums += sum;
+        bm::DoNotOptimize(sums);
     }
 
     auto total_ops = state.iterations() * dataset.size();

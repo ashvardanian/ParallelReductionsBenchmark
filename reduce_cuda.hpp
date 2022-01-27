@@ -178,29 +178,30 @@ struct cuda_cub_t {
 
     cuda_cub_t(float const *b, float const *e) : gpu_inputs(b, e), gpu_sums(1), cpu_sums(1) {
         // CUB can't handle large arrays with over 2 billion elements!
-        assert(gpu_inputs.size() < std::numeric_limit<int>::max());
+        assert(gpu_inputs.size() < std::numeric_limits<int>::max());
     }
 
     float operator()() {
 
-        auto binary_op = thrust::plus<float>();
         auto num_items = static_cast<int>(gpu_inputs.size());
-        auto init = 1.f;
         auto d_in = gpu_inputs.data().get();
         auto d_out = gpu_sums.data().get();
+        cudaError_t error;
 
         // Determine temporary device storage requirements
         void *d_temp_storage = nullptr;
         size_t temp_storage_bytes = 0;
-        cub::DeviceReduce::Reduce(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items, binary_op, init);
+        error = cub::DeviceReduce::Sum(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items);
+        assert(error == cudaSuccess);
+        assert(temp_storage_bytes > 0);
 
         // Allocate temporary storage, if needed
-        if (temp_storage_bytes > temporary.size()) {
+        if (temp_storage_bytes > temporary.size())
             temporary.resize(temp_storage_bytes);
-            d_temp_storage = temporary.data().get();
-        }
+        d_temp_storage = temporary.data().get();
 
-        cub::DeviceReduce::Reduce(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items, binary_op, init);
+        error = cub::DeviceReduce::Sum(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items);
+        assert(error == cudaSuccess);
         cudaDeviceSynchronize();
 
         cpu_sums = gpu_sums;
