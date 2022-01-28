@@ -11,8 +11,7 @@ using namespace unum;
 namespace bm = benchmark;
 static std::vector<float> dataset;
 
-template <typename accumulator_at>
-void generic(bm::State &state, accumulator_at&& accumulator) {
+template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
     double const sum_expected = dataset.size() * 1.0;
     double sum = 0;
     double error = 0;
@@ -30,9 +29,8 @@ void generic(bm::State &state, accumulator_at&& accumulator) {
     }
 }
 
-template <typename accumulator_at> 
-void automatic(bm::State &state) {
-    accumulator_at acc {dataset.data(), dataset.data() + dataset.size()};
+template <typename accumulator_at> void automatic(bm::State &state) {
+    accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
     generic(state, acc);
 }
 
@@ -68,7 +66,7 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f64:by32", &automatic<cpu_avx2_f64_by32_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("cpu_avx2:f64:multicore", &automatic<cpu_avx2_f64multicore_t>)->MinTime(10)->UseRealTime();
 
     // CUDA
     if (cuda_device_count()) {

@@ -7,6 +7,8 @@
 
 namespace unum {
 
+inline size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
+
 template <typename accumulator_at = float> struct cpu_baseline_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -128,13 +130,19 @@ struct cpu_avx2_f64_t {
     }
 };
 
-struct cpu_avx2_f64_by32_t {
+struct cpu_avx2_f64multicore_t {
 
     static constexpr size_t threads_k = 64;
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
     std::vector<std::thread> threads_;
+    std::vector<double> sums_;
+
+    cpu_avx2_f64multicore_t(float const *b, float const *e) : begin_(b), end_(e) {
+        threads_.reserve(total_cores());
+        sums_.resize(total_cores());
+    }
 
     struct thread_task_t {
         float const *const begin_;
@@ -145,22 +153,20 @@ struct cpu_avx2_f64_by32_t {
 
     double operator()() {
         auto it = begin_;
-        double running_sums[threads_k]{0};
-        size_t const count_per_thread = (end_ - begin_) / threads_k;
+        size_t const count_per_thread = (end_ - begin_) / sums_.size();
 
         // Start the child threads
-        threads_.reserve(threads_k);
-        for (size_t i = 0; i + 1 < threads_k; ++i, it += count_per_thread)
-            threads_.emplace_back(thread_task_t{it, it + count_per_thread, running_sums[i]});
+        for (size_t i = 0; i + 1 < sums_.size(); ++i, it += count_per_thread)
+            threads_.emplace_back(thread_task_t{it, it + count_per_thread, sums_[i]});
 
         // This thread lives by its own rules :)
         double running_sum = 0;
         thread_task_t{it, it + count_per_thread, running_sum}();
 
         // Accumulate sums from child threads.
-        for (size_t i = 1; i < threads_k; ++i) {
+        for (size_t i = 1; i < sums_.size(); ++i) {
             threads_[i - 1].join();
-            running_sum += running_sums[i];
+            running_sum += sums_[i];
         }
 
         threads_.clear();
@@ -176,6 +182,11 @@ struct cpu_openmp_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
+
+    cpu_openmp_t(float const *b, float const *e) : begin_(b), end_(e) {
+        omp_set_dynamic(0);
+        omp_set_num_threads(total_cores());
+    }
 
     float operator()() const noexcept {
         float sum = 0;
