@@ -1,9 +1,10 @@
 #pragma once
-#include <execution>   // `std::execution::par_unseq`
-#include <immintrin.h> // AVX2 intrinsics
-#include <numeric>     // `std::accumulate`
-#include <omp.h>       // `#pragma omp`
-#include <thread>      // `std::thread`
+#include <execution>             // `std::execution::par_unseq`
+#include <immintrin.h>           // AVX2 intrinsics
+#include <numeric>               // `std::accumulate`
+#include <omp.h>                 // `#pragma omp`
+#include <taskflow/taskflow.hpp> // Reusable thread-pools
+#include <thread>                // `std::thread`
 
 namespace unum {
 
@@ -130,16 +131,14 @@ struct cpu_avx2_f64_t {
     }
 };
 
-struct cpu_avx2_f64multicore_t {
-
-    static constexpr size_t threads_k = 64;
+struct cpu_avx2_f64threads_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
     std::vector<std::thread> threads_;
     std::vector<double> sums_;
 
-    cpu_avx2_f64multicore_t(float const *b, float const *e) : begin_(b), end_(e) {
+    cpu_avx2_f64threads_t(float const *b, float const *e) : begin_(b), end_(e) {
         threads_.reserve(total_cores());
         sums_.resize(total_cores());
     }
@@ -170,6 +169,42 @@ struct cpu_avx2_f64multicore_t {
         }
 
         threads_.clear();
+        return running_sum;
+    }
+};
+
+/**
+ * @brief A logical improvement over other parallel CPU implementation,
+ * as it explicitly reuses the threads instead of creating new ones,
+ * but doesn't improve performance in practice.
+ *
+ * https://taskflow.github.io/taskflow/ParallelIterations.html
+ */
+struct cpu_avx2_f64threadpool_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+    tf::Executor executor_;
+    tf::Taskflow taskflow_;
+    std::vector<double> sums_;
+
+    cpu_avx2_f64threadpool_t(float const *b, float const *e)
+        : begin_(b), end_(e), executor_(total_cores()), sums_(total_cores()) {
+        size_t const count_total = end_ - begin_;
+        size_t const count_per_thread = count_total / sums_.size();
+        taskflow_.for_each_index(0ul, sums_.size(), 1ul, [&](size_t i) {
+            auto b = begin_ + i * count_per_thread;
+            sums_[i] = cpu_avx2_f64_t{b, b + count_per_thread}();
+        });
+    }
+
+    double operator()() {
+
+        executor_.run(taskflow_).wait();
+
+        double running_sum = 0;
+        for (double &s : sums_)
+            running_sum += s;
         return running_sum;
     }
 };

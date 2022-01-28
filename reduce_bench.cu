@@ -66,7 +66,8 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f64:multicore", &automatic<cpu_avx2_f64multicore_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("cpu_avx2:f64:threads", &automatic<cpu_avx2_f64threads_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("cpu_avx2:f64:threadpool", &automatic<cpu_avx2_f64threadpool_t>)->MinTime(10)->UseRealTime();
 
     // CUDA
     if (cuda_device_count()) {

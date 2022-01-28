@@ -62,7 +62,18 @@ FetchContent_Populate(TBB)
 if(NOT TBB_POPULATED)
     include_directories(BEFORE ${TBB_SOURCE_DIR})
 endif()
-# FetchContent_MakeAvailable(TBB)
+
+FetchContent_Declare(
+    taskflow
+    GIT_REPOSITORY https://github.com/taskflow/taskflow.git
+    GIT_TAG        v3.3.0
+)
+FetchContent_MakeAvailable(taskflow)
+if(NOT taskflow_POPULATED)
+    FetchContent_Populate(taskflow)
+endif()
+include_directories(BEFORE ${taskflow_SOURCE_DIR})
+
 
 # Define the CUDA architectures.
 # Empty value is forbidden.

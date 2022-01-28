@@ -77,6 +77,8 @@
         "csignal": "cpp",
         "strstream": "cpp",
         "scoped_allocator": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "hash_map": "cpp",
+        "*.ipp": "cpp"
     }
 }
