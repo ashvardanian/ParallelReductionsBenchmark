@@ -123,7 +123,6 @@ struct opencl_t {
         kernel = clCreateKernel(program, kernel_name_cstr, &status);
 
         // Set the arguments of the kernel
-        auto dataset_size = static_cast<cl_ulong>(count_items);
         auto local_buffers_size = items_per_group * sizeof(float);
         status = clSetKernelArg(kernel, 0, sizeof(dataset), &dataset);
         status = clSetKernelArg(kernel, 1, sizeof(global_outputs), &global_outputs);
