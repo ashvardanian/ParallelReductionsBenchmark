@@ -9,10 +9,12 @@
 
 using namespace unum;
 namespace bm = benchmark;
-static std::vector<float> dataset;
+static float *dataset_begin = nullptr;
+static float *dataset_end = nullptr;
 
 template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
-    double const sum_expected = dataset.size() * 1.0;
+    size_t const dataset_size = dataset_end - dataset_begin;
+    double const sum_expected = dataset_size * 1.0;
     double sum = 0;
     double error = 0;
     for (auto _ : state) {
@@ -22,7 +24,7 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
     }
 
     if (state.thread_index() == 0) {
-        auto total_ops = state.iterations() * dataset.size();
+        auto total_ops = state.iterations() * dataset_size;
         state.counters["adds/s"] = bm::Counter(total_ops, bm::Counter::kIsRate);
         state.counters["bytes/s"] = bm::Counter(total_ops * sizeof(float), bm::Counter::kIsRate);
         state.counters["error,%"] = bm::Counter(error * 100);
@@ -30,7 +32,7 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
 }
 
 template <typename accumulator_at> void automatic(bm::State &state) {
-    accumulator_at acc{dataset.data(), dataset.data() + dataset.size()};
+    accumulator_at acc{dataset_begin, dataset_end};
     generic(state, acc);
 }
 
@@ -44,8 +46,11 @@ int main(int argc, char **argv) {
     } else {
         elements = static_cast<size_t>(std::atol(argv[1]));
     }
-    dataset.resize(elements);
-    std::fill(dataset.begin(), dataset.end(), 1.f);
+    std::vector<__m256> dataset;
+    dataset.resize(elements / 8);
+    dataset_begin = reinterpret_cast<float *>(dataset.data());
+    dataset_end = dataset_begin + elements;
+    std::fill(dataset_begin, dataset_end, 1.f);
 
     // Log available backends
     auto ocl_targets = opencl_targets();
