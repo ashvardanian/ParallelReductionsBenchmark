@@ -12,11 +12,7 @@ namespace unum {
 inline static size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
 inline static size_t optimal_cores() { return total_cores(); }
 inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
-    // auto x128 = _mm_add_ps(_mm256_extractf128_ps(x, 1), _mm256_castps256_ps128(x));
-    // auto x64 = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
-    // auto x32 = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
-    // return _mm_cvtss_f32(x32);
-    x = _mm256_hadd_ps(x, x);
+    x = _mm256_add_ps(x, _mm256_permute2f128_ps(x, x, 1));
     x = _mm256_hadd_ps(x, x);
     x = _mm256_hadd_ps(x, x);
     return _mm256_cvtss_f32(x);
