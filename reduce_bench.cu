@@ -25,7 +25,6 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
 
     if (state.thread_index() == 0) {
         auto total_ops = state.iterations() * dataset_size;
-        state.counters["adds/s"] = bm::Counter(total_ops, bm::Counter::kIsRate);
         state.counters["bytes/s"] = bm::Counter(total_ops * sizeof(float), bm::Counter::kIsRate);
         state.counters["error,%"] = bm::Counter(error * 100);
     }
@@ -58,27 +57,39 @@ int main(int argc, char **argv) {
         fmt::print("- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
                    tgt.language_version);
 
+    bm::RegisterBenchmark("memcpy", &automatic<memcpy_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("memcpy@threadpool", &automatic<threadpool_memcpy_t>)->MinTime(10)->UseRealTime();
+
     // Generic CPU benchmarks
-    bm::RegisterBenchmark("cpu_baseline:f32", &automatic<cpu_baseline_gt<float>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_baseline:f64", &automatic<cpu_baseline_gt<double>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_openmp", &automatic<cpu_openmp_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_par:f32", &automatic<cpu_par_gt<float>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_par:f64", &automatic<cpu_par_gt<double>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_par_unseq:f32", &automatic<cpu_par_unseq_gt<float>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_par_unseq:f64", &automatic<cpu_par_unseq_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::accumulate<f32>", &automatic<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::accumulate<f64>", &automatic<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par, f32>", &automatic<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par, f64>", &automatic<stl_par_reduce_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &automatic<stl_parunseq_reduce_gt<float>>)
+        ->MinTime(10)
+        ->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &automatic<stl_parunseq_reduce_gt<double>>)
+        ->MinTime(10)
+        ->UseRealTime();
+    bm::RegisterBenchmark("openmp<f32>", &automatic<openmp_t>)->MinTime(10)->UseRealTime();
 
     // x86
-    bm::RegisterBenchmark("cpu_avx2:f32", &automatic<cpu_avx2_f32_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f32kahan", &automatic<cpu_avx2_kahan_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f64", &automatic<cpu_avx2_f64_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f64:threads", &automatic<cpu_avx2_f64threads_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("cpu_avx2:f64:threadpool", &automatic<cpu_avx2_f64threadpool_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f32>", &automatic<avx2_f32_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f32kahan>", &automatic<avx2_f32kahan_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f64>", &automatic<avx2_f64_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f32aligned>@threadpool", &automatic<threadpool_gt<avx2_f32aligned_t>>)
+        ->MinTime(10)
+        ->UseRealTime();
+    bm::RegisterBenchmark("avx2<f64>@threadpool", &automatic<threadpool_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("sse<f32aligned>@threadpool", &automatic<threadpool_gt<sse_f32aligned_t>>)
+        ->MinTime(10)
+        ->UseRealTime();
 
     // CUDA
     if (cuda_device_count()) {
-        bm::RegisterBenchmark("cuda_cub", &automatic<cuda_cub_t>)->MinTime(10)->UseRealTime();
-        bm::RegisterBenchmark("cuda_warps", &automatic<cuda_warps_t>)->MinTime(10)->UseRealTime();
-        bm::RegisterBenchmark("cuda_thrust", &automatic<cuda_thrust_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("cub@cuda", &automatic<cuda_cub_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("warps@cuda", &automatic<cuda_warps_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("thrust@cuda", &automatic<cuda_thrust_t>)->MinTime(10)->UseRealTime();
     } else
         fmt::print("No CUDA capable devices found!\n");
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>               // `std::memcpy`
 #include <execution>             // `std::execution::par_unseq`
 #include <immintrin.h>           // AVX2 intrinsics
 #include <numeric>               // `std::accumulate`
@@ -8,16 +9,27 @@
 
 namespace unum {
 
-inline size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
+inline static size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
+inline static size_t optimal_cores() { return total_cores(); }
+inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
+    // auto x128 = _mm_add_ps(_mm256_extractf128_ps(x, 1), _mm256_castps256_ps128(x));
+    // auto x64 = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
+    // auto x32 = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
+    // return _mm_cvtss_f32(x32);
+    x = _mm256_hadd_ps(x, x);
+    x = _mm256_hadd_ps(x, x);
+    x = _mm256_hadd_ps(x, x);
+    return _mm256_cvtss_f32(x);
+}
 
-template <typename accumulator_at = float> struct cpu_baseline_gt {
+template <typename accumulator_at = float> struct stl_accumulate_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
 };
 
-template <typename accumulator_at = float> struct cpu_par_gt {
+template <typename accumulator_at = float> struct stl_par_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
@@ -26,12 +38,35 @@ template <typename accumulator_at = float> struct cpu_par_gt {
     }
 };
 
-template <typename accumulator_at = float> struct cpu_par_unseq_gt {
+template <typename accumulator_at = float> struct stl_parunseq_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
     accumulator_at operator()() const noexcept {
         return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0));
+    }
+};
+
+/**
+ * @brief Single-threaded, but SIMD parallel reductions,
+ * that accumulate 128 bits worth of data on every logic thread.
+ */
+struct sse_f32aligned_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    float operator()() const noexcept {
+        auto it = begin_;
+        auto a = _mm_set1_ps(0);
+        auto const last_sse_ptr = begin_ + ((end_ - begin_) / 4 - 1) * 4;
+        while (it != last_sse_ptr) {
+            a = _mm_add_ps(a, _mm_load_ps(it));
+            it += 4;
+        }
+        a = _mm_hadd_ps(a, a);
+        a = _mm_hadd_ps(a, a);
+        return _mm_cvtss_f32(a);
     }
 };
 
@@ -43,19 +78,12 @@ template <typename accumulator_at = float> struct cpu_par_unseq_gt {
  * https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX,AVX2&text=add_ps
  * https://stackoverflow.com/a/23190168
  */
-struct cpu_avx2_f32_t {
+struct avx2_f32_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
-    static inline float _mm256_reduce_add_ps(__m256 x) noexcept {
-        auto x128 = _mm_add_ps(_mm256_extractf128_ps(x, 1), _mm256_castps256_ps128(x));
-        auto x64 = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
-        auto x32 = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
-        return _mm_cvtss_f32(x32);
-    }
-
-    float operator()() const noexcept {
+    inline float operator()() const noexcept {
         auto it = begin_;
 
         // SIMD-parallel summation stage
@@ -73,12 +101,12 @@ struct cpu_avx2_f32_t {
 };
 
 /**
- * @brief Improvement over `cpu_avx2_f32_t`, that uses Kahan
+ * @brief Improvement over `avx2_f32_t`, that uses Kahan
  * stable summation algorithm to compensate floating point
  * error.
  * https://en.wikipedia.org/wiki/Kahan_summation_algorithm
  */
-struct cpu_avx2_kahan_t {
+struct avx2_f32kahan_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -99,7 +127,7 @@ struct cpu_avx2_kahan_t {
         }
 
         // Serial summation
-        auto running_sum = cpu_avx2_f32_t::_mm256_reduce_add_ps(running_sums);
+        auto running_sum = _mm256_reduce_add_ps(running_sums);
         for (; it != end_; ++it)
             running_sum += *it;
 
@@ -107,7 +135,7 @@ struct cpu_avx2_kahan_t {
     }
 };
 
-struct cpu_avx2_f64_t {
+struct avx2_f64_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -131,14 +159,57 @@ struct cpu_avx2_f64_t {
     }
 };
 
-struct cpu_avx2_f64threads_t {
+struct avx2_f32aligned_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    float operator()() const noexcept {
+        auto it = begin_;
+        auto a = _mm256_set1_ps(0);
+        auto const last_avx_ptr = begin_ + ((end_ - begin_) / 8 - 1) * 8;
+        while (it != last_avx_ptr) {
+            a = _mm256_add_ps(a, _mm256_load_ps(it));
+            it += 8;
+        }
+        return _mm256_reduce_add_ps(a);
+    }
+};
+
+#pragma region Multicore
+
+/**
+ * @brief OpenMP on-CPU multi-core reductions acceleration.
+ * https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
+ */
+struct openmp_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    openmp_t(float const *b, float const *e) : begin_(b), end_(e) {
+        omp_set_dynamic(0);
+        omp_set_num_threads(total_cores());
+    }
+
+    float operator()() const noexcept {
+        float sum = 0;
+        size_t const n = end_ - begin_;
+#pragma omp parallel for default(shared) reduction(+ : sum)
+        for (size_t i = 0; i != n; i++)
+            sum += begin_[i];
+        return sum;
+    }
+};
+
+template <typename serial_at = avx2_f32_t> struct threads_gt {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
     std::vector<std::thread> threads_;
     std::vector<double> sums_;
 
-    cpu_avx2_f64threads_t(float const *b, float const *e) : begin_(b), end_(e) {
+    threads_gt(float const *b, float const *e) : begin_(b), end_(e) {
         threads_.reserve(total_cores());
         sums_.resize(total_cores());
     }
@@ -147,7 +218,7 @@ struct cpu_avx2_f64threads_t {
         float const *const begin_;
         float const *const end_;
         double &output_;
-        inline void operator()() const noexcept { output_ = cpu_avx2_f64_t{begin_, end_}(); }
+        inline void operator()() const noexcept { output_ = serial_at{begin_, end_}(); }
     };
 
     double operator()() {
@@ -180,7 +251,7 @@ struct cpu_avx2_f64threads_t {
  *
  * https://taskflow.github.io/taskflow/ParallelIterations.html
  */
-struct cpu_avx2_f64threadpool_t {
+template <typename serial_at = avx2_f32_t> struct threadpool_gt {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -188,13 +259,13 @@ struct cpu_avx2_f64threadpool_t {
     tf::Taskflow taskflow_;
     std::vector<double> sums_;
 
-    cpu_avx2_f64threadpool_t(float const *b, float const *e)
-        : begin_(b), end_(e), executor_(total_cores()), sums_(total_cores()) {
+    threadpool_gt(float const *b, float const *e)
+        : begin_(b), end_(e), executor_(optimal_cores()), sums_(optimal_cores()) {
         size_t const count_total = end_ - begin_;
         size_t const count_per_thread = count_total / sums_.size();
         taskflow_.for_each_index(0ul, sums_.size(), 1ul, [&](size_t i) {
             auto b = begin_ + i * count_per_thread;
-            sums_[i] = cpu_avx2_f64_t{b, b + count_per_thread}();
+            sums_[i] = serial_at{b, b + count_per_thread}();
         });
     }
 
@@ -209,27 +280,45 @@ struct cpu_avx2_f64threadpool_t {
     }
 };
 
-/**
- * @brief OpenMP on-CPU multi-core reductions acceleration.
- * https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
- */
-struct cpu_openmp_t {
+#pragma region Other Baselines
+
+struct memcpy_t {
 
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
+    std::vector<float> targets_;
 
-    cpu_openmp_t(float const *b, float const *e) : begin_(b), end_(e) {
-        omp_set_dynamic(0);
-        omp_set_num_threads(total_cores());
+    memcpy_t(float const *b, float const *e) : begin_(b), end_(e), targets_(e - b) {}
+    float operator()() {
+        std::memcpy(targets_.data(), begin_, targets_.size() * sizeof(float));
+        return 0;
+    }
+};
+
+struct threadpool_memcpy_t {
+
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+    tf::Executor executor_;
+    tf::Taskflow taskflow_;
+    std::vector<float> targets_;
+
+    threadpool_memcpy_t(float const *b, float const *e)
+        : begin_(b), end_(e), executor_(optimal_cores()), targets_(e - b) {
+        size_t const total_threads = optimal_cores();
+        size_t const count_total = end_ - begin_;
+        size_t const count_per_thread = count_total / total_threads;
+        auto const targets_ptr = targets_.data();
+        taskflow_.for_each_index(0ul, total_threads, 1ul, [=](size_t i) {
+            auto src = begin_ + i * count_per_thread;
+            auto tgt = targets_ptr + i * count_per_thread;
+            std::memcpy(tgt, src, count_per_thread * sizeof(float));
+        });
     }
 
-    float operator()() const noexcept {
-        float sum = 0;
-        size_t const n = end_ - begin_;
-#pragma omp parallel for default(shared) reduction(+ : sum)
-        for (size_t i = 0; i != n; i++)
-            sum += begin_[i];
-        return sum;
+    float operator()() {
+        executor_.run(taskflow_).wait();
+        return 0;
     }
 };
 
