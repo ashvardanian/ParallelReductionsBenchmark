@@ -4,8 +4,11 @@
 #include <fmt/core.h>
 
 #include "reduce_cpu.hpp"
-#include "reduce_cuda.hpp"
 #include "reduce_opencl.hpp"
+
+#if defined(__CUDACC__)
+#include "reduce_cuda.hpp"
+#endif
 
 using namespace unum;
 namespace bm = benchmark;
@@ -30,9 +33,16 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
     }
 }
 
-template <typename accumulator_at> void automatic(bm::State &state) {
+template <typename accumulator_at> void make(bm::State &state) {
     accumulator_at acc{dataset_begin, dataset_end};
     generic(state, acc);
+}
+
+template <typename at> std::unique_ptr<at[]> alloc_aligned(size_t alignment, size_t length) {
+    at *raw = 0;
+    int error = posix_memalign((void **)&raw, alignment, sizeof(at) * length);
+    (void)error;
+    return std::unique_ptr<at[]>{raw};
 }
 
 int main(int argc, char **argv) {
@@ -45,9 +55,9 @@ int main(int argc, char **argv) {
     } else {
         elements = static_cast<size_t>(std::atol(argv[1]));
     }
-    std::vector<__m256> dataset;
-    dataset.resize(elements / 8);
-    dataset_begin = reinterpret_cast<float *>(dataset.data());
+
+    auto dataset = alloc_aligned<float>(64, elements);
+    dataset_begin = dataset.get();
     dataset_end = dataset_begin + elements;
     std::fill(dataset_begin, dataset_end, 1.f);
 
@@ -57,41 +67,41 @@ int main(int argc, char **argv) {
         fmt::print("- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
                    tgt.language_version);
 
-    bm::RegisterBenchmark("memcpy", &automatic<memcpy_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("memcpy@threadpool", &automatic<threadpool_memcpy_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("memset", &make<memset_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("memset@threads", &make<threads_gt<memset_t>>)->MinTime(10)->UseRealTime();
 
     // Generic CPU benchmarks
-    bm::RegisterBenchmark("std::accumulate<f32>", &automatic<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("std::accumulate<f64>", &automatic<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par, f32>", &automatic<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par, f64>", &automatic<stl_par_reduce_gt<double>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &automatic<stl_parunseq_reduce_gt<float>>)
+    bm::RegisterBenchmark("std::accumulate<f32>", &make<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::accumulate<f64>", &make<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par, f32>", &make<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par, f64>", &make<stl_par_reduce_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &make<stl_parunseq_reduce_gt<float>>)
         ->MinTime(10)
         ->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &automatic<stl_parunseq_reduce_gt<double>>)
+    bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &make<stl_parunseq_reduce_gt<double>>)
         ->MinTime(10)
         ->UseRealTime();
-    bm::RegisterBenchmark("openmp<f32>", &automatic<openmp_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("openmp<f32>", &make<openmp_t>)->MinTime(10)->UseRealTime();
 
     // x86
-    bm::RegisterBenchmark("avx2<f32>", &automatic<avx2_f32_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("avx2<f32kahan>", &automatic<avx2_f32kahan_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("avx2<f64>", &automatic<avx2_f64_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("avx2<f32aligned>@threadpool", &automatic<threadpool_gt<avx2_f32aligned_t>>)
-        ->MinTime(10)
-        ->UseRealTime();
-    bm::RegisterBenchmark("avx2<f64>@threadpool", &automatic<threadpool_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("sse<f32aligned>@threadpool", &automatic<threadpool_gt<sse_f32aligned_t>>)
-        ->MinTime(10)
-        ->UseRealTime();
+#if defined(__AVX2__)
+    bm::RegisterBenchmark("avx2<f32>", &make<avx2_f32_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f32kahan>", &make<avx2_f32kahan_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f64>", &make<avx2_f64_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f32aligned>@threads", &make<threads_gt<avx2_f32aligned_t>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx2<f64>@threads", &make<threads_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("sse<f32aligned>@threads", &make<threads_gt<sse_f32aligned_t>>)->MinTime(10)->UseRealTime();
+#endif
 
-    // CUDA
+// CUDA
+#if defined(__CUDACC__)
     if (cuda_device_count()) {
-        bm::RegisterBenchmark("cub@cuda", &automatic<cuda_cub_t>)->MinTime(10)->UseRealTime();
-        bm::RegisterBenchmark("warps@cuda", &automatic<cuda_warps_t>)->MinTime(10)->UseRealTime();
-        bm::RegisterBenchmark("thrust@cuda", &automatic<cuda_thrust_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("cub@cuda", &make<cuda_cub_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("warps@cuda", &make<cuda_warps_t>)->MinTime(10)->UseRealTime();
+        bm::RegisterBenchmark("thrust@cuda", &make<cuda_thrust_t>)->MinTime(10)->UseRealTime();
     } else
         fmt::print("No CUDA capable devices found!\n");
+#endif
 
     // OpenCL
     // for (auto tgt : ocl_targets) {

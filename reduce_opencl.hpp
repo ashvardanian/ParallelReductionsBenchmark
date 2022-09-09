@@ -92,9 +92,9 @@ struct opencl_t {
         // Create memory buffers on the device for each vector
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clCreateBuffer.html
         dataset = clCreateBuffer(context, CL_MEM_READ_ONLY, count_items * sizeof(float), NULL, &status);
-        global_outputs = clCreateBuffer(context, CL_MEM_READ_WRITE,
-                                        ((count_items + items_per_group_ - 1) / items_per_group_) * sizeof(float), NULL,
-                                        &status);
+        global_outputs =
+            clCreateBuffer(context, CL_MEM_READ_WRITE,
+                           ((count_items + items_per_group_ - 1) / items_per_group_) * sizeof(float), NULL, &status);
         returned_outputs.resize(count_threads);
 
         // Move the `dataset` to GPU.
@@ -162,7 +162,7 @@ struct opencl_t {
         // We don't need to explicitly finish the queue, as this transfer is blocking.
         // https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/clEnqueueReadBuffer.html
         status = clEnqueueReadBuffer(queue, global_outputs, CL_TRUE, 0, returned_outputs.size() * sizeof(float),
-                                         returned_outputs.data(), 0, NULL, NULL);
+                                     returned_outputs.data(), 0, NULL, NULL);
 
         if (status != 0)
             throw std::logic_error(opencl_error_name(status));
@@ -199,19 +199,20 @@ inline std::vector<opencl_target_t> opencl_targets() {
             // Extract the variable length string descriptors.
             clGetDeviceInfo(device, CL_DEVICE_NAME, 0, NULL, &string_length);
             target.device_name.resize(string_length);
-            clGetDeviceInfo(device, CL_DEVICE_NAME, string_length, target.device_name.data(), NULL);
+            clGetDeviceInfo(device, CL_DEVICE_NAME, string_length, (void *)target.device_name.data(), NULL);
 
             clGetDeviceInfo(device, CL_DEVICE_VERSION, 0, NULL, &string_length);
             target.device_version.resize(string_length);
-            clGetDeviceInfo(device, CL_DEVICE_VERSION, string_length, target.device_version.data(), NULL);
+            clGetDeviceInfo(device, CL_DEVICE_VERSION, string_length, (void *)target.device_version.data(), NULL);
 
             clGetDeviceInfo(device, CL_DRIVER_VERSION, 0, NULL, &string_length);
             target.driver_version.resize(string_length);
-            clGetDeviceInfo(device, CL_DRIVER_VERSION, string_length, target.driver_version.data(), NULL);
+            clGetDeviceInfo(device, CL_DRIVER_VERSION, string_length, (void *)target.driver_version.data(), NULL);
 
             clGetDeviceInfo(device, CL_DEVICE_OPENCL_C_VERSION, 0, NULL, &string_length);
             target.language_version.resize(string_length);
-            clGetDeviceInfo(device, CL_DEVICE_OPENCL_C_VERSION, string_length, target.language_version.data(), NULL);
+            clGetDeviceInfo(device, CL_DEVICE_OPENCL_C_VERSION, string_length, (void *)target.language_version.data(),
+                            NULL);
 
             result.push_back(target);
         }

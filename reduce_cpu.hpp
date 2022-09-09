@@ -1,22 +1,30 @@
 #pragma once
-#include <cstring>               // `std::memcpy`
-#include <execution>             // `std::execution::par_unseq`
-#include <immintrin.h>           // AVX2 intrinsics
-#include <numeric>               // `std::accumulate`
-#include <omp.h>                 // `#pragma omp`
-#include <taskflow/taskflow.hpp> // Reusable thread-pools
-#include <thread>                // `std::thread`
+#include <cstring>   // `std::memcpy`
+#include <execution> // `std::execution::par_unseq`
+#include <numeric>   // `std::accumulate`, `std::reduce`
+#include <omp.h>     // `#pragma omp`
+#include <thread>    // `std::thread`
+
+#if defined(__AVX2__)
+#include <immintrin.h> // AVX2 intrinsics
+#endif
 
 namespace unum {
 
 inline static size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
 inline static size_t optimal_cores() { return total_cores(); }
-inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
-    x = _mm256_add_ps(x, _mm256_permute2f128_ps(x, x, 1));
-    x = _mm256_hadd_ps(x, x);
-    x = _mm256_hadd_ps(x, x);
-    return _mm256_cvtss_f32(x);
-}
+
+struct memset_t {
+
+    float *const begin_ = nullptr;
+    float *const end_ = nullptr;
+
+    memset_t(float *b, float *e) : begin_(b), end_(e) {}
+    float operator()() {
+        std::memset(begin_, 1, end_ - begin_);
+        return 0;
+    }
+};
 
 template <typename accumulator_at = float> struct stl_accumulate_gt {
     float const *const begin_ = nullptr;
@@ -65,6 +73,15 @@ struct sse_f32aligned_t {
         return _mm_cvtss_f32(a);
     }
 };
+
+#if defined(__AVX2__)
+
+inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
+    x = _mm256_add_ps(x, _mm256_permute2f128_ps(x, x, 1));
+    x = _mm256_hadd_ps(x, x);
+    x = _mm256_hadd_ps(x, x);
+    return _mm256_cvtss_f32(x);
+}
 
 /**
  * @brief Single-threaded, but SIMD parallel reductions,
@@ -172,7 +189,9 @@ struct avx2_f32aligned_t {
     }
 };
 
-#pragma region Multicore
+#endif
+
+#pragma region Multi Core
 
 /**
  * @brief OpenMP on-CPU multi-core reductions acceleration.
@@ -198,36 +217,39 @@ struct openmp_t {
     }
 };
 
-template <typename serial_at = avx2_f32_t> struct threads_gt {
+template <typename serial_at = stl_accumulate_gt<float>> struct threads_gt {
 
-    float const *const begin_ = nullptr;
-    float const *const end_ = nullptr;
+    float *const begin_ = nullptr;
+    float *const end_ = nullptr;
     std::vector<std::thread> threads_;
     std::vector<double> sums_;
 
-    threads_gt(float const *b, float const *e) : begin_(b), end_(e) {
-        threads_.reserve(total_cores());
-        sums_.resize(total_cores());
+    threads_gt(float *b, float *e) : begin_(b), end_(e), sums_() {
+        auto cores = total_cores();
+        threads_.reserve(cores);
+        sums_.resize(cores);
     }
 
+    size_t count_per_thread() const { return (end_ - begin_) / sums_.size(); }
+
     struct thread_task_t {
-        float const *const begin_;
-        float const *const end_;
+        float *const begin_;
+        float *const end_;
         double &output_;
         inline void operator()() const noexcept { output_ = serial_at{begin_, end_}(); }
     };
 
     double operator()() {
         auto it = begin_;
-        size_t const count_per_thread = (end_ - begin_) / sums_.size();
+        size_t const batch_size = count_per_thread();
 
         // Start the child threads
-        for (size_t i = 0; i + 1 < sums_.size(); ++i, it += count_per_thread)
-            threads_.emplace_back(thread_task_t{it, it + count_per_thread, sums_[i]});
+        for (size_t i = 0; i + 1 < sums_.size(); ++i, it += batch_size)
+            threads_.emplace_back(thread_task_t{it, it + batch_size, sums_[i]});
 
         // This thread lives by its own rules :)
         double running_sum = 0;
-        thread_task_t{it, it + count_per_thread, running_sum}();
+        thread_task_t{it, it + batch_size, running_sum}();
 
         // Accumulate sums from child threads.
         for (size_t i = 1; i < sums_.size(); ++i) {
@@ -237,84 +259,6 @@ template <typename serial_at = avx2_f32_t> struct threads_gt {
 
         threads_.clear();
         return running_sum;
-    }
-};
-
-/**
- * @brief A logical improvement over other parallel CPU implementation,
- * as it explicitly reuses the threads instead of creating new ones,
- * but doesn't improve performance in practice.
- *
- * https://taskflow.github.io/taskflow/ParallelIterations.html
- */
-template <typename serial_at = avx2_f32_t> struct threadpool_gt {
-
-    float const *const begin_ = nullptr;
-    float const *const end_ = nullptr;
-    tf::Executor executor_;
-    tf::Taskflow taskflow_;
-    std::vector<double> sums_;
-
-    threadpool_gt(float const *b, float const *e)
-        : begin_(b), end_(e), executor_(optimal_cores()), sums_(optimal_cores()) {
-        size_t const count_total = end_ - begin_;
-        size_t const count_per_thread = count_total / sums_.size();
-        taskflow_.for_each_index(0ul, sums_.size(), 1ul, [&](size_t i) {
-            auto b = begin_ + i * count_per_thread;
-            sums_[i] = serial_at{b, b + count_per_thread}();
-        });
-    }
-
-    double operator()() {
-
-        executor_.run(taskflow_).wait();
-
-        double running_sum = 0;
-        for (double &s : sums_)
-            running_sum += s;
-        return running_sum;
-    }
-};
-
-#pragma region Other Baselines
-
-struct memcpy_t {
-
-    float const *const begin_ = nullptr;
-    float const *const end_ = nullptr;
-    std::vector<float> targets_;
-
-    memcpy_t(float const *b, float const *e) : begin_(b), end_(e), targets_(e - b) {}
-    float operator()() {
-        std::memcpy(targets_.data(), begin_, targets_.size() * sizeof(float));
-        return 0;
-    }
-};
-
-struct threadpool_memcpy_t {
-
-    float const *const begin_ = nullptr;
-    float const *const end_ = nullptr;
-    tf::Executor executor_;
-    tf::Taskflow taskflow_;
-    std::vector<float> targets_;
-
-    threadpool_memcpy_t(float const *b, float const *e)
-        : begin_(b), end_(e), executor_(optimal_cores()), targets_(e - b) {
-        size_t const total_threads = optimal_cores();
-        size_t const count_total = end_ - begin_;
-        size_t const count_per_thread = count_total / total_threads;
-        auto const targets_ptr = targets_.data();
-        taskflow_.for_each_index(0ul, total_threads, 1ul, [=](size_t i) {
-            auto src = begin_ + i * count_per_thread;
-            auto tgt = targets_ptr + i * count_per_thread;
-            std::memcpy(tgt, src, count_per_thread * sizeof(float));
-        });
-    }
-
-    float operator()() {
-        executor_.run(taskflow_).wait();
-        return 0;
     }
 };
 

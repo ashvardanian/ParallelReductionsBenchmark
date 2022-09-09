@@ -6,7 +6,8 @@ include(FetchContent)
 FetchContent_Declare(
     fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_TAG        master
+    GIT_TAG master
+    GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(fmt)
 
@@ -15,9 +16,11 @@ FetchContent_MakeAvailable(fmt)
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.11.0
+    GIT_TAG release-1.11.0
+    GIT_SHALLOW TRUE
 )
 FetchContent_GetProperties(googletest)
+
 if(NOT googletest_POPULATED)
     FetchContent_Populate(googletest)
     add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
@@ -28,10 +31,12 @@ endif()
 FetchContent_Declare(
     googlebenchmark
     GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG        v1.6.1  
+    GIT_TAG v1.6.1
+    GIT_SHALLOW TRUE
 )
 set(BENCHMARK_ENABLE_TESTING off)
 FetchContent_GetProperties(googlebenchmark)
+
 if(NOT googlebenchmark_POPULATED)
     FetchContent_Populate(googlebenchmark)
     add_subdirectory(${googlebenchmark_SOURCE_DIR} ${googlebenchmark_BINARY_DIR})
@@ -43,12 +48,15 @@ endif()
 FetchContent_Declare(
     thrust
     GIT_REPOSITORY https://github.com/thrust/thrust.git
-    GIT_TAG        1.15.0
+    GIT_TAG 1.15.0
+    GIT_SHALLOW TRUE
 )
 FetchContent_GetProperties(thrust)
+
 if(NOT thrust_POPULATED)
     FetchContent_Populate(thrust)
 endif()
+
 include_directories(BEFORE ${thrust_SOURCE_DIR})
 
 # We need TBB for Parallel CPU Algorithms in GCC.
@@ -56,28 +64,18 @@ include_directories(BEFORE ${thrust_SOURCE_DIR})
 FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
-    GIT_TAG        v2021.5.0
+    GIT_TAG v2021.5.0
+    GIT_SHALLOW TRUE
 )
 FetchContent_Populate(TBB)
+
 if(NOT TBB_POPULATED)
     include_directories(BEFORE ${TBB_SOURCE_DIR})
 endif()
 
-FetchContent_Declare(
-    taskflow
-    GIT_REPOSITORY https://github.com/taskflow/taskflow.git
-    GIT_TAG        v3.3.0
-)
-FetchContent_MakeAvailable(taskflow)
-if(NOT taskflow_POPULATED)
-    FetchContent_Populate(taskflow)
-endif()
-include_directories(BEFORE ${taskflow_SOURCE_DIR})
-
-
 # Define the CUDA architectures.
 # Empty value is forbidden.
-project(gpgpu_frameworks LANGUAGES CXX CUDA)
+project(ParallelReductions LANGUAGES CXX)
 
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
@@ -88,21 +86,55 @@ set(CMAKE_CXX_EXTENSIONS NO)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -march=native -fopenmp")
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_CUDA_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-lambda -march=native -fopenmp")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
+set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+
+set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -Wall -Wextra -march=native -fopenmp")
+
+# List of all possibkle compiler IDs:
+# https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_GCC_FLAGS}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_GCC_FLAGS}")
+    set(CMAKE_CUDA_FLAGS "${CMAKE_GCC_FLAGS}")
+    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-lambda")
+    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
+
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+endif()
 
 # Add CUDA and Thrust dependencies
 find_package(Threads REQUIRED)
-find_package(CUDA REQUIRED)
-find_package(OpenMP)
-find_package(OpenCL)
-find_package(TBB)
+find_package(TBB REQUIRED)
+find_package(CUDA)
 
-# https://developer.nvidia.com/blog/building-cuda-applications-cmake/
-add_executable(reduce_bench reduce_bench.cu)
-set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(reduce_bench PROPERTIES CUDA_ARCHITECTURES "86")
-target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads OpenCL::OpenCL OpenMP::OpenMP_CXX TBB::tbb)
+add_executable(reduce_bench reduce_bench.cpp)
+target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads TBB::tbb)
+
+find_package(OpenMP)
+
+if(OpenMP_FOUND)
+    target_link_libraries(reduce_bench OpenMP::OpenMP_CXX)
+endif()
+
+find_package(OpenCL)
+
+if(OpenCL_FOUND)
+    target_link_libraries(reduce_bench OpenCL::OpenCL)
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_GCC_FLAGS}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+    set_property(SOURCE reduce_bench.cpp PROPERTY LANGUAGE CUDA)
+    set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(reduce_bench PROPERTIES CUDA_ARCHITECTURES "86")
+
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+endif()
