@@ -1,6 +1,6 @@
-build/*
-debug/*
-release/*
+build/
+build_debug/
+build_release/
 _deps/*
 CMakeFiles/*
 lib

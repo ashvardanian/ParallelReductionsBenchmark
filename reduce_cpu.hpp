@@ -22,7 +22,7 @@ struct memset_t {
     memset_t(float *b, float *e) : begin_(b), end_(e) {}
     float operator()() {
         std::memset(begin_, 1, end_ - begin_);
-        return 0;
+        return 1;
     }
 };
 

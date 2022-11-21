@@ -4,7 +4,10 @@
 #include <fmt/core.h>
 
 #include "reduce_cpu.hpp"
+
+#if defined(__OPENCL__)
 #include "reduce_opencl.hpp"
+#endif
 
 #if defined(__CUDACC__)
 #include "reduce_cuda.hpp"
@@ -62,10 +65,12 @@ int main(int argc, char **argv) {
     std::fill(dataset_begin, dataset_end, 1.f);
 
     // Log available backends
+#if defined(__OPENCL__)
     auto ocl_targets = opencl_targets();
     for (auto const &tgt : ocl_targets)
         fmt::print("- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
                    tgt.language_version);
+#endif
 
     bm::RegisterBenchmark("memset", &make<memset_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("memset@threads", &make<threads_gt<memset_t>>)->MinTime(10)->UseRealTime();
@@ -103,21 +108,24 @@ int main(int argc, char **argv) {
         fmt::print("No CUDA capable devices found!\n");
 #endif
 
-    // OpenCL
-    // for (auto tgt : ocl_targets) {
-    //     for (auto kernel_name : opencl_t::kernels_k) {
-    //         for (auto group_size : opencl_wg_sizes) {
-    //             auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
-    //             bm::RegisterBenchmark(name.c_str(),
-    //                                   [=](bm::State &state) {
-    //                                       opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt,
-    //                                       group_size,
-    //                                       kernel_name);
-    //                                       generic(state, ocl);
-    //                                   })->MinTime(10)->UseRealTime();
-    //         }
-    //     }
-    // }
+        // OpenCL
+#if defined(__OPENCL__)
+    for (auto tgt : ocl_targets) {
+        for (auto kernel_name : opencl_t::kernels_k) {
+            for (auto group_size : opencl_wg_sizes) {
+                auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
+                bm::RegisterBenchmark(name.c_str(),
+                                      [=](bm::State &state) {
+                                          opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt, group_size,
+                                                       kernel_name);
+                                          generic(state, ocl);
+                                      })
+                    ->MinTime(10)
+                    ->UseRealTime();
+            }
+        }
+    }
+#endif
 
     bm::Initialize(&argc, argv);
     bm::RunSpecifiedBenchmarks();
