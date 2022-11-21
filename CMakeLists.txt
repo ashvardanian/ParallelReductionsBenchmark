@@ -11,36 +11,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fmt)
 
-# Fetch GTest, as its needed for GBenchmark
-# https://stackoverflow.com/a/60417587
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG release-1.11.0
-    GIT_SHALLOW TRUE
-)
-FetchContent_GetProperties(googletest)
-
-if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-endif()
-
 # Fetch GBenchmark and surpress internal tests.
 # https://github.com/google/benchmark/blob/main/docs/user_guide.md#using-register-benchmark
+set(BENCHMARK_ENABLE_TESTING OFF)
+set(BENCHMARK_ENABLE_INSTALL OFF)
+set(BENCHMARK_ENABLE_DOXYGEN OFF)
+set(BENCHMARK_INSTALL_DOCS OFF)
+set(BENCHMARK_DOWNLOAD_DEPENDENCIES ON)
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF)
+set(BENCHMARK_USE_BUNDLED_GTEST ON)
 FetchContent_Declare(
-    googlebenchmark
+    benchmark
     GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG v1.6.1
-    GIT_SHALLOW TRUE
+    GIT_TAG v1.7.0
 )
-set(BENCHMARK_ENABLE_TESTING off)
-FetchContent_GetProperties(googlebenchmark)
-
-if(NOT googlebenchmark_POPULATED)
-    FetchContent_Populate(googlebenchmark)
-    add_subdirectory(${googlebenchmark_SOURCE_DIR} ${googlebenchmark_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(benchmark)
 
 # Thrust can be configured with Intel TBB.
 # https://github.com/rapidsai/cuml/issues/3540
@@ -51,11 +36,7 @@ FetchContent_Declare(
     GIT_TAG 1.15.0
     GIT_SHALLOW TRUE
 )
-FetchContent_GetProperties(thrust)
-
-if(NOT thrust_POPULATED)
-    FetchContent_Populate(thrust)
-endif()
+FetchContent_MakeAvailable(thrust)
 
 include_directories(BEFORE ${thrust_SOURCE_DIR})
 
@@ -75,7 +56,7 @@ endif()
 
 # Define the CUDA architectures.
 # Empty value is forbidden.
-project(ParallelReductions LANGUAGES CXX)
+project(ParallelReductionsBenchmark LANGUAGES CXX)
 
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
@@ -89,10 +70,10 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CUDA_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
-set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -Wall -Wextra -march=native -fopenmp")
+set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
 # List of all possibkle compiler IDs:
 # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
@@ -105,7 +86,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CXX_COMPILER_ID STREQUAL
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-lambda")
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
 
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=1")
 endif()
 
 # Add CUDA and Thrust dependencies
