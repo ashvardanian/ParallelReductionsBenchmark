@@ -6,12 +6,12 @@
         {
             "label": "Build Debug",
             "type": "shell",
-            "command": "mkdir -p debug && cd debug && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && cd .."
+            "command": "cmake -B ./build_debug && cmake --build ./build_debug --config Debug"
         },
         {
             "label": "Build & Run Release",
             "type": "shell",
-            "command": "mkdir -p release && cd release && cmake .. && make && ./reduce_bench && cd .."
+            "command": "cmake -B ./build_release && cmake --build ./build_release --config Release && ./build_release/reduce_bench"
         }
     ]
 }

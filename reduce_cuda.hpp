@@ -26,7 +26,7 @@ struct cuda_base_t {
           gpu_partial_sums(max_block_size_k), cpu_partial_sums(max_block_size_k) {}
 };
 
-__global__ void cu_recude_blocks(const float *inputs, unsigned int input_size, float *outputs) {
+__global__ void cu_reduce_blocks(float const *inputs, unsigned int input_size, float *outputs) {
     extern __shared__ float shared[];
     unsigned int const tid = threadIdx.x;
 
@@ -62,12 +62,12 @@ struct cuda_blocks_t : public cuda_base_t {
 
         // Accumulate partial results...
         int shared_memory = threads * sizeof(float);
-        cu_recude_blocks<<<blocks, threads, shared_memory>>>(gpu_inputs.data().get(), gpu_inputs.size(),
+        cu_reduce_blocks<<<blocks, threads, shared_memory>>>(gpu_inputs.data().get(), gpu_inputs.size(),
                                                              gpu_partial_sums.data().get());
 
         // Then reduce them further to inputs single scalar
         shared_memory = max_block_size_k * sizeof(float);
-        cu_recude_blocks<<<1, max_block_size_k, shared_memory>>>(gpu_partial_sums.data().get(), blocks,
+        cu_reduce_blocks<<<1, max_block_size_k, shared_memory>>>(gpu_partial_sums.data().get(), blocks,
                                                                  gpu_partial_sums.data().get());
 
         // Sync all queues and fetch results

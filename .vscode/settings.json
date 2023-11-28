@@ -80,6 +80,17 @@
         "cfenv": "cpp",
         "hash_map": "cpp",
         "*.ipp": "cpp",
-        "__debug": "cpp"
+        "__debug": "cpp",
+        "barrier": "cpp",
+        "charconv": "cpp",
+        "propagate_const": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp",
+        "expected": "cpp",
+        "locale": "cpp",
+        "__nullptr": "cpp",
+        "cuchar": "cpp",
+        "hash_set": "cpp",
+        "latch": "cpp"
     }
 }

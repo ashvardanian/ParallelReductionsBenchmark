@@ -1,4 +1,5 @@
-#include <vector>
+#include <cstdlib> // Accessing environment variables
+#include <new>     // `std::launder`
 
 #include <benchmark/benchmark.h>
 #include <fmt/core.h>
@@ -15,21 +16,20 @@
 
 using namespace unum;
 namespace bm = benchmark;
-static float *dataset_begin = nullptr;
-static float *dataset_end = nullptr;
+static volatile float *dataset_begin = nullptr;
+static volatile float *dataset_end = nullptr;
 
 template <typename accumulator_at> void generic(bm::State &state, accumulator_at &&accumulator) {
     size_t const dataset_size = dataset_end - dataset_begin;
     double const sum_expected = dataset_size * 1.0;
     double sum = 0;
-    double error = 0;
     for (auto _ : state) {
         sum = accumulator();
         bm::DoNotOptimize(sum);
-        error = std::abs(sum_expected - sum) / sum_expected;
     }
 
     if (state.thread_index() == 0) {
+        auto error = std::abs(sum_expected - sum) / sum_expected;
         auto total_ops = state.iterations() * dataset_size;
         state.counters["bytes/s"] = bm::Counter(total_ops * sizeof(float), bm::Counter::kIsRate);
         state.counters["error,%"] = bm::Counter(error * 100);
@@ -37,7 +37,7 @@ template <typename accumulator_at> void generic(bm::State &state, accumulator_at
 }
 
 template <typename accumulator_at> void make(bm::State &state) {
-    accumulator_at acc{dataset_begin, dataset_end};
+    accumulator_at acc{(float *)(dataset_begin), (float *)(dataset_end)};
     generic(state, acc);
 }
 
@@ -52,11 +52,17 @@ int main(int argc, char **argv) {
 
     // Parse configuration parameters.
     size_t elements = 0;
-    if (argc <= 1) {
+    char const *elements_env_variable = std::getenv("PARALLEL_REDUCTIONS_LENGTH");
+
+    if (elements_env_variable) {
+        elements = static_cast<size_t>(std::atol(elements_env_variable));
+        if (elements == 0) {
+            fmt::print("Inappropriate `PARALLEL_REDUCTIONS_LENGTH` value!\n");
+            return 1;
+        }
+    } else {
         fmt::print("You did not feed the size of arrays, so we will use a 1GB array!\n");
         elements = 1024ull * 1024ull * 1024ull / sizeof(float);
-    } else {
-        elements = static_cast<size_t>(std::atol(argv[1]));
     }
 
     auto dataset = alloc_aligned<float>(64, elements);
@@ -72,8 +78,9 @@ int main(int argc, char **argv) {
                    tgt.language_version);
 #endif
 
-    bm::RegisterBenchmark("memset", &make<memset_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("memset@threads", &make<threads_gt<memset_t>>)->MinTime(10)->UseRealTime();
+    // Memset is only useful as a baseline, but running it will corrupt our buffer
+    // bm::RegisterBenchmark("memset", &make<memset_t>)->MinTime(10)->UseRealTime();
+    // bm::RegisterBenchmark("memset@threads", &make<threads_gt<memset_t>>)->MinTime(10)->UseRealTime();
 
     // Generic CPU benchmarks
     bm::RegisterBenchmark("std::accumulate<f32>", &make<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
@@ -128,6 +135,9 @@ int main(int argc, char **argv) {
 #endif
 
     bm::Initialize(&argc, argv);
+    if (bm::ReportUnrecognizedArguments(argc, argv))
+        return 1;
+
     bm::RunSpecifiedBenchmarks();
     bm::Shutdown();
     return 0;
