@@ -11,7 +11,7 @@
 #include <CL/cl.h>
 #endif
 
-namespace unum {
+namespace ashvardanian::reduce {
 
 struct opencl_target_t {
     std::string device_name;
@@ -317,4 +317,4 @@ inline char const *opencl_error_name(cl_int code) {
     // clang-format on
 }
 
-} // namespace unum
+} // namespace ashvardanian::reduce

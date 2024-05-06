@@ -9,13 +9,16 @@
 #include <immintrin.h> // AVX2 intrinsics
 #endif
 
-namespace unum {
+namespace ashvardanian::reduce {
 
+/// Returns half the number of hardware concurrency units (typically cores).
 inline static size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
+
+/// Returns the optimal number of cores for parallel processing (same as total_cores).
 inline static size_t optimal_cores() { return total_cores(); }
 
+/// Sets all elements in the provided range to the value 1.0f.
 struct memset_t {
-
     float *const begin_ = nullptr;
     float *const end_ = nullptr;
 
@@ -26,6 +29,32 @@ struct memset_t {
     }
 };
 
+/// Computes the sum of a sequence of float values using an unrolled @b `for`-loop.
+template <typename accumulator_at = float> struct unrolled_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    accumulator_at operator()() const noexcept {
+        accumulator_at sums[8];
+        std::fill(sums, sums + 8, 0);
+        float const *it = begin_;
+        for (; it + 8 < end_; it += 8) {
+            sums[0] += it[0];
+            sums[1] += it[1];
+            sums[2] += it[2];
+            sums[3] += it[3];
+            sums[4] += it[4];
+            sums[5] += it[5];
+            sums[6] += it[6];
+            sums[7] += it[7];
+        }
+        for (; it != end_; ++it)
+            sums[0] += *it;
+        return sums[0] + sums[1] + sums[2] + sums[3] + sums[4] + sums[5] + sums[6] + sums[7];
+    }
+};
+
+/// Computes the sum of a sequence of float values using @b `std::accumulate`.
 template <typename accumulator_at = float> struct stl_accumulate_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -33,28 +62,29 @@ template <typename accumulator_at = float> struct stl_accumulate_gt {
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
 };
 
+/// Computes the sum of a sequence of float values using parallel std::reduce with execution policy std::execution::par.
 template <typename accumulator_at = float> struct stl_par_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
     accumulator_at operator()() const noexcept {
-        return std::reduce(std::execution::par, begin_, end_, accumulator_at(0));
+        return std::reduce(std::execution::par, begin_, end_, accumulator_at(0), std::plus<accumulator_at>());
     }
 };
 
+/// Computes the sum of a sequence of float values using parallel std::reduce with execution policy
+/// std::execution::par_unseq for non-blocking parallelism.
 template <typename accumulator_at = float> struct stl_parunseq_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
     accumulator_at operator()() const noexcept {
-        return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0));
+        return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0), std::plus<accumulator_at>());
     }
 };
 
-/**
- * @brief Single-threaded, but SIMD parallel reductions,
- * that accumulate 128 bits worth of data on every logic thread.
- */
+/// Computes the sum of a sequence of float values using SIMD @b SSE intrinsics,
+/// processing 128 bits of data on every logic thread.
 struct sse_f32aligned_t {
 
     float const *const begin_ = nullptr;
@@ -76,6 +106,7 @@ struct sse_f32aligned_t {
 
 #if defined(__AVX2__)
 
+/// Reduces a __m256 vector to a single float by horizontal addition.
 inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
     x = _mm256_add_ps(x, _mm256_permute2f128_ps(x, x, 1));
     x = _mm256_hadd_ps(x, x);
@@ -83,14 +114,12 @@ inline static float _mm256_reduce_add_ps(__m256 x) noexcept {
     return _mm256_cvtss_f32(x);
 }
 
-/**
- * @brief Single-threaded, but SIMD parallel reductions,
- * that accumulate 256 bits worth of data on every logic thread.
- *
- * Links:
- * https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX,AVX2&text=add_ps
- * https://stackoverflow.com/a/23190168
- */
+/// Computes the sum of a sequence of float values using SIMD @b AVX2 intrinsics,
+/// processing 256 bits of data on every logic thread.
+///
+/// Links:
+/// https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX,AVX2&text=add_ps
+/// https://stackoverflow.com/a/23190168
 struct avx2_f32_t {
 
     float const *const begin_ = nullptr;
@@ -113,12 +142,9 @@ struct avx2_f32_t {
     }
 };
 
-/**
- * @brief Improvement over `avx2_f32_t`, that uses Kahan
- * stable summation algorithm to compensate floating point
- * error.
- * https://en.wikipedia.org/wiki/Kahan_summation_algorithm
- */
+/// Computes the sum of a sequence of float values using SIMD @b AVX2 intrinsics,
+/// but unlike the `avx2_f32_t` it uses Kahan stable summation algorithm to compensate floating point error.
+/// https://en.wikipedia.org/wiki/Kahan_summation_algorithm
 struct avx2_f32kahan_t {
 
     float const *const begin_ = nullptr;
@@ -148,6 +174,8 @@ struct avx2_f32kahan_t {
     }
 };
 
+/// Computes the sum of a sequence of float values using SIMD @b AVX2 intrinsics,
+/// but unlike the `avx2_f32_t` it uses double precision to compensate floating point error.
 struct avx2_f64_t {
 
     float const *const begin_ = nullptr;
@@ -172,6 +200,9 @@ struct avx2_f64_t {
     }
 };
 
+/// Computes the sum of a sequence of float values using SIMD @b AVX2 intrinsics,
+/// processing 256 bits of data on every logic thread, but unlike the `avx2_f32_t`
+/// it only performs aligned memory accesses.
 struct avx2_f32aligned_t {
 
     float const *const begin_ = nullptr;
@@ -193,10 +224,8 @@ struct avx2_f32aligned_t {
 
 #pragma region Multi Core
 
-/**
- * @brief OpenMP on-CPU multi-core reductions acceleration.
- * https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
- */
+/// Computes the sum of a sequence of float values using @b OpenMP on-CPU multi-core reductions acceleration.
+/// https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
 struct openmp_t {
 
     float const *const begin_ = nullptr;
@@ -217,6 +246,8 @@ struct openmp_t {
     }
 };
 
+/// Computes the sum of a sequence of float values using @b std::thread on-CPU multi-core reductions acceleration.
+/// https://en.cppreference.com/w/cpp/thread/thread
 template <typename serial_at = stl_accumulate_gt<float>> struct threads_gt {
 
     float *const begin_ = nullptr;
@@ -262,4 +293,4 @@ template <typename serial_at = stl_accumulate_gt<float>> struct threads_gt {
     }
 };
 
-} // namespace unum
+} // namespace ashvardanian::reduce

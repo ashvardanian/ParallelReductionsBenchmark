@@ -10,7 +10,7 @@
 
 using namespace nvcuda;
 
-namespace unum {
+namespace ashvardanian::reduce {
 
 struct cuda_blas_t {
 
@@ -149,4 +149,4 @@ struct cuda_tensors_t {
     }
 };
 
-} // namespace unum
+} // namespace ashvardanian::reduce

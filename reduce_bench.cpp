@@ -14,7 +14,8 @@
 #include "reduce_cuda.hpp"
 #endif
 
-using namespace unum;
+using namespace ashvardanian::reduce;
+
 namespace bm = benchmark;
 static volatile float *dataset_begin = nullptr;
 static volatile float *dataset_end = nullptr;
@@ -83,6 +84,8 @@ int main(int argc, char **argv) {
     // bm::RegisterBenchmark("memset@threads", &make<threads_gt<memset_t>>)->MinTime(10)->UseRealTime();
 
     // Generic CPU benchmarks
+    bm::RegisterBenchmark("unrolled<f32>", &make<unrolled_gt<float>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("unrolled<f64>", &make<unrolled_gt<double>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::accumulate<f32>", &make<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::accumulate<f64>", &make<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::reduce<par, f32>", &make<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();

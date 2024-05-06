@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # Define the CUDA architectures.
 # Empty value is forbidden.
-project(ParallelReductionsBenchmark LANGUAGES CXX)
+project(ParallelReductionsBenchmark LANGUAGES CXX CUDA)
 
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)

@@ -10,8 +10,9 @@
 
 using namespace nvcuda;
 
-namespace unum {
+namespace ashvardanian::reduce {
 
+/// Base class for CUDA-based reductions.
 struct cuda_base_t {
     static constexpr int max_block_size_k = 1024;
     static constexpr int threads = 512;
@@ -45,15 +46,12 @@ __global__ void cu_reduce_blocks(float const *inputs, unsigned int input_size, f
         outputs[blockIdx.x] = shared[0];
 }
 
-/**
- * @brief Uses global memory for partial sums.
- *
- * Reading:
- * https://sodocumentation.net/cuda/topic/6566/parallel-reduction--e-g--how-to-sum-an-array-
- * https://stackoverflow.com/inputs/25584577
- * https://stackoverflow.com/q/12733084
- * https://stackoverflow.com/q/44278317
- */
+/// CUDA-based reduction using slow `global` memory for partial sums.
+///
+/// https://sodocumentation.net/cuda/topic/6566/parallel-reduction--e-g--how-to-sum-an-array-
+/// https://stackoverflow.com/inputs/25584577
+/// https://stackoverflow.com/q/12733084
+/// https://stackoverflow.com/q/44278317
 struct cuda_blocks_t : public cuda_base_t {
 
     cuda_blocks_t(float const *b, float const *e) : cuda_base_t(b, e) {}
@@ -119,13 +117,10 @@ __global__ void cu_reduce_warps(float const *inputs, unsigned int input_size, fl
         outputs[blockIdx.x] = sum;
 }
 
-/**
- * @brief Uses warp shuffles on Kepler and newer architectures.
- * Source: https://developer.nvidia.com/blog/faster-parallel-reductions-kepler/
- * More reading:
- * https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
- * https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-kepler-shuffle/
- */
+/// CUDA-based reductions using fast warp shuffles on Kepler and newer architectures.
+/// https://developer.nvidia.com/blog/faster-parallel-reductions-kepler/
+/// https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
+/// https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-kepler-shuffle/
 struct cuda_warps_t : public cuda_base_t {
 
     cuda_warps_t(float const *b, float const *e) : cuda_base_t(b, e) {}
@@ -153,11 +148,8 @@ inline static size_t cuda_device_count() {
     return static_cast<size_t>(count);
 }
 
-/**
- * @brief Used Thrust templates library for parallel reductions
- * on Nvidia GPUs, whithout explicitly writing a single line of CUDA.
- * https://docs.nvidia.com/cuda/thrust/index.html#reductions
- */
+/// Uses CUDA Thrust library for parallel reductions on Nvidia GPUs.
+/// https://docs.nvidia.com/cuda/thrust/index.html#reductions
 struct cuda_thrust_t {
     thrust::device_vector<float> gpu_inputs;
     cuda_thrust_t(float const *b, float const *e) : gpu_inputs(b, e) {}
@@ -166,10 +158,8 @@ struct cuda_thrust_t {
     }
 };
 
-/**
- * @brief Uses CUB on Nvidia GPUs for faster global reductions.
- * https://nvlabs.github.io/cub/structcub_1_1_device_reduce.html#aa4adabeb841b852a7a5ecf4f99a2daeb
- */
+/// Uses CUB on Nvidia GPUs for faster global reductions.
+/// https://nvlabs.github.io/cub/structcub_1_1_device_reduce.html#aa4adabeb841b852a7a5ecf4f99a2daeb
 struct cuda_cub_t {
     thrust::device_vector<float> gpu_inputs;
     thrust::device_vector<uint8_t> temporary;
@@ -209,4 +199,4 @@ struct cuda_cub_t {
     }
 };
 
-} // namespace unum
+} // namespace ashvardanian::reduce
