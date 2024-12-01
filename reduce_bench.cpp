@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
         ->UseRealTime();
     bm::RegisterBenchmark("openmp<f32>", &make<openmp_t>)->MinTime(10)->UseRealTime();
 
-    // x86
+    // x86 AVX2
 #if defined(__AVX2__)
     bm::RegisterBenchmark("avx2<f32>", &make<avx2_f32_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f32kahan>", &make<avx2_f32kahan_t>)->MinTime(10)->UseRealTime();
@@ -106,6 +106,17 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx2<f32aligned>@threads", &make<threads_gt<avx2_f32aligned_t>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f64>@threads", &make<threads_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("sse<f32aligned>@threads", &make<threads_gt<sse_f32aligned_t>>)->MinTime(10)->UseRealTime();
+#endif
+    // x86 AVX-512
+#if defined(__AVX512F__)
+    bm::RegisterBenchmark("avx512<f32streamed>", &make<avx512_f32streamed_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32streamed>@threads", &make<threads_gt<avx512_f32streamed_t>>)
+        ->MinTime(10)
+        ->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32unrolled>", &make<avx512_f32streamed_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32unrolled>@threads", &make<threads_gt<avx512_f32streamed_t>>)
+        ->MinTime(10)
+        ->UseRealTime();
 #endif
 
 // CUDA

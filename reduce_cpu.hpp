@@ -5,8 +5,8 @@
 #include <omp.h>     // `#pragma omp`
 #include <thread>    // `std::thread`
 
-#if defined(__AVX2__)
-#include <immintrin.h> // AVX2 intrinsics
+#if defined(__AVX2__) || defined(__AVX512F__)
+#include <immintrin.h> // x86 intrinsics
 #endif
 
 namespace ashvardanian::reduce {
@@ -217,6 +217,99 @@ struct avx2_f32aligned_t {
             it += 8;
         }
         return _mm256_reduce_add_ps(a);
+    }
+};
+
+#endif
+
+#if defined(__AVX512F__)
+
+/// Computes the sum of a sequence of float values using SIMD @b AVX-512 intrinsics,
+/// using streaming loads and bidirectional accumulation into 2 separate ZMM registers.
+struct avx512_f32streamed_t {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    float operator()() const noexcept {
+        auto it_begin = begin_;
+        auto it_end = end_;
+
+        __m512 acc1 = _mm512_set1_ps(0.0f); // Accumulator for forward direction
+        __m512 acc2 = _mm512_set1_ps(0.0f); // Accumulator for reverse direction
+
+        // Process in chunks of 32 floats in each direction
+        for (; it_end - it_begin >= 64; it_begin += 32, it_end -= 32) {
+            acc1 = _mm512_add_ps(acc1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
+            acc2 = _mm512_add_ps(acc2, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_end - 32))));
+        }
+        if (it_end - it_begin >= 32) {
+            acc1 = _mm512_add_ps(acc1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
+            it_begin += 32;
+        }
+
+        // Combine the accumulators
+        __m512 acc = _mm512_add_ps(acc1, acc2);
+        float sum = _mm512_reduce_add_ps(acc);
+        while (it_begin < it_end)
+            sum += *it_begin++;
+        return sum;
+    }
+};
+
+/// Computes the sum of a sequence of float values using SIMD @b AVX-512 intrinsics,
+/// using caching loads and bidirectional traversal using all the available ZMM registers.
+struct avx512_f32unrolled_t {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    float operator()() const noexcept {
+        auto it_begin = begin_;
+        auto it_end = end_;
+
+        // We have a grand-total of 32 floats in a ZMM register.
+        // We want to keep half of them free for loading buffers, and the rest can be used for accumulation:
+        // 8 in the forward direction, 8 in the reverse direction, and 16 for the accumulator.
+        __m512 fwd0 = _mm512_set1_ps(0.0f), rev0 = _mm512_set1_ps(0.0f);
+        __m512 fwd1 = _mm512_set1_ps(0.0f), rev1 = _mm512_set1_ps(0.0f);
+        __m512 fwd2 = _mm512_set1_ps(0.0f), rev2 = _mm512_set1_ps(0.0f);
+        __m512 fwd3 = _mm512_set1_ps(0.0f), rev3 = _mm512_set1_ps(0.0f);
+        __m512 fwd4 = _mm512_set1_ps(0.0f), rev4 = _mm512_set1_ps(0.0f);
+        __m512 fwd5 = _mm512_set1_ps(0.0f), rev5 = _mm512_set1_ps(0.0f);
+        __m512 fwd6 = _mm512_set1_ps(0.0f), rev6 = _mm512_set1_ps(0.0f);
+        __m512 fwd7 = _mm512_set1_ps(0.0f), rev7 = _mm512_set1_ps(0.0f);
+
+        // Process in chunks of 32 floats x 8 ZMM registers = 256 floats in each direction
+        for (; it_end - it_begin >= 512; it_begin += 256, it_end -= 256) {
+            fwd0 = _mm512_add_ps(fwd0, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 0))));
+            fwd1 = _mm512_add_ps(fwd1, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 1))));
+            fwd2 = _mm512_add_ps(fwd2, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 2))));
+            fwd3 = _mm512_add_ps(fwd3, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 3))));
+            fwd4 = _mm512_add_ps(fwd4, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 4))));
+            fwd5 = _mm512_add_ps(fwd5, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 5))));
+            fwd6 = _mm512_add_ps(fwd6, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 6))));
+            fwd7 = _mm512_add_ps(fwd7, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_begin + 32 * 7))));
+            rev0 = _mm512_add_ps(rev0, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 0)))));
+            rev1 = _mm512_add_ps(rev1, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 1)))));
+            rev2 = _mm512_add_ps(rev2, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 2)))));
+            rev3 = _mm512_add_ps(rev3, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 3)))));
+            rev4 = _mm512_add_ps(rev4, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 4)))));
+            rev5 = _mm512_add_ps(rev5, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 5)))));
+            rev6 = _mm512_add_ps(rev6, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 6)))));
+            rev7 = _mm512_add_ps(rev7, _mm512_castsi512_ps(_mm512_load_si512((void *)(it_end - 32 * (1 + 7)))));
+        }
+        for (; it_end - it_begin >= 32; it_begin += 32)
+            fwd1 = _mm512_add_ps(fwd1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
+
+        // Combine the accumulators
+        __m512 fwd = _mm512_add_ps(_mm512_add_ps(_mm512_add_ps(fwd0, fwd1), _mm512_add_ps(fwd2, fwd3)),
+                                   _mm512_add_ps(_mm512_add_ps(fwd4, fwd5), _mm512_add_ps(fwd5, fwd7)));
+        __m512 rev = _mm512_add_ps(_mm512_add_ps(_mm512_add_ps(rev0, rev1), _mm512_add_ps(rev2, rev3)),
+                                   _mm512_add_ps(_mm512_add_ps(rev4, rev5), _mm512_add_ps(rev5, rev7)));
+        __m512 acc = _mm512_add_ps(fwd, rev);
+        float sum = _mm512_reduce_add_ps(acc);
+        while (it_begin < it_end)
+            sum += *it_begin++;
+        return sum;
     }
 };
 
