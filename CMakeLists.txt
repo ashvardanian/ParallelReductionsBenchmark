@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # Define the CUDA architectures.
 # Empty value is forbidden.
-project(ParallelReductionsBenchmark LANGUAGES CXX CUDA)
+project(ParallelReductionsBenchmark LANGUAGES CXX)
 
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
@@ -90,6 +90,7 @@ endif()
 # List of all possibkle compiler IDs:
 # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
 if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CUDA_COMPILER_ID STREQUAL "NVHPC")
+    enable_language(CUDA)
     message("-- Detected Nvidia Compiler")
     set_property(SOURCE reduce_bench.cpp PROPERTY LANGUAGE CUDA)
     set_target_properties(reduce_bench PROPERTIES POSITION_INDEPENDENT_CODE ON)
