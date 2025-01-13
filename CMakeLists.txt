@@ -20,17 +20,16 @@ include(FetchContent)
 FetchContent_Declare(
     fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_TAG master
-    GIT_SHALLOW TRUE
+    GIT_TAG 11.1.2
 )
 FetchContent_MakeAvailable(fmt)
 
-# Fetch GBenchmark and surpress internal tests.
+# Fetch GBenchmark and suppress internal tests.
 # https://github.com/google/benchmark/blob/main/docs/user_guide.md#using-register-benchmark
 FetchContent_Declare(
     benchmark
     GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG v1.8.3
+    GIT_TAG v1.9.1
 )
 set(BENCHMARK_ENABLE_TESTING OFF)
 set(BENCHMARK_ENABLE_INSTALL OFF)
@@ -44,19 +43,19 @@ FetchContent_MakeAvailable(benchmark)
 # Nvidia CCCL can be configured with Intel TBB.
 # https://github.com/rapidsai/cuml/issues/3540
 FetchContent_Declare(
-    cccl
+    CCCL
     GIT_REPOSITORY https://github.com/nvidia/cccl.git
-    GIT_TAG v2.2.0
+    GIT_TAG v2.7.0
     GIT_SHALLOW TRUE
 )
-FetchContent_MakeAvailable(cccl)
+FetchContent_MakeAvailable(CCCL)
 
 # We need TBB for Parallel CPU Algorithms in GCC.
 # https://github.com/oneapi-src/oneTBB/blob/onetbb_2021/cmake/README.md
 FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
-    GIT_TAG v2021.11.0
+    GIT_TAG v2022.0.0
     GIT_SHALLOW TRUE
 )
 set(TBB_TEST OFF CACHE BOOL "Do not build TBB tests" FORCE)
@@ -69,7 +68,7 @@ set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
-# Add CUDA and cccl dependencies
+# Add CUDA and CCCL dependencies
 find_package(Threads REQUIRED)
 
 add_executable(reduce_bench reduce_bench.cpp)
@@ -87,7 +86,7 @@ if(OpenCL_FOUND)
     target_link_libraries(reduce_bench OpenCL::OpenCL)
 endif()
 
-# List of all possibkle compiler IDs:
+# List of all possible compiler IDs:
 # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
 if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CUDA_COMPILER_ID STREQUAL "NVHPC")
     enable_language(CUDA)
