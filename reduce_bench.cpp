@@ -90,14 +90,18 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("std::accumulate<f64>", &make<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::reduce<par, f32>", &make<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::reduce<par, f64>", &make<stl_par_reduce_gt<double>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &make<stl_parunseq_reduce_gt<float>>)
+    bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &make<stl_par_unseq_reduce_gt<float>>)
         ->MinTime(10)
         ->UseRealTime();
-    bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &make<stl_parunseq_reduce_gt<double>>)
+    bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &make<stl_par_unseq_reduce_gt<double>>)
         ->MinTime(10)
         ->UseRealTime();
     bm::RegisterBenchmark("openmp<f32>", &make<openmp_t>)->MinTime(10)->UseRealTime();
 
+    // x86 SSE
+#if defined(__SSE__)
+    bm::RegisterBenchmark("sse<f32aligned>@threads", &make<threads_gt<sse_f32aligned_t>>)->MinTime(10)->UseRealTime();
+#endif
     // x86 AVX2
 #if defined(__AVX2__)
     bm::RegisterBenchmark("avx2<f32>", &make<avx2_f32_t>)->MinTime(10)->UseRealTime();
@@ -105,7 +109,6 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx2<f64>", &make<avx2_f64_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f32aligned>@threads", &make<threads_gt<avx2_f32aligned_t>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f64>@threads", &make<threads_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("sse<f32aligned>@threads", &make<threads_gt<sse_f32aligned_t>>)->MinTime(10)->UseRealTime();
 #endif
     // x86 AVX-512
 #if defined(__AVX512F__)

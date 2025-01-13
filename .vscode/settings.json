@@ -92,5 +92,14 @@
         "cuchar": "cpp",
         "hash_set": "cpp",
         "latch": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "ashvardanian",
+        "CCCL",
+        "CUDA",
+        "Kahan",
+        "shfl",
+        "SPIR",
+        "STREQUAL"
+    ]
 }

@@ -62,7 +62,8 @@ template <typename accumulator_at = float> struct stl_accumulate_gt {
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
 };
 
-/// Computes the sum of a sequence of float values using parallel std::reduce with execution policy std::execution::par.
+/// Computes the sum of a sequence of float values using parallel `std::reduce` with execution
+/// policy @b `std::execution::par`.
 template <typename accumulator_at = float> struct stl_par_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -72,9 +73,9 @@ template <typename accumulator_at = float> struct stl_par_reduce_gt {
     }
 };
 
-/// Computes the sum of a sequence of float values using parallel std::reduce with execution policy
-/// std::execution::par_unseq for non-blocking parallelism.
-template <typename accumulator_at = float> struct stl_parunseq_reduce_gt {
+/// Computes the sum of a sequence of float values using parallel `std::reduce` with execution
+/// policy @b `std::execution::par_unseq` for non-blocking parallelism.
+template <typename accumulator_at = float> struct stl_par_unseq_reduce_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
@@ -82,6 +83,8 @@ template <typename accumulator_at = float> struct stl_parunseq_reduce_gt {
         return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0), std::plus<accumulator_at>());
     }
 };
+
+#if defined(__SSE__)
 
 /// Computes the sum of a sequence of float values using SIMD @b SSE intrinsics,
 /// processing 128 bits of data on every logic thread.
@@ -103,6 +106,8 @@ struct sse_f32aligned_t {
         return _mm_cvtss_f32(a);
     }
 };
+
+#endif
 
 #if defined(__AVX2__)
 
@@ -301,10 +306,12 @@ struct avx512_f32unrolled_t {
             fwd1 = _mm512_add_ps(fwd1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
 
         // Combine the accumulators
-        __m512 fwd = _mm512_add_ps(_mm512_add_ps(_mm512_add_ps(fwd0, fwd1), _mm512_add_ps(fwd2, fwd3)),
-                                   _mm512_add_ps(_mm512_add_ps(fwd4, fwd5), _mm512_add_ps(fwd5, fwd7)));
-        __m512 rev = _mm512_add_ps(_mm512_add_ps(_mm512_add_ps(rev0, rev1), _mm512_add_ps(rev2, rev3)),
-                                   _mm512_add_ps(_mm512_add_ps(rev4, rev5), _mm512_add_ps(rev5, rev7)));
+        __m512 fwd = _mm512_add_ps( //
+            _mm512_add_ps(_mm512_add_ps(fwd0, fwd1), _mm512_add_ps(fwd2, fwd3)),
+            _mm512_add_ps(_mm512_add_ps(fwd4, fwd5), _mm512_add_ps(fwd5, fwd7)));
+        __m512 rev = _mm512_add_ps( //
+            _mm512_add_ps(_mm512_add_ps(rev0, rev1), _mm512_add_ps(rev2, rev3)),
+            _mm512_add_ps(_mm512_add_ps(rev4, rev5), _mm512_add_ps(rev5, rev7)));
         __m512 acc = _mm512_add_ps(fwd, rev);
         float sum = _mm512_reduce_add_ps(acc);
         while (it_begin < it_end)

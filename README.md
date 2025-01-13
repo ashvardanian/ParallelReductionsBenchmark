@@ -2,17 +2,21 @@
 
 ![Parallel Reductions Benchmark](https://github.com/ashvardanian/ashvardanian/blob/master/repositories/ParallelReductionsBenchmark.jpg?raw=true)
 
-One of the canonical examples when designing parallel algorithms is implementing parallel tree-like reductions or its special case of accumulating a bunch of numbers located in a continuous block of memory.
+One of the canonical examples when designing parallel algorithms is implementing parallel tree-like reductions, which is a special case of accumulating a bunch of numbers located in a continuous block of memory.
 In modern C++, most developers would call `std::accumulate(array.begin(), array.end(), 0)`, and in Python, it's just a `sum(array)`.
 Implementing those operations with high utilization in many-core systems is surprisingly non-trivial and depends heavily on the hardware architecture.
+Moreover, on arrays with billions of elements, the default `float` error mounts, and the results become inaccurate unless a [Kahan-like scheme](https://en.wikipedia.org/wiki/Kahan_summation_algorithm) is used.
+
 This repository contains several educational examples showcasing the performance differences between different solutions:
 
-- AVX2 single-threaded, but SIMD-parallel code.
+- Single-threaded but SIMD-accelerated code:
+  - SSE, AVX, AVX-512 on x86.
+  - 🔜 NEON and SVE on Arm.
 - OpenMP `reduction` clause.
 - Thrust with its `thrust::reduce`.
 - CUDA kernels with warp-reductions.
 - OpenCL kernels, eight of them.
-- Parallel STL `<algorithm>'s in GCC with Intel oneTBB.
+- Parallel STL `<algorithm>` in GCC with Intel oneTBB.
 
 Previously, it also compared ArrayFire, Halide, and Vulkan queues for SPIR-V kernels and SyCL.
 Examples were collected from early 2010s until 2019 and later updated in 2022.
@@ -94,12 +98,12 @@ std::reduce<par, f64>/min_time:10.000/real_time          3921280 ns      3916897
 std::reduce<par_unseq, f32>/min_time:10.000/real_time    3884794 ns      3864061 ns         3644 bytes/s=276.396G/s error,%=0
 std::reduce<par_unseq, f64>/min_time:10.000/real_time    3889332 ns      3866968 ns         3585 bytes/s=276.074G/s error,%=100
 openmp<f32>/min_time:10.000/real_time                    5061544 ns      5043250 ns         2407 bytes/s=212.137G/s error,%=65.5651u
+sse<f32aligned>@threads/min_time:10.000/real_time        5986350 ns      5193690 ns         2343 bytes/s=179.365G/s error,%=1.25021
 avx2<f32>/min_time:10.000/real_time                    110796474 ns    110794861 ns          127 bytes/s=9.69112G/s error,%=50
 avx2<f32kahan>/min_time:10.000/real_time               134144762 ns    134137771 ns          105 bytes/s=8.00435G/s error,%=0
 avx2<f64>/min_time:10.000/real_time                    115791797 ns    115790878 ns          121 bytes/s=9.27304G/s error,%=0
 avx2<f32aligned>@threads/min_time:10.000/real_time       5958283 ns      5041060 ns         2358 bytes/s=180.21G/s error,%=1.25033
 avx2<f64>@threads/min_time:10.000/real_time              5996481 ns      5123440 ns         2337 bytes/s=179.062G/s error,%=1.25001
-sse<f32aligned>@threads/min_time:10.000/real_time        5986350 ns      5193690 ns         2343 bytes/s=179.365G/s error,%=1.25021
 cub@cuda/min_time:10.000/real_time                        356488 ns       356482 ns        39315 bytes/s=3.012T/s error,%=0
 warps@cuda/min_time:10.000/real_time                      486387 ns       486377 ns        28788 bytes/s=2.20759T/s error,%=0
 thrust@cuda/min_time:10.000/real_time                     500941 ns       500919 ns        27512 bytes/s=2.14345T/s error,%=0

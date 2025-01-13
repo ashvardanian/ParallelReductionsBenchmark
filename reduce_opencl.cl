@@ -1,11 +1,11 @@
 // Project: SandboxGPUs.
-// Author: Ashot Vardanian.
+// Author: Ash Vardanian.
 // Created: 04/09/2019.
 // Copyright: Check "License" file.
 //
 
 /**
- *  Most of the algorithms here have follwong properties:
+ *  Most of the algorithms here have following properties:
  *  - takes log(n) steps for n input elements,
  *  - uses n threads,
  *  - only works for power-of-2 arrays.

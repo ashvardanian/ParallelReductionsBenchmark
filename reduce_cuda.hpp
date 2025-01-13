@@ -15,7 +15,7 @@ namespace ashvardanian::reduce {
 /// Base class for CUDA-based reductions.
 struct cuda_base_t {
     static constexpr int max_block_size_k = 1024;
-    static constexpr int threads = 512;
+    static constexpr int threads_k = 512;
 
     int blocks = max_block_size_k;
     thrust::device_vector<float> gpu_inputs;
@@ -23,7 +23,7 @@ struct cuda_base_t {
     thrust::host_vector<float> cpu_partial_sums;
 
     cuda_base_t(float const *b, float const *e)
-        : blocks(std::min<int>(((e - b) + threads - 1) / threads, max_block_size_k)), gpu_inputs(b, e),
+        : blocks(std::min<int>(((e - b) + threads_k - 1) / threads_k, max_block_size_k)), gpu_inputs(b, e),
           gpu_partial_sums(max_block_size_k), cpu_partial_sums(max_block_size_k) {}
 };
 
@@ -59,14 +59,14 @@ struct cuda_blocks_t : public cuda_base_t {
     float operator()() {
 
         // Accumulate partial results...
-        int shared_memory = threads * sizeof(float);
-        cu_reduce_blocks<<<blocks, threads, shared_memory>>>(gpu_inputs.data().get(), gpu_inputs.size(),
-                                                             gpu_partial_sums.data().get());
+        int shared_memory = threads_k * sizeof(float);
+        cu_reduce_blocks<<<blocks, threads_k, shared_memory>>>( //
+            gpu_inputs.data().get(), gpu_inputs.size(), gpu_partial_sums.data().get());
 
         // Then reduce them further to inputs single scalar
         shared_memory = max_block_size_k * sizeof(float);
-        cu_reduce_blocks<<<1, max_block_size_k, shared_memory>>>(gpu_partial_sums.data().get(), blocks,
-                                                                 gpu_partial_sums.data().get());
+        cu_reduce_blocks<<<1, max_block_size_k, shared_memory>>>( //
+            gpu_partial_sums.data().get(), blocks, gpu_partial_sums.data().get());
 
         // Sync all queues and fetch results
         cudaDeviceSynchronize();
@@ -128,10 +128,12 @@ struct cuda_warps_t : public cuda_base_t {
     float operator()() {
 
         // Accumulate partial results...
-        cu_reduce_warps<<<blocks, threads>>>(gpu_inputs.data().get(), gpu_inputs.size(), gpu_partial_sums.data().get());
+        cu_reduce_warps<<<blocks, threads_k>>>( //
+            gpu_inputs.data().get(), gpu_inputs.size(), gpu_partial_sums.data().get());
 
         // Then reduce them further to inputs single scalar
-        cu_reduce_warps<<<1, max_block_size_k>>>(gpu_partial_sums.data().get(), blocks, gpu_partial_sums.data().get());
+        cu_reduce_warps<<<1, max_block_size_k>>>( //
+            gpu_partial_sums.data().get(), blocks, gpu_partial_sums.data().get());
 
         // Sync all queues and fetch results
         cudaDeviceSynchronize();
