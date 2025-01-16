@@ -62,6 +62,8 @@ template <typename accumulator_at = float> struct stl_accumulate_gt {
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
 };
 
+#if defined(__cpp_lib_execution)
+
 /// Computes the sum of a sequence of float values using parallel `std::reduce` with execution
 /// policy @b `std::execution::par`.
 template <typename accumulator_at = float> struct stl_par_reduce_gt {
@@ -83,6 +85,8 @@ template <typename accumulator_at = float> struct stl_par_unseq_reduce_gt {
         return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0), std::plus<accumulator_at>());
     }
 };
+
+#endif // defined(__cpp_lib_execution)
 
 #if defined(__SSE__)
 
