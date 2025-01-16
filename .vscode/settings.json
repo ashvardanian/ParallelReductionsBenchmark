@@ -99,8 +99,10 @@
         "CCCL",
         "CUDA",
         "Kahan",
+        "openmp",
         "shfl",
         "SPIR",
-        "STREQUAL"
+        "STREQUAL",
+        "Vardanian"
     ]
 }

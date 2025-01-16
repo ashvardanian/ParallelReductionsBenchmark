@@ -2,8 +2,9 @@
 #include <cstring>   // `std::memcpy`
 #include <execution> // `std::execution::par_unseq`
 #include <numeric>   // `std::accumulate`, `std::reduce`
-#include <omp.h>     // `#pragma omp`
 #include <thread>    // `std::thread`
+
+#include <omp.h> // `omp_set_num_threads`
 
 #if defined(__AVX2__) || defined(__AVX512F__)
 #include <immintrin.h> // x86 intrinsics
@@ -111,7 +112,7 @@ struct sse_f32aligned_t {
     }
 };
 
-#endif
+#endif // defined(__SSE__)
 
 #if defined(__AVX2__)
 
@@ -229,7 +230,7 @@ struct avx2_f32aligned_t {
     }
 };
 
-#endif
+#endif // defined(__AVX2__)
 
 #if defined(__AVX512F__)
 
@@ -324,9 +325,9 @@ struct avx512_f32unrolled_t {
     }
 };
 
-#endif
+#endif // defined(__AVX512F__)
 
-#pragma region Multi Core
+#pragma region Multicore
 
 /// Computes the sum of a sequence of float values using @b OpenMP on-CPU multi-core reductions acceleration.
 /// https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
