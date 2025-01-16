@@ -99,6 +99,7 @@
         "blas",
         "CCCL",
         "constexpr",
+        "cublas",
         "CUDA",
         "Kahan",
         "openmp",

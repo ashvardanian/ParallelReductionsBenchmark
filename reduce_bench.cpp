@@ -1,3 +1,9 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_bench.cpp
+ *  @brief Benchmarking parallel reductions
+ *  @author Ash Vardanian
+ */
 #include <cstdlib> // Accessing environment variables
 #include <new>     // `std::launder`
 
@@ -128,17 +134,18 @@ int main(int argc, char **argv) {
         ->UseRealTime();
 #endif // defined(__AVX512F__)
 
-// CUDA
+    // CUDA
 #if defined(__CUDACC__)
     if (cuda_device_count()) {
         bm::RegisterBenchmark("cub@cuda", &make<cuda_cub_t>)->MinTime(10)->UseRealTime();
         bm::RegisterBenchmark("warps@cuda", &make<cuda_warps_t>)->MinTime(10)->UseRealTime();
         bm::RegisterBenchmark("thrust@cuda", &make<cuda_thrust_t>)->MinTime(10)->UseRealTime();
-    } else
+    } else {
         fmt::print("No CUDA capable devices found!\n");
+    }
 #endif
 
-        // OpenCL
+    // OpenCL
 #if defined(__OPENCL__)
     for (auto tgt : ocl_targets) {
         for (auto kernel_name : opencl_t::kernels_k) {

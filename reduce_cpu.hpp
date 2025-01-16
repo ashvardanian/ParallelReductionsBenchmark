@@ -1,3 +1,9 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_cpu.hpp
+ *  @brief Parallel reduction with SIMD and multicore acceleration
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <cstring>   // `std::memcpy`
 #include <execution> // `std::execution::par_unseq`

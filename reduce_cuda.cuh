@@ -1,3 +1,9 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_cuda.cuh
+ *  @brief Pure CUDA, CUB, and Thrust-based reductions
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <cuda_runtime_api.h>
 #include <mma.h> // `wmma::`

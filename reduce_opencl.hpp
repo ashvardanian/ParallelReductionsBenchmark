@@ -1,3 +1,9 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_opencl.hpp
+ *  @brief OpenCL host code for parallel reductions
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <fstream>
 #include <sstream>

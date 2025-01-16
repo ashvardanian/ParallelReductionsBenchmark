@@ -1,8 +1,9 @@
-// Project: SandboxGPUs.
-// Author: Ash Vardanian.
-// Created: 04/09/2019.
-// Copyright: Check "License" file.
-//
+/**
+ *  @date 04/09/2019
+ *  @file reduce_opencl.cl
+ *  @brief OpenCL kernels for reduction algorithms
+ *  @author Ash Vardanian
+ */
 
 /**
  *  Most of the algorithms here have following properties:

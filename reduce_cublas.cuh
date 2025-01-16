@@ -1,3 +1,9 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_cublas.cuh
+ *  @brief cuBLAS-based reductions
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <cublas_api.h>
 #include <cuda_runtime_api.h>
