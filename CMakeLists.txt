@@ -100,6 +100,50 @@ if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA" OR CMAKE_CUDA_COMPILER_ID STREQUAL "
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr --extended-lambda")
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_86,code=sm_86")
 
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND 0)
+    set(METAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/reduce_metal.msl)
+    set(METALLIB_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/reduce_metal.metallib)
+
+    add_custom_command(
+        OUTPUT ${METALLIB_OUTPUT}
+        COMMAND xcrun -sdk macosx metal -c ${METAL_SRC} -o reduce_metal.air
+        COMMAND xcrun -sdk macosx metallib reduce_metal.air -o ${METALLIB_OUTPUT}
+        DEPENDS ${METAL_SRC}
+        COMMENT "Compiling Metal shader: ${METAL_SRC} -> ${METALLIB_OUTPUT}"
+        VERBATIM
+    )
+
+    # Create a pseudo target to build the metallib
+    add_custom_target(MetalLibBuild ALL
+        DEPENDS ${METALLIB_OUTPUT}
+    )
+
+    enable_language(OBJCXX)
+    set_property(SOURCE reduce_metal.hpp PROPERTY LANGUAGE OBJCXX)
+    set_property(SOURCE reduce_bench.cpp PROPERTY LANGUAGE OBJCXX)
+    target_link_libraries(reduce_bench
+        PRIVATE
+        "-framework Metal"
+        "-framework Foundation"
+    )
+    set_source_files_properties(
+        reduce_bench.cpp
+        PROPERTIES
+        COMPILE_FLAGS "-x objective-c++ -fobjc-arc"
+    )
+
+    # Make sure reduce_bench depends on MetalLibBuild so the .metallib is built first
+    add_dependencies(reduce_bench MetalLibBuild)
+
+    # Copy the `metallib` to the same folder as reduce_bench
+    add_custom_command(
+        TARGET reduce_bench
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${METALLIB_OUTPUT}
+        $<TARGET_FILE_DIR:reduce_bench>
+    )
+
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     message("-- Detected Clang Compiler")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

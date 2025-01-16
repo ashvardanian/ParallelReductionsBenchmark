@@ -4,7 +4,7 @@
  *  @brief Benchmarking parallel reductions
  *  @author Ash Vardanian
  */
-#include <cstdlib> // Accessing environment variables
+#include <cstdlib> // `std::getenv`
 #include <new>     // `std::launder`
 
 #include <benchmark/benchmark.h>
@@ -18,6 +18,10 @@
 
 #if defined(__CUDACC__)
 #include "reduce_cuda.cuh"
+#endif
+
+#if defined(__APPLE__) && 0 // TODO: Fix compilation
+#include "reduce_metal.h"
 #endif
 
 using namespace ashvardanian::reduce;
@@ -162,6 +166,10 @@ int main(int argc, char **argv) {
             }
         }
     }
+#endif
+
+#if defined(__APPLE__) && 0
+    bm::RegisterBenchmark("metal<f32>", &make<metal_t>)->MinTime(10)->UseRealTime();
 #endif
 
     bm::Initialize(&argc, argv);
