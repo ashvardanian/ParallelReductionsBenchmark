@@ -96,13 +96,16 @@
     },
     "cSpell.words": [
         "ashvardanian",
+        "blas",
         "CCCL",
+        "constexpr",
         "CUDA",
         "Kahan",
         "openmp",
         "shfl",
         "SPIR",
         "STREQUAL",
-        "Vardanian"
+        "Vardanian",
+        "wmma"
     ]
 }

@@ -58,8 +58,8 @@ struct cuda_blas_t {
     }
 };
 
-__global__ void cu_reduce_tensors(float const *inputs, unsigned int input_size, float *sums_per_row,
-                                  unsigned int columns) {
+__global__ void cu_reduce_tensors( //
+    float const *inputs, unsigned int input_size, float *sums_per_row, unsigned int columns) {
 
     // Tile using a 2D grid
     unsigned int first_row_of_block = blockIdx.x * blockDim.x;
