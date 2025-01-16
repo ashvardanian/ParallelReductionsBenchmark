@@ -4,6 +4,7 @@
         "atomic": "cpp",
         "bit": "cpp",
         "*.tcc": "cpp",
+        "*.cl": "cpp",
         "cctype": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",

@@ -4,8 +4,10 @@
 #include <string>
 #include <vector>
 
+#include <fmt/core.h> // `fmt::format`
+
 #define CL_SILENCE_DEPRECATION 1
-#if __APPLE__
+#if defined(__APPLE__)
 #include <OpenCL/cl.h>
 #else
 #include <CL/cl.h>
