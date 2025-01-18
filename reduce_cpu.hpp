@@ -21,8 +21,9 @@ namespace ashvardanian::reduce {
 /// Returns half the number of hardware concurrency units (typically cores).
 inline static size_t total_cores() { return std::thread::hardware_concurrency() / 2; }
 
-/// Returns the optimal number of cores for parallel processing (same as total_cores).
-inline static size_t optimal_cores() { return total_cores(); }
+inline static size_t round_up_to_multiple(size_t value, size_t multiple) {
+    return ((value + multiple - 1) / multiple) * multiple;
+}
 
 /// Sets all elements in the provided range to the value 1.0f.
 struct memset_t {
@@ -241,7 +242,9 @@ struct avx2_f32aligned_t {
 #if defined(__AVX512F__)
 
 /// Computes the sum of a sequence of float values using SIMD @b AVX-512 intrinsics,
-/// using streaming loads and bidirectional accumulation into 2 separate ZMM registers.
+/// using @b non-temporal streaming loads and @b bidirectional accumulation into 2 separate ZMM registers.
+/// On both Intel and AMD this instruction has 3-4 cycle latency and can generally be executed on 2 ports,
+/// so we shouldn't get benefits from unrolling the loop further.
 struct avx512_f32streamed_t {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -273,7 +276,7 @@ struct avx512_f32streamed_t {
 };
 
 /// Computes the sum of a sequence of float values using SIMD @b AVX-512 intrinsics,
-/// using caching loads and bidirectional traversal using all the available ZMM registers.
+/// using @b caching loads and @b bidirectional traversal using @b all the available ZMM registers.
 struct avx512_f32unrolled_t {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
@@ -372,7 +375,11 @@ template <typename serial_at = stl_accumulate_gt<float>> struct threads_gt {
         sums_.resize(cores);
     }
 
-    size_t count_per_thread() const { return (end_ - begin_) / sums_.size(); }
+    size_t count_per_thread() const {
+        constexpr size_t entries_per_zmm_register = 64 / sizeof(float);
+        size_t balanced_split = (end_ - begin_) / sums_.size();
+        return round_up_to_multiple(balanced_split, entries_per_zmm_register);
+    }
 
     struct thread_task_t {
         float *const begin_;
