@@ -151,7 +151,7 @@ struct avx2_f32_t {
         auto it = begin_;
 
         // SIMD-parallel summation stage
-        auto running_sums = _mm256_set1_ps(0);
+        auto running_sums = _mm256_setzero_ps();
         for (; it + 8 < end_; it += 8)
             running_sums = _mm256_add_ps(_mm256_loadu_ps(it), running_sums);
 
@@ -176,10 +176,10 @@ struct avx2_f32kahan_t {
         auto it = begin_;
 
         // SIMD-parallel summation stage
-        auto running_sums = _mm256_set1_ps(0);
-        auto compensations = _mm256_set1_ps(0);
-        auto t = _mm256_set1_ps(0);
-        auto y = _mm256_set1_ps(0);
+        auto running_sums = _mm256_setzero_ps();
+        auto compensations = _mm256_setzero_ps();
+        auto t = _mm256_setzero_ps();
+        auto y = _mm256_setzero_ps();
         for (; it + 8 < end_; it += 8) {
             y = _mm256_sub_ps(_mm256_loadu_ps(it), compensations);
             t = _mm256_add_ps(running_sums, y);
@@ -232,7 +232,7 @@ struct avx2_f32aligned_t {
 
     float operator()() const noexcept {
         auto it = begin_;
-        auto a = _mm256_set1_ps(0);
+        auto a = _mm256_setzero_ps();
         auto const last_avx_ptr = begin_ + ((end_ - begin_) / 8 - 1) * 8;
         while (it != last_avx_ptr) {
             a = _mm256_add_ps(a, _mm256_load_ps(it));
@@ -258,8 +258,8 @@ struct avx512_f32streamed_t {
         auto it_begin = begin_;
         auto it_end = end_;
 
-        __m512 acc1 = _mm512_set1_ps(0.0f); // Accumulator for forward direction
-        __m512 acc2 = _mm512_set1_ps(0.0f); // Accumulator for reverse direction
+        __m512 acc1 = _mm512_setzero_ps(); // Accumulator for forward direction
+        __m512 acc2 = _mm512_setzero_ps(); // Accumulator for reverse direction
 
         // Process in chunks of 32 floats in each direction
         for (; it_end - it_begin >= 64; it_begin += 32, it_end -= 32) {
@@ -293,14 +293,14 @@ struct avx512_f32unrolled_t {
         // We have a grand-total of 32 floats in a ZMM register.
         // We want to keep half of them free for loading buffers, and the rest can be used for accumulation:
         // 8 in the forward direction, 8 in the reverse direction, and 16 for the accumulator.
-        __m512 fwd0 = _mm512_set1_ps(0.0f), rev0 = _mm512_set1_ps(0.0f);
-        __m512 fwd1 = _mm512_set1_ps(0.0f), rev1 = _mm512_set1_ps(0.0f);
-        __m512 fwd2 = _mm512_set1_ps(0.0f), rev2 = _mm512_set1_ps(0.0f);
-        __m512 fwd3 = _mm512_set1_ps(0.0f), rev3 = _mm512_set1_ps(0.0f);
-        __m512 fwd4 = _mm512_set1_ps(0.0f), rev4 = _mm512_set1_ps(0.0f);
-        __m512 fwd5 = _mm512_set1_ps(0.0f), rev5 = _mm512_set1_ps(0.0f);
-        __m512 fwd6 = _mm512_set1_ps(0.0f), rev6 = _mm512_set1_ps(0.0f);
-        __m512 fwd7 = _mm512_set1_ps(0.0f), rev7 = _mm512_set1_ps(0.0f);
+        __m512 fwd0 = _mm512_setzero_ps(), rev0 = _mm512_setzero_ps();
+        __m512 fwd1 = _mm512_setzero_ps(), rev1 = _mm512_setzero_ps();
+        __m512 fwd2 = _mm512_setzero_ps(), rev2 = _mm512_setzero_ps();
+        __m512 fwd3 = _mm512_setzero_ps(), rev3 = _mm512_setzero_ps();
+        __m512 fwd4 = _mm512_setzero_ps(), rev4 = _mm512_setzero_ps();
+        __m512 fwd5 = _mm512_setzero_ps(), rev5 = _mm512_setzero_ps();
+        __m512 fwd6 = _mm512_setzero_ps(), rev6 = _mm512_setzero_ps();
+        __m512 fwd7 = _mm512_setzero_ps(), rev7 = _mm512_setzero_ps();
 
         // Process in chunks of 32 floats x 8 ZMM registers = 256 floats in each direction
         for (; it_end - it_begin >= 512; it_begin += 256, it_end -= 256) {
