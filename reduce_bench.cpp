@@ -132,8 +132,8 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx512<f32streamed>@threads", &make<threads_gt<avx512_f32streamed_t>>)
         ->MinTime(10)
         ->UseRealTime();
-    bm::RegisterBenchmark("avx512<f32unrolled>", &make<avx512_f32streamed_t>)->MinTime(10)->UseRealTime();
-    bm::RegisterBenchmark("avx512<f32unrolled>@threads", &make<threads_gt<avx512_f32streamed_t>>)
+    bm::RegisterBenchmark("avx512<f32unrolled>", &make<avx512_f32unrolled_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32unrolled>@threads", &make<threads_gt<avx512_f32unrolled_t>>)
         ->MinTime(10)
         ->UseRealTime();
 #endif // defined(__AVX512F__)
