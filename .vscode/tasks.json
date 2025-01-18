@@ -6,12 +6,12 @@
         {
             "label": "Build Debug",
             "type": "shell",
-            "command": "cmake -B ./build_debug && cmake --build ./build_debug --config Debug"
+            "command": "cmake -B ./build_debug -DCMAKE_BUILD_TYPE=Debug && cmake --build ./build_debug --config Debug"
         },
         {
             "label": "Build & Run Release",
             "type": "shell",
-            "command": "cmake -B ./build_release && cmake --build ./build_release --config Release && ./build_release/reduce_bench"
+            "command": "cmake -B ./build_release -DCMAKE_BUILD_TYPE=Release && cmake --build ./build_release --config Release && ./build_release/reduce_bench"
         }
     ]
 }

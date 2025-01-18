@@ -10,8 +10,33 @@
             "preLaunchTask": "Build Debug",
             "program": "${workspaceFolder}/build_debug/reduce_bench",
             "args": [
-                "--benchmark_filter=cuda"
-            ]
+                "--benchmark_filter=sse"
+            ],
+            "setupCommands": [
+                { // Display content in STL containers pretty
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "environment": [
+                {
+                    "name": "ASAN_OPTIONS",
+                    "value": "detect_leaks=0:atexit=1:strict_init_order=1:strict_string_checks=1"
+                }
+            ],
+            "stopAtEntry": false,
+            "linux": {
+                "MIMode": "gdb"
+            },
+            "osx": {
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "program": "${workspaceFolder}\\build_debug\\reduce_bench.exe",
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+            }
         },
         {
             "name": "CUDA C++: Launch",
