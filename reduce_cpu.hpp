@@ -334,6 +334,45 @@ struct avx512_f32unrolled_t {
     }
 };
 
+/// Computes the sum of a sequence of float values using SIMD @b AVX-512 intrinsics,
+/// using @b non-temporal streaming loads and @b bidirectional accumulation into 2 separate ZMM registers,
+/// and @b interleaving the additions and FMAs, executing on different CPU @b ports on AMD Zen4.
+/// This hides the latency of expensive operations and improves hardware utilization!
+struct avx512_f32interleaving_t {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    float operator()() const noexcept {
+        auto it_begin = begin_;
+        auto it_end = end_;
+
+        __m512 acc1 = _mm512_setzero_ps(); // Accumulator for forward direction addition
+        __m512 acc2 = _mm512_setzero_ps(); // Accumulator for reverse direction addition
+        __m512 acc3 = _mm512_setzero_ps(); // Accumulator for forward direction FMAs
+        __m512 acc4 = _mm512_setzero_ps(); // Accumulator for reverse direction FMAs
+        __m512 ones = _mm512_set1_ps(1.0f);
+
+        // Process in chunks of 32 floats in each direction
+        for (; it_end - it_begin >= 128; it_begin += 64, it_end -= 64) {
+            acc1 = _mm512_add_ps(acc1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
+            acc2 = _mm512_add_ps(acc2, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_end - 32))));
+            acc3 = _mm512_fmadd_ps(ones, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin + 32))), acc3);
+            acc4 = _mm512_fmadd_ps(ones, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_end - 64))), acc4);
+        }
+        if (it_end - it_begin >= 32) {
+            acc1 = _mm512_add_ps(acc1, _mm512_castsi512_ps(_mm512_stream_load_si512((void *)(it_begin))));
+            it_begin += 32;
+        }
+
+        // Combine the accumulators
+        __m512 acc = _mm512_add_ps(_mm512_add_ps(acc1, acc2), _mm512_add_ps(acc2, acc3));
+        float sum = _mm512_reduce_add_ps(acc);
+        while (it_begin < it_end)
+            sum += *it_begin++;
+        return sum;
+    }
+};
+
 #endif // defined(__AVX512F__)
 
 #pragma region Multicore

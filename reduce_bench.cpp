@@ -136,6 +136,10 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx512<f32unrolled>@threads", &make<threads_gt<avx512_f32unrolled_t>>)
         ->MinTime(10)
         ->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32interleaving>", &make<avx512_f32interleaving_t>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("avx512<f32interleaving>@threads", &make<threads_gt<avx512_f32interleaving_t>>)
+        ->MinTime(10)
+        ->UseRealTime();
 #endif // defined(__AVX512F__)
 
     // CUDA
