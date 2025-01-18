@@ -106,16 +106,21 @@ struct sse_f32aligned_t {
     float const *const end_ = nullptr;
 
     float operator()() const noexcept {
+        auto const count_sse = (end_ - begin_) / 4;
+        auto const last_sse_ptr = begin_ + count_sse * 4;
         auto it = begin_;
-        auto a = _mm_set1_ps(0);
-        auto const last_sse_ptr = begin_ + ((end_ - begin_) / 4 - 1) * 4;
-        while (it != last_sse_ptr) {
-            a = _mm_add_ps(a, _mm_load_ps(it));
-            it += 4;
-        }
-        a = _mm_hadd_ps(a, a);
-        a = _mm_hadd_ps(a, a);
-        return _mm_cvtss_f32(a);
+
+        auto running_sums = _mm_setzero_ps();
+        for (; it != last_sse_ptr; it += 4)
+            running_sums = _mm_add_ps(running_sums, _mm_load_ps(it));
+
+        auto running_sum = 0.f;
+        for (; it != end_; ++it)
+            running_sum += *it;
+
+        running_sums = _mm_hadd_ps(running_sums, running_sums);
+        running_sums = _mm_hadd_ps(running_sums, running_sums);
+        return _mm_cvtss_f32(running_sums);
     }
 };
 
@@ -437,7 +442,7 @@ template <typename serial_at = stl_accumulate_gt<float>> struct threads_gt {
 
         // This thread lives by its own rules :)
         double running_sum = 0;
-        thread_task_t{it, it + batch_size, running_sum}();
+        thread_task_t{it, end_, running_sum}();
 
         // Accumulate sums from child threads.
         for (size_t i = 1; i < sums_.size(); ++i) {
