@@ -1,11 +1,19 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_opencl.hpp
+ *  @brief OpenCL host code for parallel reductions
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include <fmt/core.h> // `fmt::format`
+
 #define CL_SILENCE_DEPRECATION 1
-#if __APPLE__
+#if defined(__APPLE__)
 #include <OpenCL/cl.h>
 #else
 #include <CL/cl.h>

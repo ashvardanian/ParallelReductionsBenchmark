@@ -1,4 +1,10 @@
-#include <cstdlib> // Accessing environment variables
+/**
+ *  @date 04/09/2019
+ *  @file reduce_bench.cpp
+ *  @brief Benchmarking parallel reductions
+ *  @author Ash Vardanian
+ */
+#include <cstdlib> // `std::getenv`
 #include <new>     // `std::launder`
 
 #include <benchmark/benchmark.h>
@@ -11,7 +17,11 @@
 #endif
 
 #if defined(__CUDACC__)
-#include "reduce_cuda.hpp"
+#include "reduce_cuda.cuh"
+#endif
+
+#if defined(__APPLE__) && 0 // TODO: Fix compilation
+#include "reduce_metal.h"
 #endif
 
 using namespace ashvardanian::reduce;
@@ -75,8 +85,9 @@ int main(int argc, char **argv) {
 #if defined(__OPENCL__)
     auto ocl_targets = opencl_targets();
     for (auto const &tgt : ocl_targets)
-        fmt::print("- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
-                   tgt.language_version);
+        fmt::print( //
+            "- OpenCL: {} ({}), {}, {}\n", tgt.device_name, tgt.device_version, tgt.driver_version,
+            tgt.language_version);
 #endif
 
     // Memset is only useful as a baseline, but running it will corrupt our buffer
@@ -88,6 +99,9 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("unrolled<f64>", &make<unrolled_gt<double>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::accumulate<f32>", &make<stl_accumulate_gt<float>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::accumulate<f64>", &make<stl_accumulate_gt<double>>)->MinTime(10)->UseRealTime();
+    bm::RegisterBenchmark("openmp<f32>", &make<openmp_t>)->MinTime(10)->UseRealTime();
+
+#if defined(__cpp_lib_execution)
     bm::RegisterBenchmark("std::reduce<par, f32>", &make<stl_par_reduce_gt<float>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::reduce<par, f64>", &make<stl_par_reduce_gt<double>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("std::reduce<par_unseq, f32>", &make<stl_par_unseq_reduce_gt<float>>)
@@ -96,12 +110,13 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("std::reduce<par_unseq, f64>", &make<stl_par_unseq_reduce_gt<double>>)
         ->MinTime(10)
         ->UseRealTime();
-    bm::RegisterBenchmark("openmp<f32>", &make<openmp_t>)->MinTime(10)->UseRealTime();
+#endif
 
     // x86 SSE
 #if defined(__SSE__)
     bm::RegisterBenchmark("sse<f32aligned>@threads", &make<threads_gt<sse_f32aligned_t>>)->MinTime(10)->UseRealTime();
-#endif
+#endif // defined(__SSE__)
+
     // x86 AVX2
 #if defined(__AVX2__)
     bm::RegisterBenchmark("avx2<f32>", &make<avx2_f32_t>)->MinTime(10)->UseRealTime();
@@ -109,7 +124,8 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx2<f64>", &make<avx2_f64_t>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f32aligned>@threads", &make<threads_gt<avx2_f32aligned_t>>)->MinTime(10)->UseRealTime();
     bm::RegisterBenchmark("avx2<f64>@threads", &make<threads_gt<avx2_f64_t>>)->MinTime(10)->UseRealTime();
-#endif
+#endif // defined(__AVX2__)
+
     // x86 AVX-512
 #if defined(__AVX512F__)
     bm::RegisterBenchmark("avx512<f32streamed>", &make<avx512_f32streamed_t>)->MinTime(10)->UseRealTime();
@@ -120,35 +136,40 @@ int main(int argc, char **argv) {
     bm::RegisterBenchmark("avx512<f32unrolled>@threads", &make<threads_gt<avx512_f32streamed_t>>)
         ->MinTime(10)
         ->UseRealTime();
-#endif
+#endif // defined(__AVX512F__)
 
-// CUDA
+    // CUDA
 #if defined(__CUDACC__)
     if (cuda_device_count()) {
         bm::RegisterBenchmark("cub@cuda", &make<cuda_cub_t>)->MinTime(10)->UseRealTime();
         bm::RegisterBenchmark("warps@cuda", &make<cuda_warps_t>)->MinTime(10)->UseRealTime();
         bm::RegisterBenchmark("thrust@cuda", &make<cuda_thrust_t>)->MinTime(10)->UseRealTime();
-    } else
+    } else {
         fmt::print("No CUDA capable devices found!\n");
+    }
 #endif
 
-        // OpenCL
+    // OpenCL
 #if defined(__OPENCL__)
     for (auto tgt : ocl_targets) {
         for (auto kernel_name : opencl_t::kernels_k) {
             for (auto group_size : opencl_wg_sizes) {
                 auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
-                bm::RegisterBenchmark(name.c_str(),
-                                      [=](bm::State &state) {
-                                          opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt, group_size,
-                                                       kernel_name);
-                                          generic(state, ocl);
-                                      })
+                bm::RegisterBenchmark( //
+                    name.c_str(),
+                    [=](bm::State &state) {
+                        opencl_t ocl(dataset.data(), dataset.data() + dataset.size(), tgt, group_size, kernel_name);
+                        generic(state, ocl);
+                    })
                     ->MinTime(10)
                     ->UseRealTime();
             }
         }
     }
+#endif
+
+#if defined(__APPLE__) && 0
+    bm::RegisterBenchmark("metal<f32>", &make<metal_t>)->MinTime(10)->UseRealTime();
 #endif
 
     bm::Initialize(&argc, argv);

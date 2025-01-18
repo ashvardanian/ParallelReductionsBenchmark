@@ -1,9 +1,16 @@
+/**
+ *  @date 04/09/2019
+ *  @file reduce_cpu.hpp
+ *  @brief Parallel reduction with SIMD and multicore acceleration
+ *  @author Ash Vardanian
+ */
 #pragma once
 #include <cstring>   // `std::memcpy`
 #include <execution> // `std::execution::par_unseq`
 #include <numeric>   // `std::accumulate`, `std::reduce`
-#include <omp.h>     // `#pragma omp`
 #include <thread>    // `std::thread`
+
+#include <omp.h> // `omp_set_num_threads`
 
 #if defined(__AVX2__) || defined(__AVX512F__)
 #include <immintrin.h> // x86 intrinsics
@@ -62,6 +69,8 @@ template <typename accumulator_at = float> struct stl_accumulate_gt {
     accumulator_at operator()() const noexcept { return std::accumulate(begin_, end_, accumulator_at(0)); }
 };
 
+#if defined(__cpp_lib_execution)
+
 /// Computes the sum of a sequence of float values using parallel `std::reduce` with execution
 /// policy @b `std::execution::par`.
 template <typename accumulator_at = float> struct stl_par_reduce_gt {
@@ -83,6 +92,8 @@ template <typename accumulator_at = float> struct stl_par_unseq_reduce_gt {
         return std::reduce(std::execution::par_unseq, begin_, end_, accumulator_at(0), std::plus<accumulator_at>());
     }
 };
+
+#endif // defined(__cpp_lib_execution)
 
 #if defined(__SSE__)
 
@@ -107,7 +118,7 @@ struct sse_f32aligned_t {
     }
 };
 
-#endif
+#endif // defined(__SSE__)
 
 #if defined(__AVX2__)
 
@@ -225,7 +236,7 @@ struct avx2_f32aligned_t {
     }
 };
 
-#endif
+#endif // defined(__AVX2__)
 
 #if defined(__AVX512F__)
 
@@ -320,9 +331,9 @@ struct avx512_f32unrolled_t {
     }
 };
 
-#endif
+#endif // defined(__AVX512F__)
 
-#pragma region Multi Core
+#pragma region Multicore
 
 /// Computes the sum of a sequence of float values using @b OpenMP on-CPU multi-core reductions acceleration.
 /// https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html

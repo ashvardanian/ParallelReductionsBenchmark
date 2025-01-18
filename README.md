@@ -14,14 +14,14 @@ This repository contains several educational examples showcasing the performance
   - 🔜 NEON and SVE on Arm.
 - OpenMP `reduction` clause.
 - Thrust with its `thrust::reduce`.
-- CUDA kernels with warp-reductions.
+- CUDA kernels with and w/out warp-reductions.
 - OpenCL kernels, eight of them.
 - Parallel STL `<algorithm>` in GCC with Intel oneTBB.
 
 Previously, it also compared ArrayFire, Halide, and Vulkan queues for SPIR-V kernels and SyCL.
 Examples were collected from early 2010s until 2019 and later updated in 2022.
 
-- [Lecture Slides](blob/main/presentation/slides.pdf) from 2019.
+- [Lecture Slides](https://drive.google.com/file/d/16AicAl99t3ZZFnza04Wnw_Vuem0w8lc7/view?usp=sharing) from 2019.
 - [CppRussia Talk](https://youtu.be/AA4RI6o0h1U) in Russia in 2019.
 - [JetBrains Talk](https://youtu.be/BUtHOftDm_Y) in Germany & Russia in 2019.
 
@@ -35,9 +35,9 @@ You are expected to build this on an x86 machine with CUDA drivers installed.
 ```sh
 cmake -B build_release
 cmake --build build_release --config Release
-build_release/reduce_bench # To run all available benchmarks on default array size
-build_release/reduce_bench --benchmark_filter="" # Control Google Benchmark params
-PARALLEL_REDUCTIONS_LENGTH=1000 build_release/reduce_bench # Try different array size
+build_release/reduce_bench                                 # Run all benchmarks
+build_release/reduce_bench --benchmark_filter="cuda"       # Only CUDA-related
+PARALLEL_REDUCTIONS_LENGTH=1000 build_release/reduce_bench # Set a different input size
 ```
 
 Need a more fine-grained control to run only CUDA-based backends?
