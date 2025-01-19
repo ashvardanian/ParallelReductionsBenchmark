@@ -23,21 +23,17 @@ __kernel void reduce_simple(__global float const *inputs, __global float *output
     barrier(CLK_LOCAL_MEM_FENCE);
     for (uint stride = items_per_group / 2; stride > 0; stride /= 2) {
         // First n work-items read from second n work-items (n=stride)
-        if (local_item_id < stride)
-            buffer[local_item_id] += buffer[local_item_id + stride];
+        if (local_item_id < stride) buffer[local_item_id] += buffer[local_item_id + stride];
 
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     // Last iteration: write result to n-th position in global x array (n=work-group id)
-    if (local_item_id == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (local_item_id == 0) outputs[get_group_id(0)] = buffer[0];
 
     barrier(CLK_LOCAL_MEM_FENCE);
-    if (global_item_id == 0) {
-        for (uint i = 1; i < items_count / items_per_group; ++i)
-            outputs[0] += outputs[i];
-    }
+    if (global_item_id == 0)
+        for (uint i = 1; i < items_count / items_per_group; ++i) outputs[0] += outputs[i];
 }
 
 /**
@@ -56,14 +52,12 @@ __kernel void reduce_w_modulo(__global float const *inputs, __global float *outp
     // Perform reduction in the shared memory.
     for (ulong i = 1; i < get_local_size(0); i *= 2) {
         // Modulo arithmetic is slow!
-        if ((idx_in_block % (2 * i)) == 0)
-            buffer[idx_in_block] += buffer[idx_in_block + i];
+        if ((idx_in_block % (2 * i)) == 0) buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -80,14 +74,12 @@ __kernel void reduce_in_shared(__global float const *inputs, __global float *out
     // Perform reduction in the shared memory..
     for (ulong i = 1; i < get_local_size(0); i *= 2) {
         ulong const index = 2 * i * idx_in_block;
-        if (index < get_local_size(0))
-            buffer[index] += buffer[index + i];
+        if (index < get_local_size(0)) buffer[index] += buffer[index + i];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -103,14 +95,12 @@ __kernel void reduce_w_sequential_addressing(__global float const *inputs, __glo
 
     // Do reduction in shared mem.
     for (ulong i = get_local_size(0) / 2; i > 0; i >>= 1) {
-        if (idx_in_block < i)
-            buffer[idx_in_block] += buffer[idx_in_block + i];
+        if (idx_in_block < i) buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     // Write result for this block to global mem.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -126,20 +116,17 @@ __kernel void reduce_bi_step(__global float const *inputs, __global float *outpu
     // Perform first level of reduction,
     // reading from global memory,
     // writing to shared memory.
-    if (idx_global + get_local_size(0) < n)
-        buffer[idx_in_block] += inputs[idx_global + get_local_size(0)];
+    if (idx_global + get_local_size(0) < n) buffer[idx_in_block] += inputs[idx_global + get_local_size(0)];
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory.
     for (ulong i = get_local_size(0) / 2; i > 0; i >>= 1) {
-        if (idx_in_block < i)
-            buffer[idx_in_block] += buffer[idx_in_block + i];
+        if (idx_in_block < i) buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -156,37 +143,28 @@ __kernel void reduce_unrolled(__global float const *inputs, __global float *outp
     // Perform first level of reduction,
     // reading from global memory,
     // writing to shared memory.
-    if (idx_global + get_local_size(0) < n)
-        buffer[idx_in_block] += inputs[idx_global + get_local_size(0)];
+    if (idx_global + get_local_size(0) < n) buffer[idx_in_block] += inputs[idx_global + get_local_size(0)];
 
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory.
 #pragma unroll 1
     for (ulong i = get_local_size(0) / 2; i > 32; i >>= 1) {
-        if (idx_in_block < i)
-            buffer[idx_in_block] += buffer[idx_in_block + i];
+        if (idx_in_block < i) buffer[idx_in_block] += buffer[idx_in_block + i];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     if (idx_in_block < 32) {
-        if (block_size >= 64)
-            buffer[idx_in_block] += buffer[idx_in_block + 32];
-        if (block_size >= 32)
-            buffer[idx_in_block] += buffer[idx_in_block + 16];
-        if (block_size >= 16)
-            buffer[idx_in_block] += buffer[idx_in_block + 8];
-        if (block_size >= 8)
-            buffer[idx_in_block] += buffer[idx_in_block + 4];
-        if (block_size >= 4)
-            buffer[idx_in_block] += buffer[idx_in_block + 2];
-        if (block_size >= 2)
-            buffer[idx_in_block] += buffer[idx_in_block + 1];
+        if (block_size >= 64) buffer[idx_in_block] += buffer[idx_in_block + 32];
+        if (block_size >= 32) buffer[idx_in_block] += buffer[idx_in_block + 16];
+        if (block_size >= 16) buffer[idx_in_block] += buffer[idx_in_block + 8];
+        if (block_size >= 8) buffer[idx_in_block] += buffer[idx_in_block + 4];
+        if (block_size >= 4) buffer[idx_in_block] += buffer[idx_in_block + 2];
+        if (block_size >= 2) buffer[idx_in_block] += buffer[idx_in_block + 1];
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -205,46 +183,35 @@ __kernel void reduce_unrolled_fully(__global float const *inputs, __global float
     // Perform first level of reduction,
     // reading from global memory,
     // writing to shared memory.
-    if (idx_global + block_size < n)
-        buffer[idx_in_block] += inputs[idx_global + block_size];
+    if (idx_global + block_size < n) buffer[idx_in_block] += inputs[idx_global + block_size];
 
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // Perform reduction in the shared memory.
     if (block_size >= 512) {
-        if (idx_in_block < 256)
-            buffer[idx_in_block] += buffer[idx_in_block + 256];
+        if (idx_in_block < 256) buffer[idx_in_block] += buffer[idx_in_block + 256];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     if (block_size >= 256) {
-        if (idx_in_block < 128)
-            buffer[idx_in_block] += buffer[idx_in_block + 128];
+        if (idx_in_block < 128) buffer[idx_in_block] += buffer[idx_in_block + 128];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     if (block_size >= 128) {
-        if (idx_in_block < 64)
-            buffer[idx_in_block] += buffer[idx_in_block + 64];
+        if (idx_in_block < 64) buffer[idx_in_block] += buffer[idx_in_block + 64];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     if (idx_in_block < 32) {
-        if (block_size >= 64)
-            buffer[idx_in_block] += buffer[idx_in_block + 32];
-        if (block_size >= 32)
-            buffer[idx_in_block] += buffer[idx_in_block + 16];
-        if (block_size >= 16)
-            buffer[idx_in_block] += buffer[idx_in_block + 8];
-        if (block_size >= 8)
-            buffer[idx_in_block] += buffer[idx_in_block + 4];
-        if (block_size >= 4)
-            buffer[idx_in_block] += buffer[idx_in_block + 2];
-        if (block_size >= 2)
-            buffer[idx_in_block] += buffer[idx_in_block + 1];
+        if (block_size >= 64) buffer[idx_in_block] += buffer[idx_in_block + 32];
+        if (block_size >= 32) buffer[idx_in_block] += buffer[idx_in_block + 16];
+        if (block_size >= 16) buffer[idx_in_block] += buffer[idx_in_block + 8];
+        if (block_size >= 8) buffer[idx_in_block] += buffer[idx_in_block + 4];
+        if (block_size >= 4) buffer[idx_in_block] += buffer[idx_in_block + 2];
+        if (block_size >= 2) buffer[idx_in_block] += buffer[idx_in_block + 1];
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
 
 /**
@@ -267,8 +234,7 @@ __kernel void reduce_w_brents_theorem(__global float const *inputs, __global flo
     while (idx_global < n) {
         buffer[idx_in_block] += inputs[idx_global];
         // Ensure we don't read out of bounds -- this is optimized away for powerOf2 sized arrays.
-        if (idx_global + block_size < n)
-            buffer[idx_in_block] += inputs[idx_global + block_size];
+        if (idx_global + block_size < n) buffer[idx_in_block] += inputs[idx_global + block_size];
         idx_global += grid_size;
     }
 
@@ -276,37 +242,27 @@ __kernel void reduce_w_brents_theorem(__global float const *inputs, __global flo
 
     // Perform reduction in the shared memory.
     if (block_size >= 512) {
-        if (idx_in_block < 256)
-            buffer[idx_in_block] += buffer[idx_in_block + 256];
+        if (idx_in_block < 256) buffer[idx_in_block] += buffer[idx_in_block + 256];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     if (block_size >= 256) {
-        if (idx_in_block < 128)
-            buffer[idx_in_block] += buffer[idx_in_block + 128];
+        if (idx_in_block < 128) buffer[idx_in_block] += buffer[idx_in_block + 128];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
     if (block_size >= 128) {
-        if (idx_in_block < 64)
-            buffer[idx_in_block] += buffer[idx_in_block + 64];
+        if (idx_in_block < 64) buffer[idx_in_block] += buffer[idx_in_block + 64];
         barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     if (idx_in_block < 32) {
-        if (block_size >= 64)
-            buffer[idx_in_block] += buffer[idx_in_block + 32];
-        if (block_size >= 32)
-            buffer[idx_in_block] += buffer[idx_in_block + 16];
-        if (block_size >= 16)
-            buffer[idx_in_block] += buffer[idx_in_block + 8];
-        if (block_size >= 8)
-            buffer[idx_in_block] += buffer[idx_in_block + 4];
-        if (block_size >= 4)
-            buffer[idx_in_block] += buffer[idx_in_block + 2];
-        if (block_size >= 2)
-            buffer[idx_in_block] += buffer[idx_in_block + 1];
+        if (block_size >= 64) buffer[idx_in_block] += buffer[idx_in_block + 32];
+        if (block_size >= 32) buffer[idx_in_block] += buffer[idx_in_block + 16];
+        if (block_size >= 16) buffer[idx_in_block] += buffer[idx_in_block + 8];
+        if (block_size >= 8) buffer[idx_in_block] += buffer[idx_in_block + 4];
+        if (block_size >= 4) buffer[idx_in_block] += buffer[idx_in_block + 2];
+        if (block_size >= 2) buffer[idx_in_block] += buffer[idx_in_block + 1];
     }
 
     // Export this block to global memory.
-    if (idx_in_block == 0)
-        outputs[get_group_id(0)] = buffer[0];
+    if (idx_in_block == 0) outputs[get_group_id(0)] = buffer[0];
 }
