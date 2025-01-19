@@ -75,11 +75,20 @@ struct dataset_t {
     std::size_t numa_nodes = 1;
 
     dataset_t() noexcept = default;
-    dataset_t(dataset_t &&) = default;
     dataset_t(dataset_t const &) = delete;
 
-    std::size_t size() const noexcept { return length; }
+    dataset_t(dataset_t &&other) noexcept
+        : begin(other.begin), length(other.length), allocator(other.allocator), huge_pages(other.huge_pages),
+          numa_nodes(other.numa_nodes) {
+        other.begin = nullptr;
+        other.length = 0;
+        other.allocator = allocator_t::unknown;
+        other.huge_pages = huge_pages_t::unknown;
+        other.numa_nodes = 1;
+    }
+
     float *data() const noexcept { return begin; }
+    std::size_t size() const noexcept { return length; }
 
     ~dataset_t() noexcept {
         switch (allocator) {
