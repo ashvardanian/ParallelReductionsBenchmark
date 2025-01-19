@@ -202,19 +202,20 @@ dataset_t make_dataset(                           //
     [[maybe_unused]] std::size_t alignment_page) {
 
     dataset_t dataset;
-    dataset.length = needed_elements * sizeof(float);
+    dataset.length = needed_elements;
     dataset.allocator = dataset_t::allocator_t::unknown;
+    std::size_t const buffer_length = needed_elements * sizeof(float);
 
 #if defined(__linux__)
     // Try to allocate with mmap + huge pages
     int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS;
     void *mmap_memory = nullptr;
 #if defined(MAP_HUGETLB)
-    mmap_memory = ::mmap(nullptr, dataset.length, PROT_READ | PROT_WRITE, mmap_flags | MAP_HUGETLB, -1, 0);
+    mmap_memory = ::mmap(nullptr, buffer_length, PROT_READ | PROT_WRITE, mmap_flags | MAP_HUGETLB, -1, 0);
     if (mmap_memory != MAP_FAILED) dataset.huge_pages = dataset_t::huge_pages_t::allocated;
 #endif
     if (mmap_memory == MAP_FAILED)
-        mmap_memory = ::mmap(nullptr, dataset.length, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
+        mmap_memory = ::mmap(nullptr, buffer_length, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
 
     if (mmap_memory != MAP_FAILED) {
         dataset.begin = reinterpret_cast<float *>(mmap_memory);
@@ -223,7 +224,7 @@ dataset_t make_dataset(                           //
     else {
         // Fallback to `std::aligned_alloc` with RAM page alignment.
         // It requires the size to be a multiple of alignment.
-        std::size_t aligned_size = round_up_to_multiple(dataset.length, alignment_page);
+        std::size_t aligned_size = round_up_to_multiple(buffer_length, alignment_page);
         dataset.begin = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
         if (!dataset.begin) throw std::bad_alloc();
         dataset.allocator = dataset_t::allocator_t::malloc;
@@ -232,15 +233,16 @@ dataset_t make_dataset(                           //
     // Suggest transparent huge pages
 #if defined(MADV_HUGEPAGE)
     if (dataset.huge_pages != dataset_t::huge_pages_t::allocated &&
-        ::madvise(dataset.begin, dataset.length, MADV_HUGEPAGE) == 0)
+        ::madvise(dataset.begin, buffer_length, MADV_HUGEPAGE) == 0) {
         dataset.huge_pages = dataset_t::huge_pages_t::advised;
+    }
 #endif
 
-        // If `libnuma` is available, bind memory across NUMA nodes
+    // If `libnuma` is available, bind memory across NUMA nodes
 #if __has_include(<numa.h>)
     if (numa_available() != -1) {
         int num_nodes = numa_num_configured_nodes();
-        if (num_nodes <= 1) {
+        if (num_nodes > 1) {
             std::size_t chunk_size = needed_elements / num_nodes;
             for (int i = 0; i < num_nodes; ++i) {
                 float *chunk_start = dataset.begin + i * chunk_size;
@@ -254,14 +256,14 @@ dataset_t make_dataset(                           //
 #endif // __has_include(<numa.h>)
 
 #else // Not Linux:
-    std::size_t aligned_size = round_up_to_multiple(dataset.length, alignment_page);
+    std::size_t aligned_size = round_up_to_multiple(buffer_length, alignment_page);
     dataset.begin = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
     if (!dataset.begin) throw std::bad_alloc();
     dataset.allocator = dataset_t::allocator_t::malloc;
 #endif
 
-    // Initialize the allocated memory to zero to make sure it's not a copy-on-write mapping
-    std::memset(dataset.begin, 0, dataset.length * sizeof(float));
+    // Initialize the allocated memory with any value to make sure it's not a copy-on-write mapping
+    std::memset(dataset.begin, 0x01, buffer_length);
     return std::move(dataset);
 }
 
