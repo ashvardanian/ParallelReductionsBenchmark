@@ -4,7 +4,7 @@
 # 3.18 for BLAS::BLAS target
 # 3.25.2 for CUDA20 support
 # The good news is that Ubuntu 24.04 comes with 3.28!
-cmake_minimum_required(VERSION 0.3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.25.2 FATAL_ERROR)
 
 # ------------------------------------------------------------------------------
 # Project Setup
