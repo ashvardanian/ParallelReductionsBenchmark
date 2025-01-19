@@ -39,10 +39,12 @@
 /**
  *  Platform-specific includes:
  *  - CPU kernels with AVX2, AVX-512, and OpenMP acceleration
+ *  - BLAS kernels linking to `cblas_sdot`
  *  - CUDA kernels with CUB, Thrust, and manual implementations
  *  - OpenCL kernels with manual implementations
  *  - Dysfunctional Metal kernels for Apple devices
  */
+#include "reduce_blas.hpp"
 #include "reduce_cpu.hpp"
 
 #if defined(__OPENCL__)
@@ -324,6 +326,9 @@ int main(int argc, char **argv) {
     register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
     register_("std::accumulate/f64", stl_accumulate_gt<double> {}, dataset);
     register_("serial/f32/openmp", openmp_t {}, dataset);
+
+    //! BLAS struggles with zero-strided arguments!
+    //! register_("blas/f32", blas_dot_t {}, dataset);
 
 #if defined(__cpp_lib_execution)
     register_("std::reduce<par>/f32", stl_par_reduce_gt<float> {}, dataset);

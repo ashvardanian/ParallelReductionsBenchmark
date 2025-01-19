@@ -1,6 +1,7 @@
 # Let's use a recent CMake version:
 # 3.16+ for native sanitizers support
 # 3.17+ for `FindCUDAToolkit`
+# 3.18 for BLAS::BLAS target
 # 3.25.2 for CUDA20 support
 # The good news is that Ubuntu 24.04 comes with 3.28!
 cmake_minimum_required(VERSION 3.25.2 FATAL_ERROR)
@@ -59,6 +60,7 @@ if(ENABLE_CUDA)
     set(USE_NVIDIA_CCCL ON)
     set(USE_INTEL_TBB OFF) # Prioritize CUDA acceleration
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(USE_NVIDIA_CCCL OFF) # Can't compile CCCL w/o CUDA
     set(USE_INTEL_TBB ON) # Default to TBB on Linux without CUDA
 endif()
 
@@ -69,6 +71,7 @@ message(STATUS "USE_NVIDIA_CCCL: ${USE_NVIDIA_CCCL}")
 # Dependencies
 # ------------------------------------------------------------------------------
 find_package(Threads REQUIRED)
+find_package(BLAS REQUIRED)
 find_package(OpenMP QUIET)
 find_package(OpenCL QUIET)
 
@@ -144,14 +147,14 @@ set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
 add_executable(reduce_bench reduce_bench.cpp)
-target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt Threads::Threads)
+target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt Threads::Threads BLAS::BLAS)
 
 if(USE_INTEL_TBB)
-    target_link_libraries(reduce_bench tbb)
+    target_link_libraries(reduce_bench PRIVATE TBB::tbb)
 endif()
 
 if(USE_NVIDIA_CCCL)
-    target_link_libraries(reduce_bench CUDA::cudart CUDA::cublas)
+    target_link_libraries(reduce_bench PRIVATE CUDA::cudart CUDA::cublas)
 endif()
 
 if(OpenMP_FOUND)

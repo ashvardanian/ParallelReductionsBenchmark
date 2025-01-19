@@ -30,6 +30,7 @@ Examples were collected from early 2010s until 2019 and later updated in 2022.
 Install dependencies:
 
 ```sh
+sudo apt install libblas-dev            # For OpenBLAS on Linux
 sudo apt install libnuma1 libnuma-dev   # For NUMA allocators on Linux
 ```
 

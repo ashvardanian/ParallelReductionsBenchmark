@@ -18,6 +18,16 @@ using namespace nvcuda;
 
 namespace ashvardanian::reduce {
 
+/**
+ *  @brief Using cuBLAS dot-product interfaces to accumulate a vector.
+ *  @see   https://docs.nvidia.com/cuda/cublas/#cublas-t-dot
+ *
+ *  BLAS interfaces have a convenient "stride" parameter that can be used to
+ *  apply the kernel to various data layouts. Similarly, if we set the stride
+ *  to @b zero, we can fool the kernels into thinking that a scalar is a vector.
+ */
+struct cuda_blas_dot_t {};
+
 struct cuda_blas_gemm_t {
 
     // We review this input array as a wide 2D matrix.
@@ -63,8 +73,6 @@ struct cuda_blas_gemm_t {
         return thrust::reduce(sums_per_row.begin(), sums_per_row.end(), float(0), thrust::plus<float>());
     }
 };
-
-struct cuda_blas_dot_t {};
 
 __global__ void cu_reduce_tensors( //
     float const *inputs, unsigned int input_size, float *sums_per_row, unsigned int columns) {
