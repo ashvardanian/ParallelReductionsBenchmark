@@ -296,12 +296,12 @@ int main(int argc, char **argv) {
 
     std::size_t const alignment_cache = alignment_cache_line();
     std::size_t const alignment_page = alignment_ram_page();
-    fmt::print("Page size: {:,} bytes\n", alignment_page);
-    fmt::print("Cache line size: {:,} bytes\n", alignment_cache);
+    fmt::print("Page size: {} bytes\n", alignment_page);
+    fmt::print("Cache line size: {} bytes\n", alignment_cache);
 
     dataset_t dataset = make_dataset(elements, alignment_cache, alignment_page);
     std::fill_n(dataset.data(), dataset.size(), 1.f);
-    fmt::print("Dataset size: {:,} elements\n", dataset.size());
+    fmt::print("Dataset size: {} elements\n", dataset.size());
     fmt::print("Dataset alignment: {} bytes\n", alignment_cache);
     fmt::print("Dataset allocation type: {}\n",
                dataset.allocator == dataset_t::allocator_t::malloc ? "malloc" : "mmap");
