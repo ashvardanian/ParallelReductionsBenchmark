@@ -21,6 +21,10 @@
 
 namespace ashvardanian::reduce {
 
+/**
+ *  @brief OpenCL target device information, including its name, driver version,
+ *         the number of compute units, and the unique device ID.
+ */
 struct opencl_target_t {
     std::string device_name;
     std::string device_version;
@@ -38,6 +42,12 @@ static int const opencl_max_threads = 12000;
 std::vector<opencl_target_t> opencl_targets();
 char const *opencl_error_name(cl_int) noexcept;
 
+/**
+ *  @brief OpenCL kernel wrapper for parallel reductions.
+ *
+ *  ! The kernels are loaded from a file and compiled at runtime, so the working
+ *  ! directory must be the same as the executable.
+ */
 struct opencl_t {
 
     static constexpr std::size_t kernel_variants_k = 8;
@@ -46,9 +56,9 @@ struct opencl_t {
         "reduce_bi_step", "reduce_unrolled", "reduce_unrolled_fully", "reduce_w_brents_theorem",
     };
 
-    std::size_t const count_items = 0;
-    std::size_t const count_threads = 0;
-    std::size_t const items_per_group = 0;
+    std::size_t count_items = 0;
+    std::size_t count_threads = 0;
+    std::size_t items_per_group = 0;
 
   private:
     cl_context context = NULL;
@@ -68,8 +78,10 @@ struct opencl_t {
     std::vector<float> returned_outputs;
 
   public:
-    opencl_t(float const *b, float const *e, opencl_target_t target, std::size_t items_per_group = 1024,
-             char const *kernel_name_cstr = kernels_k[0])
+    opencl_t() = default;
+    opencl_t( //
+        float const *b, float const *e, opencl_target_t target, std::size_t items_per_group = 1024,
+        char const *kernel_name_cstr = kernels_k[0])
         : count_items(e - b), count_threads((opencl_max_threads / items_per_group) * items_per_group),
           items_per_group(items_per_group) {
         // Load the kernel source code into the array source_str
@@ -139,7 +151,7 @@ struct opencl_t {
         if (status != 0) throw std::logic_error(opencl_error_name(status));
     }
 
-    ~opencl_t() {
+    ~opencl_t() noexcept {
         cl_int status = 0;
         status = clFlush(queue);
         status = clFinish(queue);
@@ -157,7 +169,7 @@ struct opencl_t {
             (void)status;
     }
 
-    float operator()() {
+    float operator()() const {
         cl_int status = 0;
         std::size_t global_ws_offset = 0;
         status = clEnqueueNDRangeKernel( //
@@ -177,6 +189,10 @@ struct opencl_t {
     }
 };
 
+/**
+ *  @brief Returns a list of OpenCL target devices.
+ *  @return Array of `opencl_target_t` objects.
+ */
 std::vector<opencl_target_t> opencl_targets() {
 
     std::vector<opencl_target_t> result;

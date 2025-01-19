@@ -5,8 +5,6 @@
 One of the canonical examples when designing parallel algorithms is implementing parallel tree-like reductions, which is a special case of accumulating a bunch of numbers located in a continuous block of memory.
 In modern C++, most developers would call `std::accumulate(array.begin(), array.end(), 0)`, and in Python, it's just a `sum(array)`.
 Implementing those operations with high utilization in many-core systems is surprisingly non-trivial and depends heavily on the hardware architecture.
-Moreover, on arrays with billions of elements, the default `float` error mounts, and the results become inaccurate unless a [Kahan-like scheme](https://en.wikipedia.org/wiki/Kahan_summation_algorithm) is used.
-
 This repository contains several educational examples showcasing the performance differences between different solutions:
 
 - Single-threaded but SIMD-accelerated code:
@@ -14,12 +12,24 @@ This repository contains several educational examples showcasing the performance
   - 🔜 NEON and SVE on Arm.
 - OpenMP `reduction` clause.
 - Thrust with its `thrust::reduce`.
-- CUDA kernels with and w/out warp-reductions.
+- CUB with its `cub::DeviceReduce::Sum`.
+- CUDA kernels with and w/out [warp-primitives](https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/).
+- CUDA kernels with [Tensor-Core](https://www.nvidia.com/en-gb/data-center/tensor-cores/) acceleration.
+- [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) and cuBLAS strided vector and matrix routines.
 - OpenCL kernels, eight of them.
 - Parallel STL `<algorithm>` in GCC with Intel oneTBB.
 
-Previously, it also compared ArrayFire, Halide, and Vulkan queues for SPIR-V kernels and SyCL.
-Examples were collected from early 2010s until 2019 and later updated in 2022.
+Notably:
+
+- on arrays with billions of elements, the default `float` error mounts, and the results become inaccurate unless a [Kahan-like scheme](https://en.wikipedia.org/wiki/Kahan_summation_algorithm) is used.
+- to minimize the overhead [Translation Lookaside Buffer](https://en.wikipedia.org/wiki/Translation_lookaside_buffer) __(TLB)__ misses, the arrays are aligned to the OS page size and are allocated in [huge pages on Linux](https://wiki.debian.org/Hugepages), if possible.
+- to reduce the memory access latency on many-core  [Non-Uniform Memory Access](https://en.wikipedia.org/wiki/Non-uniform_memory_access) __(NUMA)__ systems, `libnuma` and `pthread` help maximize data affinity.
+- to "hide" latency on wide CPU registers (like `ZMM`), expensive Assembly instructions executed on different [CPU ports](https://easyperf.net/blog/2018/03/21/port-contention#utilizing-full-capacity-of-the-load-instructions) are interleaved.
+
+---
+
+The examples in this repository were originally written in early 2010s and were updated in 2019, 2022, and 2025.
+Previously, it also included ArrayFire, Halide, and Vulkan queues for SPIR-V kernels and SyCL.
 
 - [Lecture Slides](https://drive.google.com/file/d/16AicAl99t3ZZFnza04Wnw_Vuem0w8lc7/view?usp=sharing) from 2019.
 - [CppRussia Talk](https://youtu.be/AA4RI6o0h1U) in Russia in 2019.
