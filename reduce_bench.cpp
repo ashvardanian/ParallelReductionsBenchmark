@@ -252,7 +252,7 @@ dataset_t make_dataset(                           //
 #endif
 
     // Initialize the allocated memory to zero to make sure it's not a copy-on-write mapping
-    std::memset(dataset.begin, 0, dataset.length);
+    std::memset(dataset.begin, 0, dataset.length * sizeof(float));
     return std::move(dataset);
 }
 
