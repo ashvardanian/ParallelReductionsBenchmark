@@ -129,9 +129,7 @@ struct metal_t {
 
         // Determine number of threadgroups
         num_groups_ = static_cast<uint32_t>((size_ + treadgroup_size_k - 1) / treadgroup_size_k);
-        if (num_groups_ < 1) {
-            num_groups_ = 1;
-        }
+        if (num_groups_ < 1) { num_groups_ = 1; }
 
         // partials = num_groups_ floats
         partials_buffer_ = device_->newBuffer(num_groups_ * sizeof(float), MTL::ResourceStorageModeShared);
@@ -161,9 +159,7 @@ struct metal_t {
      */
     float operator()() noexcept {
         // Early exit if not properly initialized
-        if (!device_ || !phase1_ || !phase2_ || size_ == 0) {
-            return 0.0f;
-        }
+        if (!device_ || !phase1_ || !phase2_ || size_ == 0) { return 0.0f; }
 
         // 1) Dispatch phase1
         auto cmd_buffer1 = queue_->commandBuffer();
@@ -208,24 +204,15 @@ struct metal_t {
     }
 
     ~metal_t() {
-        if (output_buffer_)
-            output_buffer_->release();
-        if (partials_buffer_)
-            partials_buffer_->release();
-        if (input_buffer_)
-            input_buffer_->release();
-        if (input_size_buffer_)
-            input_size_buffer_->release();
-        if (groups_buffer_)
-            groups_buffer_->release();
-        if (phase1_)
-            phase1_->release();
-        if (phase2_)
-            phase2_->release();
-        if (queue_)
-            queue_->release();
-        if (device_)
-            device_->release();
+        if (output_buffer_) output_buffer_->release();
+        if (partials_buffer_) partials_buffer_->release();
+        if (input_buffer_) input_buffer_->release();
+        if (input_size_buffer_) input_size_buffer_->release();
+        if (groups_buffer_) groups_buffer_->release();
+        if (phase1_) phase1_->release();
+        if (phase2_) phase2_->release();
+        if (queue_) queue_->release();
+        if (device_) device_->release();
     }
 };
 

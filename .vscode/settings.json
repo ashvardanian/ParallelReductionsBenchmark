@@ -6,13 +6,19 @@
         "constexpr",
         "cublas",
         "CUDA",
+        "GTEST",
+        "HUGEPAGE",
+        "HUGETLB",
         "Kahan",
         "METALLIB",
+        "NUMA",
+        "opencl",
         "openmp",
         "shfl",
         "SPIR",
         "STREQUAL",
         "threadgroup",
+        "unseq",
         "Vardanian",
         "wmma"
     ],
@@ -110,6 +116,9 @@
         "utility": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "inplace_vector": "cpp",
+        "format": "cpp",
+        "text_encoding": "cpp"
     }
 }

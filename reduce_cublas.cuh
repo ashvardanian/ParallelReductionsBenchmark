@@ -18,7 +18,7 @@ using namespace nvcuda;
 
 namespace ashvardanian::reduce {
 
-struct cuda_blas_t {
+struct cuda_blas_gemm_t {
 
     // We review this input array as a wide 2D matrix.
     // Every group of threads operates on its set of rows.
@@ -31,7 +31,7 @@ struct cuda_blas_t {
     thrust::device_vector<float> ones_matrix;
     thrust::device_vector<float> product_matrix;
 
-    cuda_blas_t(float const *b, float const *e)
+    cuda_blas_gemm_t(float const *b, float const *e)
         : gpu_inputs(b, e), ones_matrix(b - e), product_matrix(tile_side_k * tile_side_k) {}
 
     float operator()() {
@@ -64,6 +64,8 @@ struct cuda_blas_t {
     }
 };
 
+struct cuda_blas_dot_t {};
+
 __global__ void cu_reduce_tensors( //
     float const *inputs, unsigned int input_size, float *sums_per_row, unsigned int columns) {
 
@@ -75,8 +77,7 @@ __global__ void cu_reduce_tensors( //
 
     // Fill shared memory with the pattern we are going to use as a multiplier
     shared[thread_within_block][0] = 1;
-    for (unsigned int i = 1; i != side_k; ++i)
-        shared[thread_within_block][i] = 0;
+    for (unsigned int i = 1; i != side_k; ++i) shared[thread_within_block][i] = 0;
 
     // Declare the fragments
     // The only tile size currently supported is 16.

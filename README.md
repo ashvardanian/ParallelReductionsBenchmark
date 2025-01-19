@@ -95,11 +95,11 @@ unrolled<f32>/min_time:10.000/real_time                149618549 ns    149615366
 unrolled<f64>/min_time:10.000/real_time                146594731 ns    146593719 ns           95 bytes/s=7.32456G/s error,%=0
 std::accumulate<f32>/min_time:10.000/real_time         194089563 ns    194088811 ns           72 bytes/s=5.5322G/s error,%=93.75
 std::accumulate<f64>/min_time:10.000/real_time         192657883 ns    192657360 ns           74 bytes/s=5.57331G/s error,%=0
+openmp<f32>/min_time:10.000/real_time                    5061544 ns      5043250 ns         2407 bytes/s=212.137G/s error,%=65.5651u
 std::reduce<par, f32>/min_time:10.000/real_time          3749938 ns      3727477 ns         2778 bytes/s=286.336G/s error,%=0
 std::reduce<par, f64>/min_time:10.000/real_time          3921280 ns      3916897 ns         3722 bytes/s=273.824G/s error,%=100
 std::reduce<par_unseq, f32>/min_time:10.000/real_time    3884794 ns      3864061 ns         3644 bytes/s=276.396G/s error,%=0
 std::reduce<par_unseq, f64>/min_time:10.000/real_time    3889332 ns      3866968 ns         3585 bytes/s=276.074G/s error,%=100
-openmp<f32>/min_time:10.000/real_time                    5061544 ns      5043250 ns         2407 bytes/s=212.137G/s error,%=65.5651u
 sse<f32aligned>@threads/min_time:10.000/real_time        5986350 ns      5193690 ns         2343 bytes/s=179.365G/s error,%=1.25021
 avx2<f32>/min_time:10.000/real_time                    110796474 ns    110794861 ns          127 bytes/s=9.69112G/s error,%=50
 avx2<f32kahan>/min_time:10.000/real_time               134144762 ns    134137771 ns          105 bytes/s=8.00435G/s error,%=0
@@ -134,31 +134,36 @@ CPU Caches:
   L3 Unified 32768 KiB (x24)
 Load Average: 4.54, 2.78, 4.94
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
-----------------------------------------------------------------------------------------------------------------
-Benchmark                                                      Time             CPU   Iterations UserCounters...
-----------------------------------------------------------------------------------------------------------------
-unrolled<f32>/min_time:10.000/real_time                 30546168 ns     30416147 ns          461 bytes/s=35.1514G/s error,%=50
-unrolled<f64>/min_time:10.000/real_time                 31563095 ns     31447017 ns          442 bytes/s=34.0189G/s error,%=0
-std::accumulate<f32>/min_time:10.000/real_time         219734340 ns    219326135 ns           64 bytes/s=4.88655G/s error,%=93.75
-std::accumulate<f64>/min_time:10.000/real_time         219853985 ns    219429612 ns           64 bytes/s=4.88389G/s error,%=0
-openmp<f32>/min_time:10.000/real_time                    5749979 ns      5709315 ns         1996 bytes/s=186.738G/s error,%=149.012u
-std::reduce<par, f32>/min_time:10.000/real_time          2913596 ns      2827125 ns         4789 bytes/s=368.528G/s error,%=0
-std::reduce<par, f64>/min_time:10.000/real_time          2899901 ns      2831183 ns         4874 bytes/s=370.268G/s error,%=0
-std::reduce<par_unseq, f32>/min_time:10.000/real_time    3026168 ns      2940291 ns         4461 bytes/s=354.819G/s error,%=0
-std::reduce<par_unseq, f64>/min_time:10.000/real_time    3053703 ns      2936506 ns         4797 bytes/s=351.62G/s error,%=0
-sse<f32aligned>@threads/min_time:10.000/real_time       10132563 ns      9734108 ns         1000 bytes/s=105.969G/s error,%=0.520837
-avx2<f32>/min_time:10.000/real_time                     32225620 ns     32045487 ns          435 bytes/s=33.3195G/s error,%=50
-avx2<f32kahan>/min_time:10.000/real_time               110283627 ns    110023814 ns          127 bytes/s=9.73619G/s error,%=0
-avx2<f64>/min_time:10.000/real_time                     55559986 ns     55422069 ns          247 bytes/s=19.3258G/s error,%=0
-avx2<f32aligned>@threads/min_time:10.000/real_time       9612120 ns      9277454 ns         1467 bytes/s=111.707G/s error,%=0.521407
-avx2<f64>@threads/min_time:10.000/real_time             10091882 ns      9708706 ns         1389 bytes/s=106.397G/s error,%=0.520837
-avx512<f32streamed>/min_time:10.000/real_time           55713332 ns     55615555 ns          243 bytes/s=19.2726G/s error,%=50
-avx512<f32streamed>@threads/min_time:10.000/real_time    9701513 ns      9383267 ns         1435 bytes/s=110.678G/s error,%=50.2604
+--------------------------------------------------------------------------------------------------------------------
+Benchmark                                                          Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------------------------
+unrolled<f32>/min_time:10.000/real_time                     30546168 ns     30416147 ns          461 bytes/s=35.1514G/s error,%=50
+unrolled<f64>/min_time:10.000/real_time                     31563095 ns     31447017 ns          442 bytes/s=34.0189G/s error,%=0
+std::accumulate<f32>/min_time:10.000/real_time             219734340 ns    219326135 ns           64 bytes/s=4.88655G/s error,%=93.75
+std::accumulate<f64>/min_time:10.000/real_time             219853985 ns    219429612 ns           64 bytes/s=4.88389G/s error,%=0
+openmp<f32>/min_time:10.000/real_time                        5749979 ns      5709315 ns         1996 bytes/s=186.738G/s error,%=149.012u
+std::reduce<par, f32>/min_time:10.000/real_time              2913596 ns      2827125 ns         4789 bytes/s=368.528G/s error,%=0
+std::reduce<par, f64>/min_time:10.000/real_time              2899901 ns      2831183 ns         4874 bytes/s=370.268G/s error,%=0
+std::reduce<par_unseq, f32>/min_time:10.000/real_time        3026168 ns      2940291 ns         4461 bytes/s=354.819G/s error,%=0
+std::reduce<par_unseq, f64>/min_time:10.000/real_time        3053703 ns      2936506 ns         4797 bytes/s=351.62G/s error,%=0
+sse<f32aligned>@threads/min_time:10.000/real_time           10132563 ns      9734108 ns         1000 bytes/s=105.969G/s error,%=0.520837
+avx2<f32>/min_time:10.000/real_time                         32225620 ns     32045487 ns          435 bytes/s=33.3195G/s error,%=50
+avx2<f32kahan>/min_time:10.000/real_time                   110283627 ns    110023814 ns          127 bytes/s=9.73619G/s error,%=0
+avx2<f64>/min_time:10.000/real_time                         55559986 ns     55422069 ns          247 bytes/s=19.3258G/s error,%=0
+avx2<f32aligned>@threads/min_time:10.000/real_time           9612120 ns      9277454 ns         1467 bytes/s=111.707G/s error,%=0.521407
+avx2<f64>@threads/min_time:10.000/real_time                 10091882 ns      9708706 ns         1389 bytes/s=106.397G/s error,%=0.520837
+avx512<f32streamed>/min_time:10.000/real_time               55713332 ns     55615555 ns          243 bytes/s=19.2726G/s error,%=50
+avx512<f32streamed>@threads/min_time:10.000/real_time        9701513 ns      9383267 ns         1435 bytes/s=110.678G/s error,%=50.2604
 avx512<f32unrolled>/min_time:10.000/real_time               48203352 ns     48085623 ns          228 bytes/s=22.2753G/s error,%=50
 avx512<f32unrolled>@threads/min_time:10.000/real_time        9275968 ns      8955543 ns         1508 bytes/s=115.755G/s error,%=50.2604
 avx512<f32interleaving>/min_time:10.000/real_time           40012581 ns     39939290 ns          352 bytes/s=26.8351G/s error,%=50
 avx512<f32interleaving>@threads/min_time:10.000/real_time    9477545 ns      9168739 ns         1488 bytes/s=113.293G/s error,%=50.2581
 ```
+
+Observations:
+
+- 370 GB/s can be reached in dual-socket DDR5 setups with 12 channel memory.
+- Using Kahan-like schemes is 3x slower than pure `float` and 2x slower than `double`.
 
 One of the interesting observations is the effect of latency hiding, interleaving the operations executing on different ports of the same CPU.
 It is evident when benchmarking AVX-512 kernels on very small arrays:

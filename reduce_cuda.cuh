@@ -5,21 +5,19 @@
  *  @author Ash Vardanian
  */
 #pragma once
-#include <cuda_runtime_api.h>
-#include <mma.h> // `wmma::`
-
-#include <cub/cub.cuh>
 #include <thrust/device_vector.h>
 #include <thrust/execution_policy.h>
 #include <thrust/host_vector.h>
 #include <thrust/reduce.h>
 
-using namespace nvcuda;
+#include <cub/cub.cuh>
 
 namespace ashvardanian::reduce {
 
-/// Base class for CUDA-based reductions.
-struct cuda_base_t {
+/**
+ *  @brief  Base class for CUDA-based reductions.
+ */
+class cuda_base_t {
     static constexpr int max_block_size_k = 1024;
     static constexpr int threads_k = 512;
 
@@ -42,14 +40,12 @@ __global__ void cu_reduce_blocks(float const *inputs, unsigned int input_size, f
 
     // Reduce into `shared` memory
     for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
-        if (tid < s)
-            shared[tid] += shared[tid + s];
+        if (tid < s) shared[tid] += shared[tid + s];
         __syncthreads();
     }
 
     // Export only the first result in each block
-    if (tid == 0)
-        outputs[blockIdx.x] = shared[0];
+    if (tid == 0) outputs[blockIdx.x] = shared[0];
 }
 
 /// CUDA-based reduction using slow `global` memory for partial sums.
@@ -58,11 +54,11 @@ __global__ void cu_reduce_blocks(float const *inputs, unsigned int input_size, f
 /// https://stackoverflow.com/inputs/25584577
 /// https://stackoverflow.com/q/12733084
 /// https://stackoverflow.com/q/44278317
-struct cuda_blocks_t : public cuda_base_t {
+class cuda_blocks_t : public cuda_base_t {
 
     cuda_blocks_t(float const *b, float const *e) : cuda_base_t(b, e) {}
 
-    float operator()() {
+    float operator()() noexcept {
 
         // Accumulate partial results...
         int shared_memory = threads_k * sizeof(float);
@@ -106,8 +102,7 @@ __global__ void cu_reduce_warps(float const *inputs, unsigned int input_size, fl
     sum = cu_reduce_warp(sum);
 
     // Write reduced value to shared memory
-    if (lane == 0)
-        shared[wid] = sum;
+    if (lane == 0) shared[wid] = sum;
 
     // Wait for all partial reductions
     __syncthreads();
@@ -116,18 +111,16 @@ __global__ void cu_reduce_warps(float const *inputs, unsigned int input_size, fl
     sum = (threadIdx.x < blockDim.x / warpSize) ? shared[lane] : 0;
 
     // Final reduce within first warp
-    if (wid == 0)
-        sum = cu_reduce_warp(sum);
+    if (wid == 0) sum = cu_reduce_warp(sum);
 
-    if (threadIdx.x == 0)
-        outputs[blockIdx.x] = sum;
+    if (threadIdx.x == 0) outputs[blockIdx.x] = sum;
 }
 
 /// CUDA-based reductions using fast warp shuffles on Kepler and newer architectures.
 /// https://developer.nvidia.com/blog/faster-parallel-reductions-kepler/
 /// https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/
 /// https://devblogs.nvidia.com/parallelforall/cuda-pro-tip-kepler-shuffle/
-struct cuda_warps_t : public cuda_base_t {
+class cuda_warps_t : public cuda_base_t {
 
     cuda_warps_t(float const *b, float const *e) : cuda_base_t(b, e) {}
 
@@ -148,18 +141,29 @@ struct cuda_warps_t : public cuda_base_t {
     }
 };
 
-inline static size_t cuda_device_count() {
+std::size_t cuda_device_count() noexcept {
     int count;
     auto error = cudaGetDeviceCount(&count);
-    if (error != cudaSuccess)
-        return 0;
-    return static_cast<size_t>(count);
+    if (error != cudaSuccess) return 0;
+    return static_cast<std::size_t>(count);
 }
 
 /// Uses CUDA Thrust library for parallel reductions on Nvidia GPUs.
 /// https://docs.nvidia.com/cuda/thrust/index.html#reductions
-struct cuda_thrust_t {
+class cuda_thrust_t {
     thrust::device_vector<float> gpu_inputs;
+
+    cuda_thrust_t() = default;
+    cuda_thrust_t(float const *b, float const *e) : gpu_inputs(b, e) {}
+    float operator()() const {
+        return thrust::reduce(gpu_inputs.begin(), gpu_inputs.end(), float(0), thrust::plus<float>());
+    }
+};
+
+class cuda_thrust_fma_t {
+    thrust::device_vector<float> gpu_inputs;
+
+    cuda_thrust_t() = default;
     cuda_thrust_t(float const *b, float const *e) : gpu_inputs(b, e) {}
     float operator()() const {
         return thrust::reduce(gpu_inputs.begin(), gpu_inputs.end(), float(0), thrust::plus<float>());
@@ -168,37 +172,41 @@ struct cuda_thrust_t {
 
 /// Uses CUB on Nvidia GPUs for faster global reductions.
 /// https://nvlabs.github.io/cub/structcub_1_1_device_reduce.html#aa4adabeb841b852a7a5ecf4f99a2daeb
-struct cuda_cub_t {
+class cuda_cub_t {
     thrust::device_vector<float> gpu_inputs;
     thrust::device_vector<uint8_t> temporary;
     thrust::device_vector<float> gpu_sums;
     thrust::host_vector<float> cpu_sums;
 
+    cuda_cub_t() = default;
     cuda_cub_t(float const *b, float const *e) : gpu_inputs(b, e), gpu_sums(1), cpu_sums(1) {
         // CUB can't handle large arrays with over 2 billion elements!
         assert(gpu_inputs.size() < std::numeric_limits<int>::max());
+
+        // Determine temporary device storage requirements
+        auto num_items = static_cast<int>(gpu_inputs.size());
+        auto gpu_inputs_ptr = gpu_inputs.data().get();
+        auto gpu_sums_ptr = gpu_sums.data().get();
+        void *temporary_ptr = nullptr;
+        std::size_t temporary_bytes = 0;
+        cudaError_t error =
+            cub::DeviceReduce::Sum(temporary_ptr, temporary_bytes, gpu_inputs_ptr, gpu_sums_ptr, num_items);
+        assert(error == cudaSuccess);
+        assert(temporary_bytes > 0);
+        // Allocate temporary storage, if needed
+        temporary.resize(temporary_bytes);
     }
 
     float operator()() {
 
         auto num_items = static_cast<int>(gpu_inputs.size());
-        auto d_in = gpu_inputs.data().get();
-        auto d_out = gpu_sums.data().get();
-        cudaError_t error;
+        auto gpu_inputs_ptr = gpu_inputs.data().get();
+        auto gpu_sums_ptr = gpu_sums.data().get();
+        void *temporary_ptr = temporary.data().get();
+        std::size_t const temporary_bytes = temporary.size();
 
-        // Determine temporary device storage requirements
-        void *d_temp_storage = nullptr;
-        size_t temp_storage_bytes = 0;
-        error = cub::DeviceReduce::Sum(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items);
-        assert(error == cudaSuccess);
-        assert(temp_storage_bytes > 0);
-
-        // Allocate temporary storage, if needed
-        if (temp_storage_bytes > temporary.size())
-            temporary.resize(temp_storage_bytes);
-        d_temp_storage = temporary.data().get();
-
-        error = cub::DeviceReduce::Sum(d_temp_storage, temp_storage_bytes, d_in, d_out, num_items);
+        cudaError_t error =
+            cub::DeviceReduce::Sum(temporary_ptr, temporary_bytes, gpu_inputs_ptr, gpu_sums_ptr, num_items);
         assert(error == cudaSuccess);
         cudaDeviceSynchronize();
 
