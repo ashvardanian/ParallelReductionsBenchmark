@@ -76,18 +76,47 @@ set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 find_package(Threads REQUIRED)
 
 add_executable(reduce_bench reduce_bench.cpp)
-target_link_libraries(reduce_bench benchmark::benchmark fmt::fmt Threads::Threads TBB::tbb)
+target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt Threads::Threads TBB::tbb)
 
 find_package(OpenMP)
 
 if(OpenMP_FOUND)
-    target_link_libraries(reduce_bench OpenMP::OpenMP_CXX)
+    target_link_libraries(reduce_bench PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
 find_package(OpenCL)
 
 if(OpenCL_FOUND)
-    target_link_libraries(reduce_bench OpenCL::OpenCL)
+    target_link_libraries(reduce_bench PRIVATE OpenCL::OpenCL)
+endif()
+
+# On Linux we use libnuma for NUMA support.
+if(UNIX AND NOT APPLE)
+    find_path(NUMA_INCLUDE_DIRS
+        NAMES numa.h
+        HINTS $ENV{HOME}/local/include /opt/local/include /usr/local/include /usr/include
+    )
+
+    find_library(NUMA_LIBRARIES
+        NAMES numa
+        HINTS $ENV{HOME}/local/lib64 $ENV{HOME}/local/lib /usr/local/lib64 /usr/local/lib /opt/local/lib64 /opt/local/lib /usr/lib64 /usr/lib
+        /usr/lib/x86_64-linux-gnu/
+        /usr/lib/aarch64-linux-gnu/
+    )
+
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(NUMA DEFAULT_MSG NUMA_LIBRARIES NUMA_INCLUDE_DIRS)
+
+    if(NUMA_FOUND)
+        message(STATUS "Found NUMA: includes=${NUMA_INCLUDE_DIRS}, library=${NUMA_LIBRARIES}")
+        target_include_directories(reduce_bench PRIVATE ${NUMA_INCLUDE_DIRS})
+        target_link_libraries(reduce_bench PRIVATE ${NUMA_LIBRARIES})
+    else()
+        message(WARNING "NUMA library not found.")
+        message(WARNING "Please install it using your package manager:")
+        message(WARNING "    Debian/Ubuntu: sudo apt-get install libnuma1 libnuma-dev")
+        message(WARNING "    RHEL/CentOS: sudo yum install numactl numactl-devel")
+    endif()
 endif()
 
 # List of all possible compiler IDs:
