@@ -15,6 +15,7 @@
         "Lookaside",
         "METALLIB",
         "NUMA",
+        "NVCC",
         "opencl",
         "openmp",
         "shfl",

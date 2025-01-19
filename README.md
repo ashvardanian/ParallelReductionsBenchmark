@@ -37,11 +37,13 @@ Previously, it also included ArrayFire, Halide, and Vulkan queues for SPIR-V ker
 
 ## Build & Run
 
-Install dependencies:
+This repository is a CMake project designed to be built on Linux with GCC, Clang, or NVCC.
+You may need to install the following dependencies for complete functionality:
 
 ```sh
 sudo apt install libblas-dev            # For OpenBLAS on Linux
 sudo apt install libnuma1 libnuma-dev   # For NUMA allocators on Linux
+sudo apt install cuda-toolkit           # This may not be as easy 😈
 ```
 
 The following script will, by default, generate a 1GB array of numbers and reduce them using every available backend.
