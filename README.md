@@ -27,6 +27,12 @@ Examples were collected from early 2010s until 2019 and later updated in 2022.
 
 ## Build & Run
 
+Install dependencies:
+
+```sh
+sudo apt install libnuma1 libnuma-dev   # For NUMA allocators on Linux
+```
+
 The following script will, by default, generate a 1GB array of numbers and reduce them using every available backend.
 All the classical Google Benchmark arguments are supported, including `--benchmark_filter=opencl`.
 All the library dependencies, including GTest, GBench, Intel oneTBB, FMT, and Thrust with CUB, will be automatically fetched.

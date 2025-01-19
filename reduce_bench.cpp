@@ -19,7 +19,7 @@
 #if defined(__linux__)
 #include <sys/mman.h> // `mmap`
 #include <unistd.h>   // `sysconf`
-#if defined(LIBNUMA)
+#if __has_include(<numa.h>)
 #include <numa.h> // `numa_available`, `numa_alloc_onnode`, `numa_free`
 #endif
 #endif
@@ -65,26 +65,31 @@ using namespace ashvardanian::reduce;
  *          Their deallocation mechanisms differ, so we need to keep track of the type.
  */
 struct dataset_t {
-    float *begin_ = nullptr;
-    float *end_ = nullptr;
-    enum class type_t { unknown, malloc, mmap } type_ = type_t::unknown;
+    float *begin = nullptr;
+    std::size_t length = 0;
+
+    enum class allocator_t { unknown, malloc, mmap } allocator = allocator_t::unknown;
+    enum class huge_pages_t { unknown, allocated, advised } huge_pages = huge_pages_t::unknown;
+    std::size_t numa_nodes = 1;
 
     dataset_t() noexcept = default;
+    dataset_t(dataset_t &&) = default;
     dataset_t(dataset_t const &) = delete;
-    dataset_t(float *b, float *e, type_t t) noexcept : begin_(b), end_(e), type_(t) {}
 
-    std::size_t size() const noexcept { return end_ - begin_; }
-    float *data() const noexcept { return begin_; }
+    std::size_t size() const noexcept { return length; }
+    float *data() const noexcept { return begin; }
 
     ~dataset_t() noexcept {
-        switch (type_) {
-        case type_t::malloc: std::free(begin_); break;
-        case type_t::mmap: munmap(begin_, size() * sizeof(float)); break;
+        switch (allocator) {
+        case allocator_t::malloc: std::free(begin); break;
+        case allocator_t::mmap: munmap(begin, size() * sizeof(float)); break;
         default: break;
         }
-        begin_ = nullptr;
-        end_ = nullptr;
-        type_ = type_t::unknown;
+        begin = nullptr;
+        length = 0;
+        allocator = allocator_t::unknown;
+        huge_pages = huge_pages_t::unknown;
+        numa_nodes = 1;
     }
 };
 
@@ -175,67 +180,78 @@ std::size_t alignment_ram_page() {
  *  @param elements Number of float elements to allocate.
  *  @return dataset_t A dataset wrapper holding the pointer and type of allocation.
  *  @throws std::bad_alloc if allocation fails.
+ *
+ *  @see NUMA docs: https://man7.org/linux/man-pages/man3/numa.3.html
+ *  @see MMAP docs: https://man7.org/linux/man-pages/man2/mmap.2.html
+ *  @see MADVISE docs: https://man7.org/linux/man-pages/man2/madvise.2.html
  */
 dataset_t make_dataset(                           //
     std::size_t needed_elements,                  //
     [[maybe_unused]] std::size_t alignment_cache, //
     [[maybe_unused]] std::size_t alignment_page) {
 
-    std::size_t needed_bytes = needed_elements * sizeof(float);
-    dataset_t::type_t allocation_type = dataset_t::type_t::unknown;
-    float *memory = nullptr;
+    dataset_t dataset;
+    dataset.length = needed_elements * sizeof(float);
+    dataset.allocator = dataset_t::allocator_t::unknown;
 
 #if defined(__linux__)
     // Try to allocate with mmap + huge pages
     int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS;
+    void *mmap_memory = nullptr;
 #if defined(MAP_HUGETLB)
-    mmap_flags |= MAP_HUGETLB;
+    mmap_memory = ::mmap(nullptr, dataset.length, PROT_READ | PROT_WRITE, mmap_flags | MAP_HUGETLB, -1, 0);
+    if (mmap_memory != MAP_FAILED) dataset.huge_pages = dataset_t::huge_pages_t::allocated;
 #endif
-    void *mmap_memory = ::mmap(nullptr, needed_bytes, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
+    if (mmap_memory == MAP_FAILED)
+        mmap_memory = ::mmap(nullptr, dataset.length, PROT_READ | PROT_WRITE, mmap_flags, -1, 0);
 
     if (mmap_memory != MAP_FAILED) {
-        memory = reinterpret_cast<float *>(mmap_memory);
-        allocation_type = dataset_t::type_t::mmap;
+        dataset.begin = reinterpret_cast<float *>(mmap_memory);
+        dataset.allocator = dataset_t::allocator_t::mmap;
     }
     else {
         // Fallback to `std::aligned_alloc` with RAM page alignment.
         // It requires the size to be a multiple of alignment.
-        std::size_t aligned_size = round_up_to_multiple(needed_bytes, alignment_page);
-        memory = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
-        if (!memory) throw std::bad_alloc();
-        allocation_type = dataset_t::type_t::malloc;
-
-#if defined(MADV_HUGEPAGE)
-        // Suggest transparent huge pages
-        ::madvise(memory, needed_bytes, MADV_HUGEPAGE);
-#endif
+        std::size_t aligned_size = round_up_to_multiple(dataset.length, alignment_page);
+        dataset.begin = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
+        if (!dataset.begin) throw std::bad_alloc();
+        dataset.allocator = dataset_t::allocator_t::malloc;
     }
 
-    // If `libnuma` is available, bind memory across NUMA nodes
-#if defined(LIBNUMA)
+    // Suggest transparent huge pages
+#if defined(MADV_HUGEPAGE)
+    if (dataset.huge_pages != dataset_t::huge_pages_t::allocated &&
+        ::madvise(dataset.begin, dataset.length, MADV_HUGEPAGE) == 0)
+        dataset.huge_pages = dataset_t::huge_pages_t::advised;
+#endif
+
+        // If `libnuma` is available, bind memory across NUMA nodes
+#if __has_include(<numa.h>)
     if (numa_available() != -1) {
         int num_nodes = numa_num_configured_nodes();
         if (num_nodes <= 1) {
             std::size_t chunk_size = needed_elements / num_nodes;
             for (int i = 0; i < num_nodes; ++i) {
-                float *chunk_start = memory + i * chunk_size;
+                float *chunk_start = dataset.begin + i * chunk_size;
                 std::size_t chunk_elems =
                     (i == num_nodes - 1) ? (needed_elements - (chunk_size * (num_nodes - 1))) : (chunk_size);
                 numa_tonode_memory(chunk_start, chunk_elems * sizeof(float), i);
             }
         }
+        dataset.numa_nodes = static_cast<std::size_t>(num_nodes);
     }
-#endif // LIBNUMA
-#else  // Not Linux:
-    std::size_t aligned_size = round_up_to_multiple(needed_bytes, alignment_page);
-    memory = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
-    if (!memory) throw std::bad_alloc();
-    allocation_type = dataset_t::type_t::malloc;
+#endif // __has_include(<numa.h>)
+
+#else // Not Linux:
+    std::size_t aligned_size = round_up_to_multiple(dataset.length, alignment_page);
+    dataset.begin = static_cast<float *>(std::aligned_alloc(alignment_page, aligned_size));
+    if (!dataset.begin) throw std::bad_alloc();
+    dataset.allocator = dataset_t::allocator_t::malloc;
 #endif
 
     // Initialize the allocated memory to zero to make sure it's not a copy-on-write mapping
-    std::memset(memory, 0, needed_bytes);
-    return dataset_t {memory, memory + needed_elements, allocation_type};
+    std::memset(dataset.begin, 0, dataset.length);
+    return std::move(dataset);
 }
 
 /**
@@ -278,11 +294,16 @@ int main(int argc, char **argv) {
 
     std::size_t const alignment_cache = alignment_cache_line();
     std::size_t const alignment_page = alignment_ram_page();
-    fmt::print("Cache line size: {} bytes\n", alignment_cache);
-    fmt::print("Page size: {} bytes\n", alignment_page);
+    fmt::print("Page size: {:,} bytes\n", alignment_page);
+    fmt::print("Cache line size: {:,} bytes\n", alignment_cache);
 
     dataset_t dataset = make_dataset(elements, alignment_cache, alignment_page);
     std::fill_n(dataset.data(), dataset.size(), 1.f);
+    fmt::print("Dataset size: {:,} elements\n", dataset.size());
+    fmt::print("Dataset alignment: {} bytes\n", alignment_cache);
+    fmt::print("Dataset allocation type: {}\n",
+               dataset.allocator == dataset_t::allocator_t::malloc ? "malloc" : "mmap");
+    fmt::print("Dataset NUMA nodes: {}\n", dataset.numa_nodes);
 
     // Log available backends
 #if defined(__OPENCL__)
