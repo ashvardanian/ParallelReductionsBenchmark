@@ -295,52 +295,53 @@ int main(int argc, char **argv) {
 
     // Memset is only useful as a baseline, but running it will corrupt our buffer
     // register_("memset", memset_t {}, dataset);
-    // register_("memset@threads", threads_gt<memset_t> {}, dataset);
+    // register_("memset/std::threads", threads_gt<memset_t> {}, dataset);
 
     // Generic CPU benchmarks
-    register_("unrolled<f32>", unrolled_gt<float> {}, dataset);
-    register_("unrolled<f64>", unrolled_gt<double> {}, dataset);
-    register_("std::accumulate<f32>", stl_accumulate_gt<float> {}, dataset);
-    register_("std::accumulate<f64>", stl_accumulate_gt<double> {}, dataset);
-    register_("openmp<f32>", openmp_t {}, dataset);
+    register_("unrolled/f32", unrolled_gt<float> {}, dataset);
+    register_("unrolled/f64", unrolled_gt<double> {}, dataset);
+    register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
+    register_("std::accumulate/f64", stl_accumulate_gt<double> {}, dataset);
+    register_("serial/f32/openmp", openmp_t {}, dataset);
 
 #if defined(__cpp_lib_execution)
-    register_("std::reduce<par, f32>", stl_par_reduce_gt<float> {}, dataset);
-    register_("std::reduce<par, f64>", stl_par_reduce_gt<double> {}, dataset);
-    register_("std::reduce<par_unseq, f32>", stl_par_unseq_reduce_gt<float> {}, dataset);
-    register_("std::reduce<par_unseq, f64>", stl_par_unseq_reduce_gt<double> {}, dataset);
+    register_("std::reduce<par>/f32", stl_par_reduce_gt<float> {}, dataset);
+    register_("std::reduce<par>/f64", stl_par_reduce_gt<double> {}, dataset);
+    register_("std::reduce<par_unseq>/f32", stl_par_unseq_reduce_gt<float> {}, dataset);
+    register_("std::reduce<par_unseq>/f64", stl_par_unseq_reduce_gt<double> {}, dataset);
 #endif // defined(__cpp_lib_execution)
 
     // x86 SSE
 #if defined(__SSE__)
-    register_("sse<f32aligned>@threads", threads_gt<sse_f32aligned_t> {}, dataset);
+    register_("sse/f32/aligned/std::threads", threads_gt<sse_f32aligned_t> {}, dataset);
 #endif // defined(__SSE__)
 
     // x86 AVX2
 #if defined(__AVX2__)
-    register_("avx2<f32>", avx2_f32_t {}, dataset);
-    register_("avx2<f32kahan>", avx2_f32kahan_t {}, dataset);
-    register_("avx2<f64>", avx2_f64_t {}, dataset);
-    register_("avx2<f32aligned>@threads", threads_gt<avx2_f32aligned_t> {}, dataset);
-    register_("avx2<f64>@threads", threads_gt<avx2_f64_t> {}, dataset);
+    register_("avx2/f32", avx2_f32_t {}, dataset);
+    register_("avx2/f32/kahan", avx2_f32kahan_t {}, dataset);
+    register_("avx2/f64", avx2_f64_t {}, dataset);
+    register_("avx2/f32/aligned/std::threads", threads_gt<avx2_f32aligned_t> {}, dataset);
+    register_("avx2/f64/std::threads", threads_gt<avx2_f64_t> {}, dataset);
 #endif // defined(__AVX2__)
 
     // x86 AVX-512
 #if defined(__AVX512F__)
-    register_("avx512<f32streamed>", avx512_f32streamed_t {}, dataset);
-    register_("avx512<f32streamed>@threads", threads_gt<avx512_f32streamed_t> {}, dataset);
-    register_("avx512<f32unrolled>", avx512_f32unrolled_t {}, dataset);
-    register_("avx512<f32unrolled>@threads", threads_gt<avx512_f32unrolled_t> {}, dataset);
-    register_("avx512<f32interleaving>", avx512_f32interleaving_t {}, dataset);
-    register_("avx512<f32interleaving>@threads", threads_gt<avx512_f32interleaving_t> {}, dataset);
+    register_("avx512/f32/streamed", avx512_f32streamed_t {}, dataset);
+    register_("avx512/f32/streamed/std::threads", threads_gt<avx512_f32streamed_t> {}, dataset);
+    register_("avx512/f32/unrolled", avx512_f32unrolled_t {}, dataset);
+    register_("avx512/f32/unrolled/std::threads", threads_gt<avx512_f32unrolled_t> {}, dataset);
+    register_("avx512/f32/interleaving", avx512_f32interleaving_t {}, dataset);
+    register_("avx512/f32/interleaving/std::threads", threads_gt<avx512_f32interleaving_t> {}, dataset);
 #endif // defined(__AVX512F__)
 
     // CUDA
 #if defined(__CUDACC__)
     if (cuda_device_count()) {
-        register_("cub@cuda", cuda_cub_t {}, dataset);
-        register_("warps@cuda", cuda_warps_t {}, dataset);
-        register_("thrust@cuda", cuda_thrust_t {}, dataset);
+        register_("cuda/cub", cuda_cub_t {}, dataset);
+        register_("cuda/warps", cuda_warps_t {}, dataset);
+        register_("cuda/thrust", cuda_thrust_t {}, dataset);
+        register_("cuda/thrust/interleaving", cuda_thrust_fma_t {}, dataset);
     }
     else { fmt::print("No CUDA capable devices found!\n"); }
 #endif // defined(__CUDACC__)
@@ -350,7 +351,7 @@ int main(int argc, char **argv) {
     for (auto tgt : ocl_targets) {
         for (auto kernel_name : opencl_t::kernels_k) {
             for (auto group_size : opencl_wg_sizes) {
-                auto name = fmt::format("opencl-{} split by {} on {}", kernel_name, group_size, tgt.device_name);
+                auto name = fmt::format("opencl/{}split/{}", kernel_name, group_size, tgt.device_name);
                 register_(name, opencl_t {}, data, tgt, group_size, kernel_name);
             }
         }
@@ -359,7 +360,7 @@ int main(int argc, char **argv) {
 
     // Apple's Metal Performance Shaders
 #if defined(__APPLE__) && 0
-    register_("metal<f32>", metal_t {}, dataset);
+    register_("metal/f32", metal_t {}, dataset);
 #endif // defined(__APPLE__)
 
     bm::Initialize(&argc, argv);
