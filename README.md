@@ -191,9 +191,9 @@ It is evident when benchmarking AVX-512 kernels on very small arrays:
 --------------------------------------------------------------------------------------------------------------------
 Benchmark                                                          Time             CPU   Iterations UserCounters...
 --------------------------------------------------------------------------------------------------------------------
-avx512<f32streamed>/min_time:10.000/real_time                   11.5 ns         11.5 ns   1213284345 bytes/s=355.396G/s
-avx512<f32unrolled>/min_time:10.000/real_time                   13.2 ns         13.2 ns   1062115528 bytes/s=310.782G/s
-avx512<f32interleaving>/min_time:10.000/real_time               8.21 ns         8.20 ns   1699079374 bytes/s=499.047G/s
+avx512/f32/streamed/min_time:10.000/real_time                    19.4 ns         19.4 ns    724081506 bytes/s=211.264G/s
+avx512/f32/unrolled/min_time:10.000/real_time                    15.1 ns         15.1 ns    934282388 bytes/s=271.615G/s
+avx512/f32/interleaving/min_time:10.000/real_time                12.3 ns         12.3 ns   1158791855 bytes/s=332.539G/s
 ```
 
 The reason this happens is that on Zen4:
