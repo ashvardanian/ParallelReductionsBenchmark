@@ -52,8 +52,8 @@ All the library dependencies, including GTest, GBench, Intel oneTBB, FMT, and Th
 You are expected to build this on an x86 machine with CUDA drivers installed.
 
 ```sh
-cmake -B build_release
-cmake --build build_release --config Release
+cmake -B build_release -D CMAKE_BUILD_TYPE=Release         # Generate the build files
+cmake --build build_release --config Release               # Build the project
 build_release/reduce_bench                                 # Run all benchmarks
 build_release/reduce_bench --benchmark_filter="cuda"       # Only CUDA-related
 PARALLEL_REDUCTIONS_LENGTH=1024 build_release/reduce_bench # Set a different input size
@@ -135,6 +135,17 @@ Observations:
 - 286 GB/s upper bound on the CPU.
 - 2.2 TB/s using vanilla CUDA approaches.
 - 3 TB/s using CUB.
+
+On Nvidia H200 GPUs, the numbers are even higher:
+
+```sh
+-------------------------------------------------------------------------------------------------------------
+Benchmark                                                   Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------------------------------
+cuda/cub/min_time:10.000/real_time                     254609 ns       254607 ns        54992 bytes/s=4.21723T/s error,%=0
+cuda/thrust/min_time:10.000/real_time                  319709 ns       316368 ns        43846 bytes/s=3.3585T/s error,%=0
+cuda/thrust/interleaving/min_time:10.000/real_time     318598 ns       314996 ns        43956 bytes/s=3.37021T/s error,%=0
+```
 
 ### AWS Zen4 `m7a.metal-48xl`
 
