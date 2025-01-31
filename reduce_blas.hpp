@@ -22,11 +22,17 @@ class blas_dot_t {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
 
+#if defined(CBLAS_INDEX)
+    using blas_dim_t = CBLAS_INDEX;
+#else
+    using blas_dim_t = blasint;
+#endif
+
   public:
     blas_dot_t() = default;
     blas_dot_t(float const *b, float const *e) : begin_(b), end_(e) {
-        constexpr std::size_t max_length = static_cast<std::size_t>(std::numeric_limits<blasint>::max());
-        if (end_ - begin_ > max_length) throw std::length_error("BLAS not configured for 64-bit sizes");
+        constexpr std::size_t max_length_k = static_cast<std::size_t>(std::numeric_limits<blas_dim_t>::max());
+        if (end_ - begin_ > max_length_k) throw std::length_error("BLAS not configured for 64-bit sizes");
     }
 
     float operator()() const noexcept {
