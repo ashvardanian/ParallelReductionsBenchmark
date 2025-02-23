@@ -1,7 +1,7 @@
 /**
  *  @date 16/01/2025
- *  @file reduce_metal.hpp
- *  @brief Array reductions in Metal
+ *  @file reduce_metal.h
+ *  @brief Objective-C helpers to launch Metal compute kernels
  *  @author Ash Vardanian
  */
 
