@@ -16,6 +16,14 @@
 #include <immintrin.h> // x86 intrinsics
 #endif
 
+#if defined(__ARM_NEON)
+#include <arm_neon.h> // ARM NEON intrinsics
+#endif
+
+#if defined(__ARM_FEATURE_SVE)
+#include <arm_sve.h> // ARM SVE intrinsics
+#endif
+
 namespace ashvardanian::reduce {
 
 /**
@@ -454,7 +462,74 @@ class avx512_f32interleaving_t {
 
 #endif // defined(__AVX512F__)
 
-#pragma region Multicore
+#pragma endregion x86
+#pragma region ARM
+#if defined(__ARM_NEON)
+
+/**
+ *  @brief Computes the sum of a sequence of float values using SIMD @b NEON intrinsics,
+ *         processing 128 bits (4 floats) per vector.
+ */
+class neon_f32_t {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+  public:
+    neon_f32_t() = default;
+    neon_f32_t(float const *b, float const *e) noexcept : begin_(b), end_(e) {}
+
+    float operator()() const noexcept {
+        auto const count_neon = (end_ - begin_) / 4;
+        auto const last_neon_ptr = begin_ + count_neon * 4;
+        auto it = begin_;
+
+        float32x4_t running_sums = vdupq_n_f32(0.f);
+        for (; it != last_neon_ptr; it += 4) running_sums = vaddq_f32(running_sums, vld1q_f32(it));
+
+        float running_sum = vaddvq_f32(running_sums);
+        for (; it != end_; ++it) running_sum += *it;
+        return running_sum;
+    }
+};
+
+#endif // defined(__ARM_NEON)
+
+#if defined(__ARM_FEATURE_SVE)
+
+/**
+ *  @brief Computes the sum of a sequence of float values using SIMD @b SVE intrinsics,
+ *         processing multiple entries per cycle.
+ */
+class sve_f32_t {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+  public:
+    sve_f32_t() = default;
+    sve_f32_t(float const *b, float const *e) noexcept : begin_(b), end_(e) {}
+
+    float operator()() const noexcept {
+        auto const sve_register_width = svcntw();
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+
+        svfloat32_t running_sums = svdup_f32(0.f);
+        for (std::size_t start_offset = 0; start_offset < input_size; start_offset += sve_register_width) {
+            svbool_t progress_vec = svwhilelt_b32(start_offset, input_size);
+            running_sums = svadd_f32_m(progress_vec, running_sums, svld1(progress_vec, begin_ + start_offset));
+        }
+
+        // No need to handle the tail separately
+        float const running_sum = svaddv(svptrue_b32(), running_sums);
+        return running_sum;
+    }
+};
+
+#endif // defined(__ARM_FEATURE_SVE__)
+
+#pragma endregion ARM
+#pragma endregion Handwritten SIMD Kernels
+
+#pragma region - Multicore
 
 /**
  *  @brief Computes the sum of a sequence of float values using @b OpenMP on-CPU

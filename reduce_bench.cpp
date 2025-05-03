@@ -372,6 +372,16 @@ int main(int argc, char **argv) {
     register_("avx512/f32/interleaving/std::threads", threads_gt<avx512_f32interleaving_t> {}, dataset);
 #endif // defined(__AVX512F__)
 
+    // Arm NEON
+#if defined(__ARM_NEON)
+    register_("neon/f32", neon_f32_t {}, dataset);
+#endif
+
+// Arm SVE
+#if defined(__ARM_FEATURE_SVE)
+    register_("sve/f32", sve_f32_t {}, dataset);
+#endif // defined(__ARM_FEATURE_SVE__)
+
     // CUDA
 #if defined(__CUDACC__)
     if (cuda_device_count()) {
