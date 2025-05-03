@@ -1,8 +1,8 @@
 /**
- *  @date 16/01/2025
- *  @file reduce_metal.h
  *  @brief Objective-C helpers to launch Metal compute kernels
+ *  @file reduce_metal.h
  *  @author Ash Vardanian
+ *  @date 16/01/2025
  */
 
 #pragma once

@@ -1,8 +1,8 @@
 /**
- *  @date 04/09/2019
- *  @file reduce_opencl.cl
  *  @brief OpenCL kernels for reduction algorithms
  *  @author Ash Vardanian
+ *  @file reduce_opencl.cl
+ *  @date 04/09/2019
  */
 
 /**

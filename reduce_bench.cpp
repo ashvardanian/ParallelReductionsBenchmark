@@ -1,8 +1,8 @@
 /**
- *  @date 04/09/2019
- *  @file reduce_bench.cpp
  *  @brief Benchmarking parallel reductions
+ *  @file reduce_bench.cpp
  *  @author Ash Vardanian
+ *  @date 04/09/2019
  */
 #include <cstdlib>   // `std::getenv`
 #include <cstring>   // `std::memset`

@@ -1,8 +1,8 @@
 /**
- *  @date 04/09/2019
- *  @file reduce_cublas.cuh
  *  @brief cuBLAS-based reductions
+ *  @file reduce_cublas.cuh
  *  @author Ash Vardanian
+ *  @date 04/09/2019
  */
 #pragma once
 #include <cublas_api.h>

@@ -1,8 +1,8 @@
 /**
- *  @date 19/01/2025
- *  @file reduce_blas.gpp
  *  @brief BLAS-based reductions
+ *  @file reduce_blas.gpp
  *  @author Ash Vardanian
+ *  @date 19/01/2025
  */
 #pragma once
 #include <cblas.h>   // `cblas_sdot`

@@ -1,8 +1,8 @@
 /**
- *  @date 04/09/2019
- *  @file reduce_cuda.cuh
  *  @brief Pure CUDA, CUB, and Thrust-based reductions
+ *  @file reduce_cuda.cuh
  *  @author Ash Vardanian
+ *  @date 04/09/2019
  */
 #pragma once
 #include <thrust/device_ptr.h>
