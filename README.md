@@ -9,7 +9,7 @@ This repository contains several educational examples showcasing the performance
 
 - Single-threaded but SIMD-accelerated code:
   - SSE, AVX, AVX-512 on x86.
-  - 🔜 NEON and SVE on Arm.
+  - NEON and SVE on Arm.
 - OpenMP `reduction` clause.
 - Thrust with its `thrust::reduce`.
 - CUB with its `cub::DeviceReduce::Sum`.

@@ -10,7 +10,9 @@
 #include <numeric>   // `std::accumulate`, `std::reduce`
 #include <thread>    // `std::thread`
 
+#if defined(_OPENMP)
 #include <omp.h> // `omp_set_num_threads`
+#endif
 
 #if defined(__AVX2__) || defined(__AVX512F__)
 #include <immintrin.h> // x86 intrinsics
@@ -538,6 +540,8 @@ class sve_f32_t {
 
 #pragma region - Multicore
 
+#if defined(_OPENMP)
+
 /**
  *  @brief Computes the sum of a sequence of float values using @b OpenMP on-CPU
  *         for multi-core reductions acceleration.
@@ -562,6 +566,42 @@ class openmp_t {
         return sum;
     }
 };
+
+/**
+ *  @brief Computes the sum of a sequence of float values using @b OpenMP on-CPU
+ *         for multi-core parallelism, combined with the given @b SIMD vectorization.
+ *  @see   https://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-reduction.html
+ */
+template <typename serial_at = stl_accumulate_gt<float>>
+class openmp_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+    std::size_t const total_cores_ = 0;
+    std::vector<double> sums_;
+
+  public:
+    openmp_gt() = default;
+    openmp_gt(float const *b, float const *e) : begin_(b), end_(e), total_cores_(total_cores()), sums_(total_cores_) {
+        omp_set_dynamic(0);
+        omp_set_num_threads(total_cores_);
+    }
+
+    double operator()() {
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+        auto const chunk_size = input_size / total_cores_;
+#pragma omp parallel
+        {
+            std::size_t const thread_id = static_cast<std::size_t>(omp_get_thread_num());
+            std::size_t const start = thread_id * chunk_size;
+            std::size_t const stop = std::min(start + chunk_size, input_size);
+            double local_sum = serial_at {begin_ + start, begin_ + stop}();
+            sums_[thread_id] = local_sum;
+        }
+        return std::accumulate(sums_.begin(), sums_.end(), 0.0);
+    }
+};
+
+#endif
 
 /**
  *  @brief Computes the sum of a sequence of float values using @b std::thread on-CPU
