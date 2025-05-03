@@ -213,3 +213,49 @@ The reason this happens is that on Zen4:
 - Fused-Multiply-Add instructions like `vfmadd132ps zmm, zmm, zmm` execute on ports 0 and 1.
 
 So if the CPU can fetch enough data in time, we can have at least 4 ports simultaneously busy, and the latency of the operation is hidden.
+
+### AWS Graviton4 `c8g.metal-24xl`
+
+On AWS Graviton4 `c8g.metal-24xl` instances with GCC 12, one may expect the following results:
+
+```sh
+$ build_release/reduce_bench 
+You did not feed the size of arrays, so we will use a 1GB array!
+Page size: 4096 bytes
+Cache line size: 64 bytes
+Dataset size: 268435456 elements
+Dataset alignment: 64 bytes
+Dataset allocation type: mmap
+Dataset NUMA nodes: 1
+2025-05-03T20:50:16+00:00
+Running build_release/reduce_bench
+Run on (96 X 2000 MHz CPU s)
+CPU Caches:
+  L1 Data 64 KiB (x96)
+  L1 Instruction 64 KiB (x96)
+  L2 Unified 2048 KiB (x96)
+  L3 Unified 36864 KiB (x1)
+Load Average: 5.76, 6.38, 2.75
+---------------------------------------------------------------------------------------------------------------
+Benchmark                                                     Time             CPU   Iterations UserCounters...
+---------------------------------------------------------------------------------------------------------------
+unrolled/f32/min_time:10.000/real_time                 38034000 ns     38033650 ns          368 bytes/s=28.2311G/s error,%=50
+unrolled/f64/min_time:10.000/real_time                 72851731 ns     72852189 ns          192 bytes/s=14.7387G/s error,%=0
+std::accumulate/f32/min_time:10.000/real_time         192162701 ns    192164003 ns           73 bytes/s=5.58767G/s error,%=93.75
+std::accumulate/f64/min_time:10.000/real_time         192266754 ns    192268708 ns           73 bytes/s=5.58465G/s error,%=0
+serial/f32/av::fork_union/min_time:10.000/real_time     1889686 ns      1889604 ns         7320 bytes/s=568.212G/s error,%=0
+serial/f64/av::fork_union/min_time:10.000/real_time     1935453 ns      1935360 ns         7309 bytes/s=554.775G/s error,%=0
+serial/f32/openmp/min_time:10.000/real_time             2244099 ns      2108568 ns         4723 bytes/s=478.473G/s error,%=71.5256u
+std::reduce<par>/f32/min_time:10.000/real_time          1950894 ns      1950842 ns         7129 bytes/s=550.384G/s error,%=0
+std::reduce<par>/f64/min_time:10.000/real_time          1959062 ns      1953907 ns         7121 bytes/s=548.09G/s error,%=0
+std::reduce<par_unseq>/f32/min_time:10.000/real_time    1956428 ns      1949906 ns         7139 bytes/s=548.828G/s error,%=0
+std::reduce<par_unseq>/f64/min_time:10.000/real_time    1953465 ns      1952599 ns         7117 bytes/s=549.66G/s error,%=0
+neon/f32/min_time:10.000/real_time                     48248562 ns     48249488 ns          290 bytes/s=22.2544G/s error,%=75
+neon/f32/av::fork_union/min_time:10.000/real_time       1890173 ns      1887574 ns         7354 bytes/s=568.065G/s error,%=0
+neon/f32/std::threads/min_time:10.000/real_time         3321599 ns      3181368 ns         4221 bytes/s=323.261G/s error,%=1.04167
+neon/f32/openmp/min_time:10.000/real_time               1901684 ns      1899327 ns         7263 bytes/s=564.627G/s error,%=23.8419u
+sve/f32/min_time:10.000/real_time                      50048126 ns     50049059 ns          280 bytes/s=21.4542G/s error,%=75
+sve/f32/av::fork_union/min_time:10.000/real_time        1898117 ns      1897862 ns         7329 bytes/s=565.688G/s error,%=0
+sve/f32/std::threads/min_time:10.000/real_time          3347690 ns      3203386 ns         4190 bytes/s=320.741G/s error,%=1.04167
+sve/f32/openmp/min_time:10.000/real_time                1909972 ns      1901816 ns         7274 bytes/s=562.177G/s error,%=23.8419u
+```
