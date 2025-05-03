@@ -26,6 +26,8 @@
 #include <arm_sve.h> // ARM SVE intrinsics
 #endif
 
+#include <fork_union.hpp>
+
 namespace ashvardanian {
 
 /**
@@ -604,7 +606,7 @@ class openmp_gt {
 #endif
 
 /**
- *  @brief Computes the sum of a sequence of float values using @b std::thread on-CPU
+ *  @brief Computes the sum of a sequence of float values using @b `std::thread` on-CPU
  *         multi-core reductions acceleration.
  *  @see   https://en.cppreference.com/w/cpp/thread/thread
  */
@@ -658,6 +660,37 @@ class threads_gt {
 
         threads_.clear();
         return running_sum;
+    }
+};
+
+/**
+ *  @brief Computes the sum of a sequence of float values using @b `std::thread` on-CPU
+ *         multi-core reductions acceleration, reusing a fixed-size thread pool.
+ *  @see   https://github.com/ashvardanian/fork_union
+ */
+template <typename serial_at = stl_accumulate_gt<float>>
+class fork_union_gt {
+    using pool_t = ::ashvardanian::fork_union_t;
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+    pool_t pool_;
+    std::vector<double> sums_;
+
+  public:
+    fork_union_gt() = default;
+    fork_union_gt(float const *b, float const *e) : begin_(b), end_(e), sums_() {
+        auto cores = total_cores();
+        if (!pool_.try_spawn(cores)) throw std::runtime_error("Failed to fork threads");
+        sums_.resize(cores);
+    }
+
+    double operator()() {
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+        pool_.for_each_slice(input_size, [this](pool_t::task_t first_task, std::size_t slice_length) noexcept {
+            auto const slice_begin = begin_ + first_task.task_index;
+            sums_[first_task.thread_index] = serial_at {slice_begin, slice_begin + slice_length}();
+        });
+        return std::accumulate(sums_.begin(), sums_.end(), 0.0);
     }
 };
 

@@ -195,7 +195,7 @@ Observations:
 - 370 GB/s can be reached in dual-socket DDR5 setups with 12 channel memory.
 - Using Kahan-like schemes is 3x slower than pure `float` and 2x slower than `double`.
 
-One of the interesting observations is the effect of latency hiding, interleaving the operations executing on different ports of the same CPU.
+One of the interesting observations is the effect of [latency hiding, interleaving the operations executing on different ports of the same CPU](https://ashvardanian.com/posts/cpu-ports).
 It is evident when benchmarking AVX-512 kernels on very small arrays:
 
 ```sh

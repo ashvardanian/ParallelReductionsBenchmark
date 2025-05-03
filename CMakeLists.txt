@@ -88,6 +88,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fmt)
 
+FetchContent_Declare(
+    fork_union
+    GIT_REPOSITORY https://github.com/ashvardanian/fork_union.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(fork_union)
+
 # Fetch GBenchmark and suppress internal tests.
 # https://github.com/google/benchmark/blob/main/docs/user_guide.md#using-register-benchmark
 FetchContent_Declare(
@@ -152,7 +159,7 @@ set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
 add_executable(reduce_bench reduce_bench.cpp)
-target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt Threads::Threads BLAS::BLAS)
+target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt fork_union Threads::Threads BLAS::BLAS)
 
 if (USE_INTEL_TBB)
     target_link_libraries(reduce_bench PRIVATE TBB::tbb)

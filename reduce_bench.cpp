@@ -188,9 +188,9 @@ std::size_t alignment_ram_page() {
  *  2. `std::aligned_alloc` aligned to the system page size with optional @b `madvise(MADV_HUGEPAGE)`.
  *  If NUMA is available (libNUMA on Linux), memory is distributed across NUMA nodes.
  *
- *  @param elements Number of float elements to allocate.
- *  @return dataset_t A dataset wrapper holding the pointer and type of allocation.
- *  @throws std::bad_alloc if allocation fails.
+ *  @param[in] needed_elements Number of float elements to allocate.
+ *  @return `dataset_t` A dataset wrapper holding the pointer and type of allocation.
+ *  @throws `std::bad_alloc` if allocation fails.
  *
  *  @see NUMA docs: https://man7.org/linux/man-pages/man3/numa.3.html
  *  @see MMAP docs: https://man7.org/linux/man-pages/man2/mmap.2.html
@@ -336,7 +336,11 @@ int main(int argc, char **argv) {
     register_("unrolled/f64", unrolled_gt<double> {}, dataset);
     register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
     register_("std::accumulate/f64", stl_accumulate_gt<double> {}, dataset);
+    register_("serial/f32/av::fork_union", fork_union_gt<unrolled_gt<float>> {}, dataset);
+    register_("serial/f64/av::fork_union", fork_union_gt<unrolled_gt<double>> {}, dataset);
+#if defined(_OPENMP)
     register_("serial/f32/openmp", openmp_t {}, dataset);
+#endif // defined(_OPENMP)
 
     //! BLAS struggles with zero-strided arguments!
     //! register_("blas/f32", blas_dot_t {}, dataset);
@@ -375,11 +379,17 @@ int main(int argc, char **argv) {
     // Arm NEON
 #if defined(__ARM_NEON)
     register_("neon/f32", neon_f32_t {}, dataset);
+    register_("neon/f32/av::fork_union", fork_union_gt<neon_f32_t> {}, dataset);
+    register_("neon/f32/std::threads", threads_gt<neon_f32_t> {}, dataset);
+    register_("neon/f32/openmp", openmp_gt<neon_f32_t> {}, dataset);
 #endif
 
 // Arm SVE
 #if defined(__ARM_FEATURE_SVE)
     register_("sve/f32", sve_f32_t {}, dataset);
+    register_("sve/f32/av::fork_union", fork_union_gt<sve_f32_t> {}, dataset);
+    register_("sve/f32/std::threads", threads_gt<sve_f32_t> {}, dataset);
+    register_("sve/f32/openmp", openmp_gt<sve_f32_t> {}, dataset);
 #endif // defined(__ARM_FEATURE_SVE__)
 
     // CUDA
