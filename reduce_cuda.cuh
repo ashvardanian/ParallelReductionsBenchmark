@@ -13,7 +13,7 @@
 
 #include <cub/cub.cuh>
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 std::size_t cuda_device_count() noexcept {
     int count;
@@ -280,4 +280,4 @@ class cuda_cub_t {
     }
 };
 
-} // namespace ashvardanian::reduce
+} // namespace ashvardanian

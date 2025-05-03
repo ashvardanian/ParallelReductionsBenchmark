@@ -53,7 +53,7 @@ You are expected to build this on an x86 machine with CUDA drivers installed.
 
 ```sh
 cmake -B build_release -D CMAKE_BUILD_TYPE=Release         # Generate the build files
-cmake --build build_release --config Release               # Build the project
+cmake --build build_release --config Release -j            # Build the project
 build_release/reduce_bench                                 # Run all benchmarks
 build_release/reduce_bench --benchmark_filter="cuda"       # Only CUDA-related
 PARALLEL_REDUCTIONS_LENGTH=1024 build_release/reduce_bench # Set a different input size

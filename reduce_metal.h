@@ -17,7 +17,7 @@
 #include <cstdio>
 #include <cstring>
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 struct metal_t {
 
@@ -216,6 +216,6 @@ struct metal_t {
     }
 };
 
-} // namespace ashvardanian::reduce
+} // namespace ashvardanian
 
 #endif

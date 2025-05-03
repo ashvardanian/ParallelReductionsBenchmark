@@ -19,7 +19,7 @@
 #include <CL/cl.h>
 #endif
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 /**
  *  @brief OpenCL target device information, including its name, driver version,
@@ -337,4 +337,4 @@ char const *opencl_error_name(cl_int code) noexcept {
     }
 }
 
-} // namespace ashvardanian::reduce
+} // namespace ashvardanian

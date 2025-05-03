@@ -16,7 +16,7 @@
 
 using namespace nvcuda;
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 /**
  *  @brief Using cuBLAS dot-product interfaces to accumulate a vector.
@@ -164,4 +164,4 @@ struct cuda_tensors_t {
     }
 };
 
-} // namespace ashvardanian::reduce
+} // namespace ashvardanian

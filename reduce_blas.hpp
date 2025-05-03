@@ -9,7 +9,7 @@
 #include <limits>    // `std::numeric_limits`
 #include <stdexcept> // `std::length_error`
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 /**
  *  @brief Using BLAS dot-product interface to accumulate a vector.
@@ -42,4 +42,4 @@ class blas_dot_t {
     }
 };
 
-} // namespace ashvardanian::reduce
+} // namespace ashvardanian

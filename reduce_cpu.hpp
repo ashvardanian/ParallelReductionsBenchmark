@@ -1,8 +1,8 @@
 /**
- *  @date 04/09/2019
- *  @file reduce_cpu.hpp
  *  @brief Parallel reduction with SIMD and multicore acceleration
+ *  @file reduce_cpu.hpp
  *  @author Ash Vardanian
+ *  @date 04/09/2019
  */
 #pragma once
 #include <cstring>   // `std::memcpy`
@@ -24,7 +24,7 @@
 #include <arm_sve.h> // ARM SVE intrinsics
 #endif
 
-namespace ashvardanian::reduce {
+namespace ashvardanian {
 
 /**
  *  @brief Returns the current number of logical cores on the CPU.
@@ -40,6 +40,8 @@ inline static std::size_t total_cores() { return std::thread::hardware_concurren
 inline static std::size_t round_up_to_multiple(std::size_t value, std::size_t multiple) noexcept {
     return ((value + multiple - 1) / multiple) * multiple;
 }
+
+#pragma region - Serial and Autovectorized
 
 /**
  *  @brief Computes the sum of a sequence of float values using an unrolled @b `for`-loop,
@@ -130,6 +132,11 @@ class stl_par_unseq_reduce_gt {
 };
 
 #endif // defined(__cpp_lib_execution)
+
+#pragma endregion - Serial and Autovectorized
+
+#pragma region - Handwritten SIMD Kernels
+#pragma region x86
 
 #if defined(__SSE__)
 
@@ -614,4 +621,6 @@ class threads_gt {
     }
 };
 
-} // namespace ashvardanian::reduce
+#pragma endregion - Multicore
+
+} // namespace ashvardanian

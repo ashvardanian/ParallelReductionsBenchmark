@@ -60,7 +60,7 @@
 #endif
 
 namespace bm = benchmark;
-using namespace ashvardanian::reduce;
+using namespace ashvardanian;
 
 /**
  *  @brief  Wraps the memory allocated for the benchmark either from `malloc` or `mmap`.
