@@ -62,15 +62,29 @@ PARALLEL_REDUCTIONS_LENGTH=1024 build_release/reduce_bench # Set a different inp
 Need a more fine-grained control to run only CUDA-based backends?
 
 ```sh
-cmake -DCMAKE_CUDA_COMPILER=nvcc -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -B build_release
-cmake --build build_release --config Release
+cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc-12 -D CMAKE_CXX_COMPILER=g++-12 -B build_release
+cmake --build build_release --config Release -j
 build_release/reduce_bench --benchmark_filter=cuda
+```
+
+Want to use the non-default Clang distribution on macOS?
+OpenBLAS will be superseded by Apple's `Accelerate.framework`, but LLVM and OpenMP should ideally be pulled from Homebrew:
+
+```sh
+brew install llvm libomp
+cmake -B build_release \
+  -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ \
+  -D OpenMP_ROOT=$(brew --prefix llvm)          \
+  -D CMAKE_BUILD_RPATH=$(brew --prefix llvm)/lib \
+  -D CMAKE_INSTALL_RPATH=$(brew --prefix llvm)/lib
+cmake --build build_release --config Release -j
+build_release/reduce_bench
 ```
 
 To debug or introspect, the procedure is similar:
 
 ```sh
-cmake -DCMAKE_CUDA_COMPILER=nvcc -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Debug -B build_debug
+cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_BUILD_TYPE=Debug -B build_debug
 cmake --build build_debug --config Debug
 ```
 
