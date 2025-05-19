@@ -81,7 +81,7 @@ find_package(OpenMP QUIET)
 find_package(OpenCL QUIET)
 if (NOT APPLE)
     find_package(BLAS REQUIRED)
-endif()
+endif ()
 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
@@ -92,6 +92,13 @@ FetchContent_Declare(
     GIT_TAG 11.1.2
 )
 FetchContent_MakeAvailable(fmt)
+
+FetchContent_Declare(
+    taskflow
+    GIT_REPOSITORY https://github.com/taskflow/taskflow.git
+    GIT_TAG v3.10.0
+)
+FetchContent_MakeAvailable(taskflow)
 
 FetchContent_Declare(
     fork_union
@@ -164,13 +171,13 @@ set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
 add_executable(reduce_bench reduce_bench.cpp)
-target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt fork_union Threads::Threads)
+target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt fork_union Taskflow Threads::Threads)
 
 if (APPLE)
     target_link_libraries(reduce_bench PRIVATE "-framework Accelerate")
-else()
+else ()
     target_compile_definitions(reduce_bench PRIVATE BLAS::BLAS)
-endif()
+endif ()
 
 if (USE_INTEL_TBB)
     target_link_libraries(reduce_bench PRIVATE TBB::tbb)

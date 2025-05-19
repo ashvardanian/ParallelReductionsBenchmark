@@ -27,6 +27,7 @@
 #endif
 
 #include <fork_union.hpp>
+#include <taskflow/taskflow.hpp>
 
 namespace ashvardanian {
 
@@ -716,6 +717,44 @@ class fork_union_gt {
         });
         return std::accumulate(sums_.begin(), sums_.end(), 0.0,
                                [](double const &a, thread_result_t const &b) { return a + b.partial_sum; });
+    }
+};
+
+template <typename serial_at = stl_accumulate_gt<float>>
+class taskflow_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+    std::size_t const cores_ = 0;
+
+    tf::Executor executor_;
+    tf::Taskflow taskflow_;
+
+    struct alignas(128) thread_result_t {
+        double partial_sum = 0.0;
+    };
+    std::vector<thread_result_t> sums_;
+
+  public:
+    taskflow_gt() = default;
+    taskflow_gt(float const *b, float const *e)
+        : begin_ {b}, end_ {e}, cores_ {total_cores()}, executor_ {static_cast<unsigned>(cores_)}, sums_(cores_) {}
+
+    double operator()() {
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+        auto const chunk_size = scalars_per_core(input_size, cores_);
+
+        taskflow_.clear();
+        for (std::size_t tid = 0; tid < cores_; ++tid) {
+            taskflow_.emplace([&, tid] {
+                std::size_t const start = std::min(tid * chunk_size, input_size);
+                std::size_t const stop = std::min(start + chunk_size, input_size);
+                sums_[tid].partial_sum = serial_at {begin_ + start, begin_ + stop}();
+            });
+        }
+
+        executor_.run(taskflow_).wait();
+        return std::accumulate(sums_.begin(), sums_.end(), 0.0,
+                               [](double acc, thread_result_t const &x) noexcept { return acc + x.partial_sum; });
     }
 };
 
