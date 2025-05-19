@@ -577,6 +577,14 @@ class openmp_t {
     }
 };
 
+inline std::size_t scalars_per_core(std::size_t input_size, std::size_t total_cores) {
+    constexpr std::size_t max_cache_line_size = 64; // 64 on x86, sometimes 128 on ARM
+    constexpr std::size_t scalars_per_cache_line = max_cache_line_size / sizeof(float);
+    std::size_t const chunk_size =
+        round_up_to_multiple(divide_round_up(input_size, total_cores), scalars_per_cache_line);
+    return chunk_size;
+}
+
 /**
  *  @brief Computes the sum of a sequence of float values using @b OpenMP on-CPU
  *         for multi-core parallelism, combined with the given @b SIMD vectorization.
@@ -598,7 +606,7 @@ class openmp_gt {
 
     double operator()() {
         auto const input_size = static_cast<std::size_t>(end_ - begin_);
-        auto const chunk_size = divide_round_up(input_size, total_cores_);
+        auto const chunk_size = scalars_per_core(input_size, total_cores_);
 #pragma omp parallel
         {
             std::size_t const thread_id = static_cast<std::size_t>(omp_get_thread_num());
@@ -642,29 +650,26 @@ class threads_gt {
         sums_.resize(cores);
     }
 
-    std::size_t count_per_thread() const noexcept {
-        constexpr std::size_t entries_per_zmm_register = 64 / sizeof(float);
-        std::size_t balanced_split = divide_round_up(end_ - begin_, sums_.size());
-        return round_up_to_multiple(balanced_split, entries_per_zmm_register);
-    }
-
     double operator()() {
-        auto it = begin_;
-        std::size_t const batch_size = count_per_thread();
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+        auto const chunk_size = scalars_per_core(input_size, sums_.size());
 
         // Start the child threads
-        for (std::size_t i = 0; i + 1 < sums_.size(); ++i, it += batch_size)
-            threads_.emplace_back(thread_task_t {it, it + batch_size, sums_[i]});
+        for (std::size_t i = 1; i < sums_.size(); ++i) {
+            auto chunk_begin = begin_ + i * chunk_size;
+            if (chunk_begin < end_)
+                threads_.emplace_back(thread_task_t {chunk_begin, std::min(chunk_begin + chunk_size, end_), sums_[i]});
+            else
+                sums_[i] = 0;
+        }
 
         // This thread lives by its own rules and may end up processing a smaller batch :)
         double running_sum = 0;
-        thread_task_t {it, end_, running_sum}();
+        thread_task_t {begin_, std::min(begin_ + chunk_size, end_), running_sum}();
 
         // Accumulate sums from child threads.
-        for (std::size_t i = 1; i < sums_.size(); ++i) {
-            threads_[i - 1].join();
-            running_sum += sums_[i];
-        }
+        for (auto &thread : threads_) thread.join();
+        for (auto const &sum : sums_) running_sum += sum;
 
         threads_.clear();
         return running_sum;
