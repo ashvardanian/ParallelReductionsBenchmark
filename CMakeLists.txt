@@ -93,6 +93,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fmt)
 
+set(TF_BUILD_CUDA OFF)
+set(TF_BUILD_TESTS OFF)
+set(TF_BUILD_EXAMPLES OFF)
 FetchContent_Declare(
     taskflow
     GIT_REPOSITORY https://github.com/taskflow/taskflow.git
