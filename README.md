@@ -112,7 +112,7 @@ On Nvidia DGX-H100 nodes, with GCC 12 and NVCC 12.1, one may expect the followin
 ```sh
 $ build_release/reduce_bench
 You did not feed the size of arrays, so we will use a 1GB array!
-2024-05-06T00:11:14+00:00
+
 Running build_release/reduce_bench
 Run on (160 X 2100 MHz CPU s)
 CPU Caches:
@@ -168,7 +168,7 @@ On AWS Zen4 `m7a.metal-48xl` instances with GCC 12, one may expect the following
 ```sh
 $ build_release/reduce_bench
 You did not feed the size of arrays, so we will use a 1GB array!
-2025-01-18T11:26:46+00:00
+
 Running build_release/reduce_bench
 Run on (192 X 3701.95 MHz CPU s)
 CPU Caches:
@@ -177,7 +177,6 @@ CPU Caches:
   L2 Unified 1024 KiB (x192)
   L3 Unified 32768 KiB (x24)
 Load Average: 4.54, 2.78, 4.94
-***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
 --------------------------------------------------------------------------------------------------------------------
 Benchmark                                                          Time             CPU   Iterations UserCounters...
 --------------------------------------------------------------------------------------------------------------------
@@ -241,7 +240,7 @@ Dataset size: 268435456 elements
 Dataset alignment: 64 bytes
 Dataset allocation type: mmap
 Dataset NUMA nodes: 1
-2025-05-03T20:50:16+00:00
+
 Running build_release/reduce_bench
 Run on (96 X 2000 MHz CPU s)
 CPU Caches:
@@ -272,4 +271,39 @@ sve/f32/min_time:10.000/real_time                      50048126 ns     50049059 
 sve/f32/av::fork_union/min_time:10.000/real_time        1898117 ns      1897862 ns         7329 bytes/s=565.688G/s error,%=0
 sve/f32/std::threads/min_time:10.000/real_time          3347690 ns      3203386 ns         4190 bytes/s=320.741G/s error,%=1.04167
 sve/f32/openmp/min_time:10.000/real_time                1909972 ns      1901816 ns         7274 bytes/s=562.177G/s error,%=23.8419u
+```
+
+### Apple M2 Pro
+
+```sh
+$ build_release/reduce_bench
+You did not feed the size of arrays, so we will use a 1GB array!
+Page size: 16384 bytes
+Cache line size: 128 bytes
+Dataset size: 268435456 elements
+Dataset alignment: 128 bytes
+Dataset allocation type: malloc
+Dataset NUMA nodes: 1
+
+Running build_release/reduce_bench
+Run on (12 X 24 MHz CPU s)
+CPU Caches:
+  L1 Data 64 KiB
+  L1 Instruction 128 KiB
+  L2 Unified 4096 KiB (x12)
+Load Average: 2.85, 2.81, 3.73
+--------------------------------------------------------------------------------------------------------------
+Benchmark                                                    Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------------------
+unrolled/f32/min_time:10.000/real_time                30964307 ns     30957398 ns          450 bytes/s=34.6768G/s error,%=50
+unrolled/f64/min_time:10.000/real_time                29709300 ns     29570448 ns          469 bytes/s=36.1416G/s error,%=0
+std::accumulate/f32/min_time:10.000/real_time        230808586 ns    230802100 ns           60 bytes/s=4.65209G/s error,%=93.75
+std::accumulate/f64/min_time:10.000/real_time        230730119 ns    230729517 ns           60 bytes/s=4.65367G/s error,%=0
+serial/f32/av::fork_union/min_time:10.000/real_time    9916316 ns      9401053 ns         1394 bytes/s=108.28G/s error,%=745.058n
+serial/f64/av::fork_union/min_time:10.000/real_time    9681207 ns      9152610 ns         1450 bytes/s=110.91G/s error,%=0
+serial/f32/openmp/min_time:10.000/real_time           25585366 ns     21820168 ns          518 bytes/s=41.967G/s error,%=25
+neon/f32/min_time:10.000/real_time                    58821387 ns     58819675 ns          234 bytes/s=18.2543G/s error,%=75
+neon/f32/av::fork_union/min_time:10.000/real_time     10396624 ns      9999804 ns         1365 bytes/s=103.278G/s error,%=8.9407u
+neon/f32/std::threads/min_time:10.000/real_time        9973662 ns      6937423 ns         1370 bytes/s=107.658G/s error,%=8.33334
+neon/f32/openmp/min_time:10.000/real_time             10295897 ns      6866715 ns         1367 bytes/s=104.288G/s error,%=8.9407u
 ```
