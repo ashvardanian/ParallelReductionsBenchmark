@@ -9,6 +9,8 @@
 #include <stdexcept> // `std::length_error`
 
 #if defined(__APPLE__)
+#define ACCELERATE_NEW_LAPACK 1    // For 64-bit newer APIs
+#define CBLAS_INDEX long           // Use 64-bit signed ints
 #include <Accelerate/Accelerate.h> // Apple's BLAS/CBLAS
 #else
 #include <cblas.h> // OpenBLAS, MKL, etc.
