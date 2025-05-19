@@ -286,7 +286,7 @@ $ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter=
 Benchmark                          Time             CPU   Iterations UserCounters...
 ------------------------------------------------------------------------------------
 sve/f32/std::threads         2047275 ns      2008267 ns        13751 bytes/s=3.00106M/s error,%=0
-sve/f32/tf::taskflow          109782 ns       106764 ns       254660 bytes/s=55.9655M/s error,%=0
+sve/f32/tf::taskflow          109782 ns       106764 ns       254660 bytes/s=76.2837M/s error,%=0
 sve/f32/av::fork_union         13136 ns        13136 ns      2117597 bytes/s=467.714M/s error,%=0
 sve/f32/openmp                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
 ```
