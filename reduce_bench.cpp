@@ -337,9 +337,9 @@ int main(int argc, char **argv) {
     register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
     register_("std::accumulate/f64", stl_accumulate_gt<double> {}, dataset);
     register_("serial/f32/av::fork_union", fork_union_gt<unrolled_gt<float>> {}, dataset);
-    register_("serial/f32/taskflow", taskflow_gt<unrolled_gt<float>> {}, dataset);
+    register_("serial/f32/tf::taskflow", taskflow_gt<unrolled_gt<float>> {}, dataset);
     register_("serial/f64/av::fork_union", fork_union_gt<unrolled_gt<double>> {}, dataset);
-    register_("serial/f64/taskflow", taskflow_gt<unrolled_gt<double>> {}, dataset);
+    register_("serial/f64/tf::taskflow", taskflow_gt<unrolled_gt<double>> {}, dataset);
 #if defined(_OPENMP)
     register_("serial/f32/openmp", openmp_t {}, dataset);
 #endif // defined(_OPENMP)
@@ -382,7 +382,7 @@ int main(int argc, char **argv) {
 #if defined(__ARM_NEON)
     register_("neon/f32", neon_f32_t {}, dataset);
     register_("neon/f32/av::fork_union", fork_union_gt<neon_f32_t> {}, dataset);
-    register_("neon/f32/taskflow", taskflow_gt<neon_f32_t> {}, dataset);
+    register_("neon/f32/tf::taskflow", taskflow_gt<neon_f32_t> {}, dataset);
     register_("neon/f32/std::threads", threads_gt<neon_f32_t> {}, dataset);
     register_("neon/f32/openmp", openmp_gt<neon_f32_t> {}, dataset);
 #endif
@@ -391,7 +391,7 @@ int main(int argc, char **argv) {
 #if defined(__ARM_FEATURE_SVE)
     register_("sve/f32", sve_f32_t {}, dataset);
     register_("sve/f32/av::fork_union", fork_union_gt<sve_f32_t> {}, dataset);
-    register_("sve/f32/taskflow", taskflow_gt<sve_f32_t> {}, dataset);
+    register_("sve/f32/tf::taskflow", taskflow_gt<sve_f32_t> {}, dataset);
     register_("sve/f32/std::threads", threads_gt<sve_f32_t> {}, dataset);
     register_("sve/f32/openmp", openmp_gt<sve_f32_t> {}, dataset);
 #endif // defined(__ARM_FEATURE_SVE__)
