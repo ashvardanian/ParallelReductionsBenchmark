@@ -273,6 +273,26 @@ sve/f32/std::threads/min_time:10.000/real_time          3347690 ns      3203386 
 sve/f32/openmp/min_time:10.000/real_time                1909972 ns      1901816 ns         7274 bytes/s=562.177G/s error,%=23.8419u
 ```
 
+Amazon's Graviton CPUs configured with a single NUMA node and Arm's native support for "weak memory model" make it the perfect ground for studying the cost of various concurrency synchronization primitives.
+For that, we can launch the benchmark with a tiny input, such as just 1 scalar per core, and measure the overall latency of dispatching all threads, blocking, and afterwards aggregating partial results.
+Assuming, some of the work scheduling happens at a cache-line granularity, instead of 1 scalar per core, we take 1 cache-line per core.
+
+> 64 bytes / 4 bytes per scalar * 96 cores = 1536 scalars.
+
+```sh
+$ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter="openmp|fork"
+
+--------------------------------------------------------------------------------------------------------------
+Benchmark                                                    Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------------------
+serial/f32/av::fork_union/min_time:10.000/real_time      13273 ns        13273 ns      1011938 bytes/s=462.912M/s error,%=0
+serial/f32/openmp/min_time:10.000/real_time              12153 ns        12087 ns      1089832 bytes/s=505.544M/s error,%=0
+neon/f32/av::fork_union/min_time:10.000/real_time        13414 ns        13409 ns      1036934 bytes/s=458.024M/s error,%=0
+neon/f32/openmp/min_time:10.000/real_time                 8406 ns         8398 ns      1641973 bytes/s=730.88M/s error,%=0
+sve/f32/av::fork_union/min_time:10.000/real_time         13351 ns        13351 ns      1038792 bytes/s=460.191M/s error,%=0
+sve/f32/openmp/min_time:10.000/real_time                  9647 ns         9313 ns      1620873 bytes/s=636.869M/s error,%=0
+```
+
 ### Apple M2 Pro
 
 ```sh
