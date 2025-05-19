@@ -6,7 +6,10 @@
         {
             "label": "Build Debug",
             "type": "shell",
-            "command": "cmake -B ./build_debug -DCMAKE_BUILD_TYPE=Debug && cmake --build ./build_debug --config Debug"
+            "command": "cmake -B ./build_debug -DCMAKE_BUILD_TYPE=Debug && cmake --build ./build_debug --config Debug",
+            "osx": {
+                "command": "cmake -B ./build_debug -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ -D OpenMP_ROOT=$(brew --prefix llvm) -D CMAKE_BUILD_RPATH=$(brew --prefix llvm)/lib -D CMAKE_INSTALL_RPATH=$(brew --prefix llvm)/lib && cmake --build ./build_debug --config Debug"
+            },
         },
         {
             "label": "Build & Run Release",

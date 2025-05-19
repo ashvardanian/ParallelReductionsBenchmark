@@ -5,7 +5,6 @@
             "name": "GDB C++: Launch",
             "type": "cppdbg",
             "request": "launch",
-            "miDebuggerPath": "/usr/bin/gdb",
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "Build Debug",
             "program": "${workspaceFolder}/build_debug/reduce_bench",
@@ -27,15 +26,17 @@
             ],
             "stopAtEntry": false,
             "linux": {
+                "miDebuggerPath": "/usr/bin/gdb",
                 "MIMode": "gdb"
             },
             "osx": {
+                "miDebuggerPath": "$(brew --prefix llvm)/bin/lldb-mi",
                 "MIMode": "lldb"
             },
             "windows": {
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
                 "program": "${workspaceFolder}\\build_debug\\reduce_bench.exe",
-                "MIMode": "gdb",
-                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+                "MIMode": "gdb"
             }
         },
         {
