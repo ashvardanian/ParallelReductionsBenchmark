@@ -1,13 +1,18 @@
 /**
  *  @brief BLAS-based reductions
- *  @file reduce_blas.gpp
+ *  @file reduce_blas.hpp
  *  @author Ash Vardanian
  *  @date 19/01/2025
  */
 #pragma once
-#include <cblas.h>   // `cblas_sdot`
 #include <limits>    // `std::numeric_limits`
 #include <stdexcept> // `std::length_error`
+
+#if defined(__APPLE__)
+#include <Accelerate/Accelerate.h> // Apple's BLAS/CBLAS
+#else
+#include <cblas.h> // OpenBLAS, MKL, etc.
+#endif
 
 namespace ashvardanian {
 
