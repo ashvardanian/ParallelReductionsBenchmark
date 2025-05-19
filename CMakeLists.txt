@@ -65,6 +65,9 @@ if (ENABLE_CUDA)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(USE_NVIDIA_CCCL OFF) # Can't compile CCCL w/o CUDA
     set(USE_INTEL_TBB ON) # Default to TBB on Linux without CUDA
+else ()
+    set(USE_NVIDIA_CCCL OFF) # Disable CCCL on non-Linux systems
+    set(USE_INTEL_TBB OFF) # Disable TBB on non-Linux systems
 endif ()
 
 message(STATUS "USE_INTEL_TBB: ${USE_INTEL_TBB}")
@@ -159,7 +162,13 @@ set(CMAKE_CUDA_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_GCC_FLAGS "${CMAKE_GCC_FLAGS} -march=native -fopenmp")
 
 add_executable(reduce_bench reduce_bench.cpp)
-target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt fork_union Threads::Threads BLAS::BLAS)
+target_link_libraries(reduce_bench PRIVATE benchmark::benchmark fmt::fmt fork_union Threads::Threads)
+
+if (APPLE)
+    target_link_libraries(reduce_bench PRIVATE "-framework Accelerate")
+else()
+    target_compile_definitions(reduce_bench PRIVATE BLAS::BLAS)
+endif()
 
 if (USE_INTEL_TBB)
     target_link_libraries(reduce_bench PRIVATE TBB::tbb)
