@@ -77,9 +77,11 @@ message(STATUS "USE_NVIDIA_CCCL: ${USE_NVIDIA_CCCL}")
 # Dependencies
 # ------------------------------------------------------------------------------
 find_package(Threads REQUIRED)
-find_package(BLAS REQUIRED)
 find_package(OpenMP QUIET)
 find_package(OpenCL QUIET)
+if (NOT APPLE)
+    find_package(BLAS REQUIRED)
+endif()
 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
