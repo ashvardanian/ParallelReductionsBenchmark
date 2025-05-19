@@ -74,7 +74,7 @@ class unrolled_gt {
         accumulator_at sums[8];
         std::fill(sums, sums + 8, 0);
         float const *it = begin_;
-        for (; it + 8 < end_; it += 8) {
+        for (; it + 8 <= end_; it += 8) {
             sums[0] += it[0];
             sums[1] += it[1];
             sums[2] += it[2];
