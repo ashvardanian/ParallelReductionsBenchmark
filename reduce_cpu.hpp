@@ -38,11 +38,19 @@ namespace ashvardanian {
 inline static std::size_t total_cores() { return std::thread::hardware_concurrency(); }
 
 /**
+ *  @brief Divides a value by another value and rounds it up to the nearest integer.
+ *         Example: `round_up_to_multiple(5, 3) == 2`
+ */
+inline static std::size_t divide_round_up(std::size_t value, std::size_t multiple) noexcept {
+    return ((value + multiple - 1) / multiple);
+}
+
+/**
  *  @brief Rounds a value up to the nearest multiple of another value.
  *         Example: `round_up_to_multiple(5, 3) == 6`
  */
 inline static std::size_t round_up_to_multiple(std::size_t value, std::size_t multiple) noexcept {
-    return ((value + multiple - 1) / multiple) * multiple;
+    return divide_round_up(value, multiple) * multiple;
 }
 
 #pragma region - Serial and Autovectorized
@@ -590,11 +598,11 @@ class openmp_gt {
 
     double operator()() {
         auto const input_size = static_cast<std::size_t>(end_ - begin_);
-        auto const chunk_size = input_size / total_cores_;
+        auto const chunk_size = divide_round_up(input_size, total_cores_);
 #pragma omp parallel
         {
             std::size_t const thread_id = static_cast<std::size_t>(omp_get_thread_num());
-            std::size_t const start = thread_id * chunk_size;
+            std::size_t const start = std::min(thread_id * chunk_size);
             std::size_t const stop = std::min(start + chunk_size, input_size);
             double local_sum = serial_at {begin_ + start, begin_ + stop}();
             sums_[thread_id] = local_sum;
@@ -636,7 +644,7 @@ class threads_gt {
 
     std::size_t count_per_thread() const noexcept {
         constexpr std::size_t entries_per_zmm_register = 64 / sizeof(float);
-        std::size_t balanced_split = (end_ - begin_) / sums_.size();
+        std::size_t balanced_split = divide_round_up(end_ - begin_, sums_.size());
         return round_up_to_multiple(balanced_split, entries_per_zmm_register);
     }
 
