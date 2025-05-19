@@ -121,27 +121,27 @@ CPU Caches:
   L2 Unified 4096 KiB (x80)
   L3 Unified 16384 KiB (x2)
 Load Average: 3.23, 19.01, 13.71
-----------------------------------------------------------------------------------------------------------------
-Benchmark                                                      Time             CPU   Iterations UserCounters...
-----------------------------------------------------------------------------------------------------------------
-unrolled<f32>/min_time:10.000/real_time                149618549 ns    149615366 ns           95 bytes/s=7.17653G/s error,%=50
-unrolled<f64>/min_time:10.000/real_time                146594731 ns    146593719 ns           95 bytes/s=7.32456G/s error,%=0
-std::accumulate<f32>/min_time:10.000/real_time         194089563 ns    194088811 ns           72 bytes/s=5.5322G/s error,%=93.75
-std::accumulate<f64>/min_time:10.000/real_time         192657883 ns    192657360 ns           74 bytes/s=5.57331G/s error,%=0
-openmp<f32>/min_time:10.000/real_time                    5061544 ns      5043250 ns         2407 bytes/s=212.137G/s error,%=65.5651u
-std::reduce<par, f32>/min_time:10.000/real_time          3749938 ns      3727477 ns         2778 bytes/s=286.336G/s error,%=0
-std::reduce<par, f64>/min_time:10.000/real_time          3921280 ns      3916897 ns         3722 bytes/s=273.824G/s error,%=100
-std::reduce<par_unseq, f32>/min_time:10.000/real_time    3884794 ns      3864061 ns         3644 bytes/s=276.396G/s error,%=0
-std::reduce<par_unseq, f64>/min_time:10.000/real_time    3889332 ns      3866968 ns         3585 bytes/s=276.074G/s error,%=100
-sse<f32aligned>@threads/min_time:10.000/real_time        5986350 ns      5193690 ns         2343 bytes/s=179.365G/s error,%=1.25021
-avx2<f32>/min_time:10.000/real_time                    110796474 ns    110794861 ns          127 bytes/s=9.69112G/s error,%=50
-avx2<f32kahan>/min_time:10.000/real_time               134144762 ns    134137771 ns          105 bytes/s=8.00435G/s error,%=0
-avx2<f64>/min_time:10.000/real_time                    115791797 ns    115790878 ns          121 bytes/s=9.27304G/s error,%=0
-avx2<f32aligned>@threads/min_time:10.000/real_time       5958283 ns      5041060 ns         2358 bytes/s=180.21G/s error,%=1.25033
-avx2<f64>@threads/min_time:10.000/real_time              5996481 ns      5123440 ns         2337 bytes/s=179.062G/s error,%=1.25001
-cub@cuda/min_time:10.000/real_time                        356488 ns       356482 ns        39315 bytes/s=3.012T/s error,%=0
-warps@cuda/min_time:10.000/real_time                      486387 ns       486377 ns        28788 bytes/s=2.20759T/s error,%=0
-thrust@cuda/min_time:10.000/real_time                     500941 ns       500919 ns        27512 bytes/s=2.14345T/s error,%=0
+--------------------------------------------------------------------------------------
+Benchmark                            Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------
+unrolled<f32>                149618549 ns    149615366 ns           95 bytes/s=7.17653G/s error,%=50
+unrolled<f64>                146594731 ns    146593719 ns           95 bytes/s=7.32456G/s error,%=0
+std::accumulate<f32>         194089563 ns    194088811 ns           72 bytes/s=5.5322G/s error,%=93.75
+std::accumulate<f64>         192657883 ns    192657360 ns           74 bytes/s=5.57331G/s error,%=0
+openmp<f32>                    5061544 ns      5043250 ns         2407 bytes/s=212.137G/s error,%=65.5651u
+std::reduce<par, f32>          3749938 ns      3727477 ns         2778 bytes/s=286.336G/s error,%=0
+std::reduce<par, f64>          3921280 ns      3916897 ns         3722 bytes/s=273.824G/s error,%=100
+std::reduce<par_unseq, f32>    3884794 ns      3864061 ns         3644 bytes/s=276.396G/s error,%=0
+std::reduce<par_unseq, f64>    3889332 ns      3866968 ns         3585 bytes/s=276.074G/s error,%=100
+sse<f32aligned>@threads        5986350 ns      5193690 ns         2343 bytes/s=179.365G/s error,%=1.25021
+avx2<f32>                    110796474 ns    110794861 ns          127 bytes/s=9.69112G/s error,%=50
+avx2<f32kahan>               134144762 ns    134137771 ns          105 bytes/s=8.00435G/s error,%=0
+avx2<f64>                    115791797 ns    115790878 ns          121 bytes/s=9.27304G/s error,%=0
+avx2<f32aligned>@threads       5958283 ns      5041060 ns         2358 bytes/s=180.21G/s error,%=1.25033
+avx2<f64>@threads              5996481 ns      5123440 ns         2337 bytes/s=179.062G/s error,%=1.25001
+cub@cuda                        356488 ns       356482 ns        39315 bytes/s=3.012T/s error,%=0
+warps@cuda                      486387 ns       486377 ns        28788 bytes/s=2.20759T/s error,%=0
+thrust@cuda                     500941 ns       500919 ns        27512 bytes/s=2.14345T/s error,%=0
 ```
 
 Observations:
@@ -153,12 +153,12 @@ Observations:
 On Nvidia H200 GPUs, the numbers are even higher:
 
 ```sh
--------------------------------------------------------------------------------------------------------------
-Benchmark                                                   Time             CPU   Iterations UserCounters...
--------------------------------------------------------------------------------------------------------------
-cuda/cub/min_time:10.000/real_time                     254609 ns       254607 ns        54992 bytes/s=4.21723T/s error,%=0
-cuda/thrust/min_time:10.000/real_time                  319709 ns       316368 ns        43846 bytes/s=3.3585T/s error,%=0
-cuda/thrust/interleaving/min_time:10.000/real_time     318598 ns       314996 ns        43956 bytes/s=3.37021T/s error,%=0
+-----------------------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------
+cuda/cub                     254609 ns       254607 ns        54992 bytes/s=4.21723T/s error,%=0
+cuda/thrust                  319709 ns       316368 ns        43846 bytes/s=3.3585T/s error,%=0
+cuda/thrust/interleaving     318598 ns       314996 ns        43956 bytes/s=3.37021T/s error,%=0
 ```
 
 ### AWS Zen4 `m7a.metal-48xl`
@@ -177,30 +177,30 @@ CPU Caches:
   L2 Unified 1024 KiB (x192)
   L3 Unified 32768 KiB (x24)
 Load Average: 4.54, 2.78, 4.94
---------------------------------------------------------------------------------------------------------------------
-Benchmark                                                          Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------------------------------------
-unrolled<f32>/min_time:10.000/real_time                     30546168 ns     30416147 ns          461 bytes/s=35.1514G/s error,%=50
-unrolled<f64>/min_time:10.000/real_time                     31563095 ns     31447017 ns          442 bytes/s=34.0189G/s error,%=0
-std::accumulate<f32>/min_time:10.000/real_time             219734340 ns    219326135 ns           64 bytes/s=4.88655G/s error,%=93.75
-std::accumulate<f64>/min_time:10.000/real_time             219853985 ns    219429612 ns           64 bytes/s=4.88389G/s error,%=0
-openmp<f32>/min_time:10.000/real_time                        5749979 ns      5709315 ns         1996 bytes/s=186.738G/s error,%=149.012u
-std::reduce<par, f32>/min_time:10.000/real_time              2913596 ns      2827125 ns         4789 bytes/s=368.528G/s error,%=0
-std::reduce<par, f64>/min_time:10.000/real_time              2899901 ns      2831183 ns         4874 bytes/s=370.268G/s error,%=0
-std::reduce<par_unseq, f32>/min_time:10.000/real_time        3026168 ns      2940291 ns         4461 bytes/s=354.819G/s error,%=0
-std::reduce<par_unseq, f64>/min_time:10.000/real_time        3053703 ns      2936506 ns         4797 bytes/s=351.62G/s error,%=0
-sse<f32aligned>@threads/min_time:10.000/real_time           10132563 ns      9734108 ns         1000 bytes/s=105.969G/s error,%=0.520837
-avx2<f32>/min_time:10.000/real_time                         32225620 ns     32045487 ns          435 bytes/s=33.3195G/s error,%=50
-avx2<f32kahan>/min_time:10.000/real_time                   110283627 ns    110023814 ns          127 bytes/s=9.73619G/s error,%=0
-avx2<f64>/min_time:10.000/real_time                         55559986 ns     55422069 ns          247 bytes/s=19.3258G/s error,%=0
-avx2<f32aligned>@threads/min_time:10.000/real_time           9612120 ns      9277454 ns         1467 bytes/s=111.707G/s error,%=0.521407
-avx2<f64>@threads/min_time:10.000/real_time                 10091882 ns      9708706 ns         1389 bytes/s=106.397G/s error,%=0.520837
-avx512<f32streamed>/min_time:10.000/real_time               55713332 ns     55615555 ns          243 bytes/s=19.2726G/s error,%=50
-avx512<f32streamed>@threads/min_time:10.000/real_time        9701513 ns      9383267 ns         1435 bytes/s=110.678G/s error,%=50.2604
-avx512<f32unrolled>/min_time:10.000/real_time               48203352 ns     48085623 ns          228 bytes/s=22.2753G/s error,%=50
-avx512<f32unrolled>@threads/min_time:10.000/real_time        9275968 ns      8955543 ns         1508 bytes/s=115.755G/s error,%=50.2604
-avx512<f32interleaving>/min_time:10.000/real_time           40012581 ns     39939290 ns          352 bytes/s=26.8351G/s error,%=50
-avx512<f32interleaving>@threads/min_time:10.000/real_time    9477545 ns      9168739 ns         1488 bytes/s=113.293G/s error,%=50.2581
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+unrolled<f32>                     30546168 ns     30416147 ns          461 bytes/s=35.1514G/s error,%=50
+unrolled<f64>                     31563095 ns     31447017 ns          442 bytes/s=34.0189G/s error,%=0
+std::accumulate<f32>             219734340 ns    219326135 ns           64 bytes/s=4.88655G/s error,%=93.75
+std::accumulate<f64>             219853985 ns    219429612 ns           64 bytes/s=4.88389G/s error,%=0
+openmp<f32>                        5749979 ns      5709315 ns         1996 bytes/s=186.738G/s error,%=149.012u
+std::reduce<par, f32>              2913596 ns      2827125 ns         4789 bytes/s=368.528G/s error,%=0
+std::reduce<par, f64>              2899901 ns      2831183 ns         4874 bytes/s=370.268G/s error,%=0
+std::reduce<par_unseq, f32>        3026168 ns      2940291 ns         4461 bytes/s=354.819G/s error,%=0
+std::reduce<par_unseq, f64>        3053703 ns      2936506 ns         4797 bytes/s=351.62G/s error,%=0
+sse<f32aligned>@threads           10132563 ns      9734108 ns         1000 bytes/s=105.969G/s error,%=0.520837
+avx2<f32>                         32225620 ns     32045487 ns          435 bytes/s=33.3195G/s error,%=50
+avx2<f32kahan>                   110283627 ns    110023814 ns          127 bytes/s=9.73619G/s error,%=0
+avx2<f64>                         55559986 ns     55422069 ns          247 bytes/s=19.3258G/s error,%=0
+avx2<f32aligned>@threads           9612120 ns      9277454 ns         1467 bytes/s=111.707G/s error,%=0.521407
+avx2<f64>@threads                 10091882 ns      9708706 ns         1389 bytes/s=106.397G/s error,%=0.520837
+avx512<f32streamed>               55713332 ns     55615555 ns          243 bytes/s=19.2726G/s error,%=50
+avx512<f32streamed>@threads        9701513 ns      9383267 ns         1435 bytes/s=110.678G/s error,%=50.2604
+avx512<f32unrolled>               48203352 ns     48085623 ns          228 bytes/s=22.2753G/s error,%=50
+avx512<f32unrolled>@threads        9275968 ns      8955543 ns         1508 bytes/s=115.755G/s error,%=50.2604
+avx512<f32interleaving>           40012581 ns     39939290 ns          352 bytes/s=26.8351G/s error,%=50
+avx512<f32interleaving>@threads    9477545 ns      9168739 ns         1488 bytes/s=113.293G/s error,%=50.2581
 ```
 
 Observations:
@@ -212,12 +212,12 @@ One of the interesting observations is the effect of [latency hiding, interleavi
 It is evident when benchmarking AVX-512 kernels on very small arrays:
 
 ```sh
---------------------------------------------------------------------------------------------------------------------
-Benchmark                                                          Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------------------------------------
-avx512/f32/streamed/min_time:10.000/real_time                    19.4 ns         19.4 ns    724081506 bytes/s=211.264G/s
-avx512/f32/unrolled/min_time:10.000/real_time                    15.1 ns         15.1 ns    934282388 bytes/s=271.615G/s
-avx512/f32/interleaving/min_time:10.000/real_time                12.3 ns         12.3 ns   1158791855 bytes/s=332.539G/s
+-------------------------------------------------------------------------------------------
+Benchmark                                 Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------------
+avx512/f32/streamed                    19.4 ns         19.4 ns    724081506 bytes/s=211.264G/s
+avx512/f32/unrolled                    15.1 ns         15.1 ns    934282388 bytes/s=271.615G/s
+avx512/f32/interleaving                12.3 ns         12.3 ns   1158791855 bytes/s=332.539G/s
 ```
 
 The reason this happens is that on Zen4:
@@ -249,28 +249,28 @@ CPU Caches:
   L2 Unified 2048 KiB (x96)
   L3 Unified 36864 KiB (x1)
 Load Average: 5.76, 6.38, 2.75
----------------------------------------------------------------------------------------------------------------
-Benchmark                                                     Time             CPU   Iterations UserCounters...
----------------------------------------------------------------------------------------------------------------
-unrolled/f32/min_time:10.000/real_time                 38034000 ns     38033650 ns          368 bytes/s=28.2311G/s error,%=50
-unrolled/f64/min_time:10.000/real_time                 72851731 ns     72852189 ns          192 bytes/s=14.7387G/s error,%=0
-std::accumulate/f32/min_time:10.000/real_time         192162701 ns    192164003 ns           73 bytes/s=5.58767G/s error,%=93.75
-std::accumulate/f64/min_time:10.000/real_time         192266754 ns    192268708 ns           73 bytes/s=5.58465G/s error,%=0
-serial/f32/av::fork_union/min_time:10.000/real_time     1889686 ns      1889604 ns         7320 bytes/s=568.212G/s error,%=0
-serial/f64/av::fork_union/min_time:10.000/real_time     1935453 ns      1935360 ns         7309 bytes/s=554.775G/s error,%=0
-serial/f32/openmp/min_time:10.000/real_time             2244099 ns      2108568 ns         4723 bytes/s=478.473G/s error,%=71.5256u
-std::reduce<par>/f32/min_time:10.000/real_time          1950894 ns      1950842 ns         7129 bytes/s=550.384G/s error,%=0
-std::reduce<par>/f64/min_time:10.000/real_time          1959062 ns      1953907 ns         7121 bytes/s=548.09G/s error,%=0
-std::reduce<par_unseq>/f32/min_time:10.000/real_time    1956428 ns      1949906 ns         7139 bytes/s=548.828G/s error,%=0
-std::reduce<par_unseq>/f64/min_time:10.000/real_time    1953465 ns      1952599 ns         7117 bytes/s=549.66G/s error,%=0
-neon/f32/min_time:10.000/real_time                     48248562 ns     48249488 ns          290 bytes/s=22.2544G/s error,%=75
-neon/f32/av::fork_union/min_time:10.000/real_time       1890173 ns      1887574 ns         7354 bytes/s=568.065G/s error,%=0
-neon/f32/std::threads/min_time:10.000/real_time         3321599 ns      3181368 ns         4221 bytes/s=323.261G/s error,%=1.04167
-neon/f32/openmp/min_time:10.000/real_time               1901684 ns      1899327 ns         7263 bytes/s=564.627G/s error,%=23.8419u
-sve/f32/min_time:10.000/real_time                      50048126 ns     50049059 ns          280 bytes/s=21.4542G/s error,%=75
-sve/f32/av::fork_union/min_time:10.000/real_time        1898117 ns      1897862 ns         7329 bytes/s=565.688G/s error,%=0
-sve/f32/std::threads/min_time:10.000/real_time          3347690 ns      3203386 ns         4190 bytes/s=320.741G/s error,%=1.04167
-sve/f32/openmp/min_time:10.000/real_time                1909972 ns      1901816 ns         7274 bytes/s=562.177G/s error,%=23.8419u
+-------------------------------------------------------------------------------------
+Benchmark                           Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------
+unrolled/f32                 38034000 ns     38033650 ns          368 bytes/s=28.2311G/s error,%=50
+unrolled/f64                 72851731 ns     72852189 ns          192 bytes/s=14.7387G/s error,%=0
+std::accumulate/f32         192162701 ns    192164003 ns           73 bytes/s=5.58767G/s error,%=93.75
+std::accumulate/f64         192266754 ns    192268708 ns           73 bytes/s=5.58465G/s error,%=0
+serial/f32/av::fork_union     1889686 ns      1889604 ns         7320 bytes/s=568.212G/s error,%=0
+serial/f64/av::fork_union     1935453 ns      1935360 ns         7309 bytes/s=554.775G/s error,%=0
+serial/f32/openmp             2244099 ns      2108568 ns         4723 bytes/s=478.473G/s error,%=71.5256u
+std::reduce<par>/f32          1950894 ns      1950842 ns         7129 bytes/s=550.384G/s error,%=0
+std::reduce<par>/f64          1959062 ns      1953907 ns         7121 bytes/s=548.09G/s error,%=0
+std::reduce<par_unseq>/f32    1956428 ns      1949906 ns         7139 bytes/s=548.828G/s error,%=0
+std::reduce<par_unseq>/f64    1953465 ns      1952599 ns         7117 bytes/s=549.66G/s error,%=0
+neon/f32                     48248562 ns     48249488 ns          290 bytes/s=22.2544G/s error,%=75
+neon/f32/av::fork_union       1890173 ns      1887574 ns         7354 bytes/s=568.065G/s error,%=0
+neon/f32/std::threads         3321599 ns      3181368 ns         4221 bytes/s=323.261G/s error,%=1.04167
+neon/f32/openmp               1901684 ns      1899327 ns         7263 bytes/s=564.627G/s error,%=23.8419u
+sve/f32                      50048126 ns     50049059 ns          280 bytes/s=21.4542G/s error,%=75
+sve/f32/av::fork_union        1898117 ns      1897862 ns         7329 bytes/s=565.688G/s error,%=0
+sve/f32/std::threads          3347690 ns      3203386 ns         4190 bytes/s=320.741G/s error,%=1.04167
+sve/f32/openmp                1909972 ns      1901816 ns         7274 bytes/s=562.177G/s error,%=23.8419u
 ```
 
 Amazon's Graviton CPUs configured with a single NUMA node and Arm's native support for "weak memory model" make it the perfect ground for studying the cost of various concurrency synchronization primitives.
@@ -282,11 +282,12 @@ Assuming, some of the work scheduling happens at a cache-line granularity, inste
 ```sh
 $ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter="(sve/f32)(.*)(openmp|fork_union|taskflow)"
 
---------------------------------------------------------------------------------------------------------------
-Benchmark                                                    Time             CPU   Iterations UserCounters...
-sve/f32/av::fork_union/min_time:20.000/real_time         13136 ns        13136 ns      2117597 bytes/s=467.714M/s error,%=0
-sve/f32/taskflow/min_time:20.000/real_time              109782 ns       106764 ns       254660 bytes/s=55.9655M/s error,%=0
-sve/f32/openmp/min_time:20.000/real_time                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
+------------------------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------
+sve/f32/av::fork_union         13136 ns        13136 ns      2117597 bytes/s=467.714M/s error,%=0
+sve/f32/taskflow              109782 ns       106764 ns       254660 bytes/s=55.9655M/s error,%=0
+sve/f32/openmp                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
 ```
 
 ### Apple M2 Pro
@@ -308,18 +309,18 @@ CPU Caches:
   L1 Instruction 128 KiB
   L2 Unified 4096 KiB (x12)
 Load Average: 2.85, 2.81, 3.73
---------------------------------------------------------------------------------------------------------------
-Benchmark                                                    Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------------------------------
-unrolled/f32/min_time:10.000/real_time                30964307 ns     30957398 ns          450 bytes/s=34.6768G/s error,%=50
-unrolled/f64/min_time:10.000/real_time                29709300 ns     29570448 ns          469 bytes/s=36.1416G/s error,%=0
-std::accumulate/f32/min_time:10.000/real_time        230808586 ns    230802100 ns           60 bytes/s=4.65209G/s error,%=93.75
-std::accumulate/f64/min_time:10.000/real_time        230730119 ns    230729517 ns           60 bytes/s=4.65367G/s error,%=0
-serial/f32/av::fork_union/min_time:10.000/real_time    9916316 ns      9401053 ns         1394 bytes/s=108.28G/s error,%=745.058n
-serial/f64/av::fork_union/min_time:10.000/real_time    9681207 ns      9152610 ns         1450 bytes/s=110.91G/s error,%=0
-serial/f32/openmp/min_time:10.000/real_time           25585366 ns     21820168 ns          518 bytes/s=41.967G/s error,%=25
-neon/f32/min_time:10.000/real_time                    58821387 ns     58819675 ns          234 bytes/s=18.2543G/s error,%=75
-neon/f32/av::fork_union/min_time:10.000/real_time     10396624 ns      9999804 ns         1365 bytes/s=103.278G/s error,%=8.9407u
-neon/f32/std::threads/min_time:10.000/real_time        9973662 ns      6937423 ns         1370 bytes/s=107.658G/s error,%=8.33334
-neon/f32/openmp/min_time:10.000/real_time             10295897 ns      6866715 ns         1367 bytes/s=104.288G/s error,%=8.9407u
+------------------------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------
+unrolled/f32                30964307 ns     30957398 ns          450 bytes/s=34.6768G/s error,%=50
+unrolled/f64                29709300 ns     29570448 ns          469 bytes/s=36.1416G/s error,%=0
+std::accumulate/f32        230808586 ns    230802100 ns           60 bytes/s=4.65209G/s error,%=93.75
+std::accumulate/f64        230730119 ns    230729517 ns           60 bytes/s=4.65367G/s error,%=0
+serial/f32/av::fork_union    9916316 ns      9401053 ns         1394 bytes/s=108.28G/s error,%=745.058n
+serial/f64/av::fork_union    9681207 ns      9152610 ns         1450 bytes/s=110.91G/s error,%=0
+serial/f32/openmp           25585366 ns     21820168 ns          518 bytes/s=41.967G/s error,%=25
+neon/f32                    58821387 ns     58819675 ns          234 bytes/s=18.2543G/s error,%=75
+neon/f32/av::fork_union     10396624 ns      9999804 ns         1365 bytes/s=103.278G/s error,%=8.9407u
+neon/f32/std::threads        9973662 ns      6937423 ns         1370 bytes/s=107.658G/s error,%=8.33334
+neon/f32/openmp             10295897 ns      6866715 ns         1367 bytes/s=104.288G/s error,%=8.9407u
 ```
