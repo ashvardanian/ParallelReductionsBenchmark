@@ -602,7 +602,7 @@ class openmp_gt {
 #pragma omp parallel
         {
             std::size_t const thread_id = static_cast<std::size_t>(omp_get_thread_num());
-            std::size_t const start = std::min(thread_id * chunk_size);
+            std::size_t const start = std::min(thread_id * chunk_size, input_size);
             std::size_t const stop = std::min(start + chunk_size, input_size);
             double local_sum = serial_at {begin_ + start, begin_ + stop}();
             sums_[thread_id] = local_sum;
