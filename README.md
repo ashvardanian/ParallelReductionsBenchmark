@@ -280,17 +280,13 @@ Assuming, some of the work scheduling happens at a cache-line granularity, inste
 > 64 bytes / 4 bytes per scalar * 96 cores = 1536 scalars.
 
 ```sh
-$ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter="openmp|fork"
+$ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter="(sve/f32)(.*)(openmp|fork_union|taskflow)"
 
 --------------------------------------------------------------------------------------------------------------
 Benchmark                                                    Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------------------------------
-serial/f32/av::fork_union/min_time:10.000/real_time      13273 ns        13273 ns      1011938 bytes/s=462.912M/s error,%=0
-serial/f32/openmp/min_time:10.000/real_time              12153 ns        12087 ns      1089832 bytes/s=505.544M/s error,%=0
-neon/f32/av::fork_union/min_time:10.000/real_time        13414 ns        13409 ns      1036934 bytes/s=458.024M/s error,%=0
-neon/f32/openmp/min_time:10.000/real_time                 8406 ns         8398 ns      1641973 bytes/s=730.88M/s error,%=0
-sve/f32/av::fork_union/min_time:10.000/real_time         13351 ns        13351 ns      1038792 bytes/s=460.191M/s error,%=0
-sve/f32/openmp/min_time:10.000/real_time                  9647 ns         9313 ns      1620873 bytes/s=636.869M/s error,%=0
+sve/f32/av::fork_union/min_time:20.000/real_time         13136 ns        13136 ns      2117597 bytes/s=467.714M/s error,%=0
+sve/f32/taskflow/min_time:20.000/real_time              109782 ns       106764 ns       254660 bytes/s=55.9655M/s error,%=0
+sve/f32/openmp/min_time:20.000/real_time                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
 ```
 
 ### Apple M2 Pro
