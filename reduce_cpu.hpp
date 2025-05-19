@@ -687,7 +687,16 @@ class fork_union_gt {
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
     pool_t pool_;
-    std::vector<double> sums_;
+
+    /**
+     *  Make sure different threads never output to the same cache lines.
+     *  Over-aligning with `std::max_align_t` or a fixed size of 128 bytes
+     *  should be enough to avoid false sharing.
+     */
+    struct alignas(128) thread_result_t {
+        double partial_sum = 0;
+    };
+    std::vector<thread_result_t> sums_;
 
   public:
     fork_union_gt() = default;
@@ -699,11 +708,14 @@ class fork_union_gt {
 
     double operator()() {
         auto const input_size = static_cast<std::size_t>(end_ - begin_);
-        pool_.for_each_slice(input_size, [this](pool_t::task_t first_task, std::size_t slice_length) noexcept {
-            auto const slice_begin = begin_ + first_task.task_index;
-            sums_[first_task.thread_index] = serial_at {slice_begin, slice_begin + slice_length}();
+        auto const chunk_size = scalars_per_core(input_size, sums_.size());
+        pool_.for_each_thread([&](std::size_t thread_id) noexcept {
+            std::size_t const start = std::min(thread_id * chunk_size, input_size);
+            std::size_t const stop = std::min(start + chunk_size, input_size);
+            sums_[thread_id].partial_sum = serial_at {begin_ + start, begin_ + stop}();
         });
-        return std::accumulate(sums_.begin(), sums_.end(), 0.0);
+        return std::accumulate(sums_.begin(), sums_.end(), 0.0,
+                               [](double const &a, thread_result_t const &b) { return a + b.partial_sum; });
     }
 };
 
