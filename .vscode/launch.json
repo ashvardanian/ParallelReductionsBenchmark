@@ -9,7 +9,7 @@
             "preLaunchTask": "Build Debug",
             "program": "${workspaceFolder}/build_debug/reduce_bench",
             "args": [
-                "--benchmark_filter=sse"
+                "--benchmark_filter='taskflow'"
             ],
             "setupCommands": [
                 { // Display content in STL containers pretty
@@ -22,6 +22,10 @@
                 {
                     "name": "ASAN_OPTIONS",
                     "value": "detect_leaks=0:atexit=1:strict_init_order=1:strict_string_checks=1"
+                },
+                {
+                    "name": "PARALLEL_REDUCTIONS_LENGTH",
+                    "value": "17"
                 }
             ],
             "stopAtEntry": false,
