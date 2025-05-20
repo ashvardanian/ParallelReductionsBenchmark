@@ -9,7 +9,7 @@ futures-lite = "2.3"
 smol = "2.0"
 rayon = "1.10"
 criterion = "0.6"
-Tokio = { package = "tokio", version = "1.45", features = [
+tokio = { version = "1.45", features = [
     "rt-multi-thread",
     "macros",
 ] }

@@ -2,7 +2,9 @@
 /// like: `rayon`, `tokio`, `smol`, and `fork_union`.
 use std::env;
 use std::sync::Arc;
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use std::hint::black_box;
+use criterion::{criterion_group, criterion_main, Criterion};
+use rayon::prelude::*;
 
 const MAX_CACHE_LINE_SIZE: usize = 64; // bytes on x86; adjust if needed
 const SCALARS_PER_CACHE_LINE: usize = MAX_CACHE_LINE_SIZE / std::mem::size_of::<f32>();
@@ -82,11 +84,10 @@ pub fn prepare_input() -> Vec<f32> {
 pub fn sum_tokio(data: &[f32], runtime: &tokio::runtime::Runtime) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let shared = Arc::from(data);
+    let shared: Arc<[f32]> = Arc::from(data);
 
     runtime.block_on(async move {
         use tokio::task;
-        use futures::future::join_all;
         let mut tasks = Vec::with_capacity(cores);
         for tid in 0..cores {
             let start = tid * chunk_size;
@@ -97,8 +98,11 @@ pub fn sum_tokio(data: &[f32], runtime: &tokio::runtime::Runtime) -> f64 {
             let local = Arc::clone(&shared);
             tasks.push(task::spawn_blocking(move || sum_unrolled(&local[start..stop])));
         }
-        let partials = join_all(tasks).await;
-        partials.into_iter().map(|r| r.unwrap()).sum::<f64>()
+        let mut sum = 0.0f64;
+        for t in tasks {
+            sum += t.await.unwrap();
+        }
+        sum
     })
 }
 
@@ -132,10 +136,9 @@ pub fn sum_rayon(data: &[f32]) -> f64 {
 pub fn sum_smol(data: &[f32]) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let shared = Arc::from(data);
+    let shared: Arc<[f32]> = Arc::from(data);
 
     smol::block_on(async {
-        use futures::future::join_all;
         let mut tasks = Vec::with_capacity(cores);
         for tid in 0..cores {
             let start = tid * chunk_size;
@@ -146,8 +149,11 @@ pub fn sum_smol(data: &[f32]) -> f64 {
             let local = Arc::clone(&shared);
             tasks.push(smol::unblock(move || sum_unrolled(&local[start..stop])));
         }
-        let partials = join_all(tasks).await;
-        partials.into_iter().sum::<f64>()
+        let mut sum = 0.0f64;
+        for t in tasks {
+            sum += t.await;
+        }
+        sum
     })
 }
 
@@ -184,10 +190,7 @@ pub fn reduction_bench(c: &mut Criterion) {
 
     c.bench_function("serial", |b| b.iter(|| black_box(sum_unrolled(&data))));
     c.bench_function("rayon", |b| b.iter(|| black_box(sum_rayon(&data))));
-    c.bench_function("tokio", |b| {
-        b.iter(|| black_box(sum_tokio(&data, &tokio_rt)))
-    });
-
+    c.bench_function("tokio", |b| b.iter(|| black_box(sum_tokio(&data, &tokio_rt))));
     c.bench_function("smol", |b| b.iter(|| black_box(sum_smol(&data))));
 }
 
