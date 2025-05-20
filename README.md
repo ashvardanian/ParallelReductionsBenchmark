@@ -304,6 +304,19 @@ sve/f32/av::fork_union         13136 ns        13136 ns      2117597 bytes/s=467
 sve/f32/openmp                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
 ```
 
+The timing methods between C++ and Rust implementation of the benchmark differ, but the relative timings are as expected.
+Fork Union is seemingly 10x faster than [Rayon](https://github.com/rayon-rs/rayon), similar to the C++ implementation improvement over [Taskflow](https://github.com/taskflow/taskflow).
+
+```sh
+$ PARALLEL_REDUCTIONS_LENGTH=1536 cargo +nightly bench -- --output-format bencher
+
+test serial ... bench:        144 ns/iter (+/- 0)
+test fork_union ... bench:  5,150 ns/iter (+/- 402)
+test rayon ... bench:      47,251 ns/iter (+/- 3,985)
+test tokio ... bench:     240,707 ns/iter (+/- 921)
+test smol ... bench:       54,931 ns/iter (+/- 10)
+```
+
 ### Apple M2 Pro
 
 ```sh
