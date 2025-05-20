@@ -103,7 +103,9 @@ Several basic kernels and CPU-oriented parallel reductions are also implemented 
 To build and run the Rust code, you need to have the Rust toolchain installed. You can use `rustup` to install it:
 
 ```sh
-cargo bench --release
+rustup toolchain install nightly
+cargo +nightly test --release
+cargo +nightly bench
 ```
 
 ## Results
