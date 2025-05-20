@@ -37,6 +37,8 @@ Previously, it also included ArrayFire, Halide, and Vulkan queues for SPIR-V ker
 
 ## Build & Run
 
+### C++
+
 This repository is a CMake project designed to be built on Linux with GCC, Clang, or NVCC.
 You may need to install the following dependencies for complete functionality:
 
@@ -94,6 +96,15 @@ Optional backends:
 
 - To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md) on CPUs: `apt-get install intel-opencl-icd`.
 - To run on integrated Intel GPU, follow [this guide](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/prerequisites.html).
+
+### Rust
+
+Several basic kernels and CPU-oriented parallel reductions are also implemented in Rust.
+To build and run the Rust code, you need to have the Rust toolchain installed. You can use `rustup` to install it:
+
+```sh
+cargo bench --release
+```
 
 ## Results
 
