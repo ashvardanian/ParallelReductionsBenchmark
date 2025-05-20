@@ -85,49 +85,52 @@ pub fn prepare_input() -> Vec<f32> {
 }
 
 /// Parallel reduction through Fork Union, using a custom pool with explicit chunking
-pub fn sum_fork_union(data: &[f32], pool: &fork_union::ForkUnion) -> f64 {
+pub fn sum_fork_union(pool: &fork_union::ForkUnion, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = pool.thread_count();
     let chunk_size = scalars_per_core(data.len(), cores);
-
-    let mut sums_per_thread = vec![0.0f64; cores];
-    let sums_per_thread_ptr = sums_per_thread.as_mut_ptr();
+    let partial_sums_ptr = partial_sums.as_mut_ptr();
 
     pool.for_each_thread(|thread_index| unsafe {
         let start = thread_index * chunk_size;
-        if start < data.len() {
-            let end = usize::min(start + chunk_size, data.len());
-            let val = sum_unrolled(&data[start..end]);
-            ptr::write(sums_per_thread_ptr.add(thread_index), val);
+        if start >= data.len() {
+            return;
         }
+        let stop = usize::min(start + chunk_size, data.len());
+        let partial_sum = sum_unrolled(&data[start..stop]);
+        ptr::write(partial_sums_ptr.add(thread_index), partial_sum);
     });
 
-    sums_per_thread.into_iter().sum::<f64>()
+    partial_sums[..].into_iter().sum()
 }
 
 /// Parallel reduction through Rayon, using a custom pool with explicit chunking
-pub fn sum_rayon(data: &[f32], pool: &rayon::ThreadPool) -> f64 {
+pub fn sum_rayon(pool: &rayon::ThreadPool, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = pool.current_num_threads();
     let chunk_size = scalars_per_core(data.len(), cores);
+    let partial_sums_ptr = partial_sums.as_mut_ptr();
 
     pool.broadcast(|context: rayon::BroadcastContext<'_>| {
         let thread_index = context.index();
-        let start_offset = thread_index * chunk_size;
-        if start_offset >= data.len() {
-            0.0
-        } else {
-            let stop_offset = std::cmp::min(start_offset + chunk_size, data.len());
-            sum_unrolled(&data[start_offset..stop_offset])
+        let start = thread_index * chunk_size;
+        if start >= data.len() {
+            return;
         }
-    })
-    .into_iter()
-    .sum::<f64>()
+        let stop = std::cmp::min(start + chunk_size, data.len());
+        let partial_sum = sum_unrolled(&data[start..stop]);
+        unsafe {
+            ptr::write(partial_sums_ptr.add(thread_index), partial_sum);
+        }
+    });
+
+    partial_sums[..].into_iter().sum()
 }
 
 /// Parallel reduction through Tokio, which notably itself recommends Rayon for CPU-bound tasks
 /// https://docs.rs/tokio/latest/tokio/index.html#cpu-bound-tasks-and-blocking-code
-pub fn sum_tokio(data: &[f32], pool: &tokio::runtime::Runtime) -> f64 {
+pub fn sum_tokio(pool: &tokio::runtime::Runtime, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
+    let partial_sums_ptr = partial_sums.as_mut_ptr();
 
     // Raw parts of the slice – immutable, lives as long as `data`.
     let ptr = data.as_ptr();
@@ -136,31 +139,29 @@ pub fn sum_tokio(data: &[f32], pool: &tokio::runtime::Runtime) -> f64 {
     pool.block_on(async move {
         let mut handles = Vec::with_capacity(cores);
         for thread_index in 0..cores {
-            let start_offset = thread_index * chunk_size;
+            let start = thread_index * chunk_size;
             let handle = pool.spawn_blocking(move || unsafe {
-                if start_offset >= len {
-                    0.0
-                } else {
-                    let stop_offset = std::cmp::min(start_offset + chunk_size, len);
-                    let slice = std::slice::from_raw_parts(
-                        ptr.add(start_offset),
-                        stop_offset - start_offset,
-                    );
-                    sum_unrolled(slice)
+                if start >= len {
+                    return;
                 }
+                let stop = std::cmp::min(start + chunk_size, len);
+                let slice = std::slice::from_raw_parts(ptr.add(start), stop - start);
+                let partial_sum = sum_unrolled(slice);
+                ptr::write(partial_sums_ptr.add(thread_index), partial_sum);
             });
             handles.push(handle);
         }
-        let partials = join_all(handles).await;
-        partials.into_iter().map(|r| r.unwrap()).sum::<f64>()
+        let _ = join_all(handles).await;
+        partial_sums[..].into_iter().sum()
     })
 }
 
 /// Parallel reduction through "Smol.rs" toolkit.
 /// The `async-executor` is recommended, but it doesn't allow setting the number of threads.
-pub fn sum_smol(data: &[f32], pool: &async_executor::Executor) -> f64 {
+pub fn sum_smol(pool: &async_executor::Executor, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
+    let partial_sums_ptr = partial_sums.as_mut_ptr();
 
     let ptr = data.as_ptr();
     let len = data.len();
@@ -168,30 +169,26 @@ pub fn sum_smol(data: &[f32], pool: &async_executor::Executor) -> f64 {
     pool.run(async move {
         let mut tasks = Vec::with_capacity(cores);
         for thread_index in 0..cores {
-            let start_offset = thread_index * chunk_size;
-            tasks.push(pool.spawn(async move {
-                unsafe {
-                    if start_offset >= len {
-                        0.0
-                    } else {
-                        let stop_offset = std::cmp::min(start_offset + chunk_size, len);
-                        let slice = std::slice::from_raw_parts(
-                            ptr.add(start_offset),
-                            stop_offset - start_offset,
-                        );
-                        sum_unrolled(slice)
-                    }
+            let start = thread_index * chunk_size;
+            tasks.push(pool.spawn(async move || unsafe {
+                if start >= len {
+                    return;
                 }
+                let stop = std::cmp::min(start + chunk_size, len);
+                let slice = std::slice::from_raw_parts(ptr.add(start), stop - start);
+                let partial_sum = sum_unrolled(slice);
+                ptr::write(partial_sums_ptr.add(thread_index), partial_sum);
             }));
         }
-        let partials = join_all(tasks).await;
-        partials.into_iter().sum::<f64>()
+        let _ = join_all(tasks).await;
+        partial_sums[..].into_iter().sum()
     })
 }
 
 pub fn reduction_bench(c: &mut Criterion) {
     let cores = num_cpus::get();
     let data = prepare_input();
+    let mut partial_sums = vec![0.0; cores];
 
     // Sum with the serial baseline
     c.bench_function("serial", |b| b.iter(|| black_box(sum_unrolled(&data))));
@@ -200,7 +197,7 @@ pub fn reduction_bench(c: &mut Criterion) {
     {
         let pool = fork_union::ForkUnion::try_spawn_in(cores, Global).unwrap();
         c.bench_function("fork_union", |b| {
-            b.iter(|| black_box(sum_fork_union(&data, &pool)))
+            b.iter(|| black_box(sum_fork_union(&pool, &data, &mut partial_sums)))
         });
     }
 
@@ -210,7 +207,9 @@ pub fn reduction_bench(c: &mut Criterion) {
             .num_threads(cores)
             .build()
             .unwrap();
-        c.bench_function("rayon", |b| b.iter(|| black_box(sum_rayon(&data, &pool))));
+        c.bench_function("rayon", |b| {
+            b.iter(|| black_box(sum_rayon(&pool, &data, &mut partial_sums)))
+        });
     }
 
     // Sum with Tokio
@@ -220,13 +219,17 @@ pub fn reduction_bench(c: &mut Criterion) {
             .enable_all()
             .build()
             .unwrap();
-        c.bench_function("tokio", |b| b.iter(|| black_box(sum_tokio(&data, &pool))));
+        c.bench_function("tokio", |b| {
+            b.iter(|| black_box(sum_tokio(&pool, &data, &mut partial_sums)))
+        });
     }
 
     // Sum with Smol
     {
         let pool = async_executor::Executor::new();
-        c.bench_function("smol", |b| b.iter(|| black_box(sum_smol(&data, &pool))));
+        c.bench_function("smol", |b| {
+            b.iter(|| black_box(sum_smol(&pool, &data, &mut partial_sums)))
+        });
     }
 }
 
@@ -245,32 +248,34 @@ mod tests {
     fn smoke() {
         let data = prepare_input();
         let serial = sum_unrolled(&data);
+        let cores = num_cpus::get();
+        let mut partial_sums = vec![0.0; cores];
 
         // Fork Union
-        let pool_fu = ForkUnion::try_spawn_in(num_cpus::get(), Global).unwrap();
-        let r_fu = sum_fork_union(&data, &pool_fu);
+        let pool_fu = ForkUnion::try_spawn_in(cores, Global).unwrap();
+        let r_fu = sum_fork_union(&pool_fu, &data, &partial_sums);
         assert!(approx_eq(serial, r_fu));
 
         // Rayon
         let pool_rayon = rayon::ThreadPoolBuilder::new()
-            .num_threads(num_cpus::get())
+            .num_threads(cores)
             .build()
             .unwrap();
-        let r_rayon = sum_rayon(&data, &pool_rayon);
+        let r_rayon = sum_rayon(&pool_rayon, &data, &partial_sums);
         assert!(approx_eq(serial, r_rayon));
 
         // Tokio
         let pool_tokio = tokio::runtime::Builder::new_multi_thread()
-            .worker_threads(num_cpus::get())
+            .worker_threads(cores)
             .enable_all()
             .build()
             .unwrap();
-        let r_tokio = sum_tokio(&data, &pool_tokio);
+        let r_tokio = sum_tokio(&pool_tokio, &data, &partial_sums);
         assert!(approx_eq(serial, r_tokio));
 
         // Smol
         let pool_smol = async_executor::Executor::new();
-        let r_smol = sum_smol(&data, &pool_smol);
+        let r_smol = sum_smol(&pool_smol, &data, &partial_sums);
         assert!(approx_eq(serial, r_smol));
     }
 }
