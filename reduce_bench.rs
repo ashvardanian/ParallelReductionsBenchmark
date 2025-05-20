@@ -7,6 +7,7 @@ use std::env;
 use std::hint::black_box;
 use std::ptr;
 
+use futures::executor::block_on;
 use futures::future::join_all;
 
 const MAX_CACHE_LINE_SIZE: usize = 64; // bytes on x86; adjust if needed
@@ -175,7 +176,7 @@ pub fn sum_smol(pool: &async_executor::Executor, data: &[f32], partial_sums: &mu
     let ptr = data.as_ptr() as usize;
     let len = data.len();
 
-    pool.run(async move {
+    block_on(pool.run(async move {
         let mut tasks = Vec::with_capacity(cores);
         for thread_index in 0..cores {
             let start = thread_index * chunk_size;
@@ -196,7 +197,8 @@ pub fn sum_smol(pool: &async_executor::Executor, data: &[f32], partial_sums: &mu
             }));
         }
         let _ = join_all(tasks).await;
-    });
+    }));
+
     partial_sums.iter().copied().sum()
 }
 
@@ -253,14 +255,15 @@ criterion_main!(benches);
 
 #[cfg(test)]
 mod tests {
-    const EPS: f64 = 1e-6;
-
-    fn approx_eq(a: f64, b: f64) -> bool {
-        (a - b).abs() <= EPS * a.abs().max(b.abs())
-    }
 
     #[test]
     fn smoke() {
+        const EPS: f64 = 1e-6;
+
+        fn approx_eq(a: f64, b: f64) -> bool {
+            (a - b).abs() <= EPS * a.abs().max(b.abs())
+        }
+
         let data = prepare_input();
         let serial = sum_unrolled(&data);
         let cores = num_cpus::get();
