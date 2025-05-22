@@ -7,6 +7,7 @@
 #pragma once
 #include <cstring>   // `std::memcpy`
 #include <execution> // `std::execution::par_unseq`
+#include <new>       // `std::hardware_destructive_interference_size`
 #include <numeric>   // `std::accumulate`, `std::reduce`
 #include <thread>    // `std::thread`
 
@@ -684,7 +685,7 @@ class threads_gt {
  */
 template <typename serial_at = stl_accumulate_gt<float>>
 class fork_union_gt {
-    using pool_t = ::ashvardanian::fork_union_t;
+    using pool_t = fork_union::fork_union_t;
     float const *const begin_ = nullptr;
     float const *const end_ = nullptr;
     pool_t pool_;
@@ -694,7 +695,7 @@ class fork_union_gt {
      *  Over-aligning with `std::max_align_t` or a fixed size of 128 bytes
      *  should be enough to avoid false sharing.
      */
-    struct alignas(128) thread_result_t {
+    struct alignas(std::hardware_destructive_interference_size) thread_result_t {
         double partial_sum = 0;
     };
     std::vector<thread_result_t> sums_;
@@ -729,7 +730,7 @@ class taskflow_gt {
     tf::Executor executor_;
     tf::Taskflow taskflow_;
 
-    struct alignas(128) thread_result_t {
+    struct alignas(std::hardware_destructive_interference_size) thread_result_t {
         double partial_sum = 0.0;
     };
     std::vector<thread_result_t> sums_;
