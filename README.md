@@ -295,13 +295,13 @@ Assuming, some of the work scheduling happens at a cache-line granularity, inste
 ```sh
 $ PARALLEL_REDUCTIONS_LENGTH=1536 build_release/reduce_bench --benchmark_filter="(sve/f32)(.*)(openmp|fork_union|taskflow)"
 
-------------------------------------------------------------------------------------
-Benchmark                          Time             CPU   Iterations UserCounters...
-------------------------------------------------------------------------------------
-sve/f32/std::threads         2047275 ns      2008267 ns        13751 bytes/s=3.00106M/s error,%=0
-sve/f32/tf::taskflow          109782 ns       106764 ns       254660 bytes/s=76.2837M/s error,%=0
-sve/f32/av::fork_union         13136 ns        13136 ns      2117597 bytes/s=467.714M/s error,%=0
-sve/f32/openmp                 10494 ns        10256 ns      2848849 bytes/s=585.492M/s error,%=0
+---------------------------------------------
+Benchmark                     UserCounters...
+---------------------------------------------
+sve/f32/std::threads          bytes/s=3.00106M/s error,%=0
+sve/f32/tf::taskflow          bytes/s=76.2837M/s error,%=0
+sve/f32/av::fork_union        bytes/s=467.714M/s error,%=0
+sve/f32/openmp                bytes/s=585.492M/s error,%=0
 ```
 
 The timing methods between C++ and Rust implementation of the benchmark differ, but the relative timings are as expected.
@@ -350,4 +350,36 @@ neon/f32                    58821387 ns     58819675 ns          234 bytes/s=18.
 neon/f32/av::fork_union     10396624 ns      9999804 ns         1365 bytes/s=103.278G/s error,%=8.9407u
 neon/f32/std::threads        9973662 ns      6937423 ns         1370 bytes/s=107.658G/s error,%=8.33334
 neon/f32/openmp             10295897 ns      6866715 ns         1367 bytes/s=104.288G/s error,%=8.9407u
+```
+
+Apple's Arm CPUs configured with a single NUMA node and Arm's native support for "weak memory model" make it the perfect ground for studying the cost of various concurrency synchronization primitives.
+For that, we can launch the benchmark with a tiny input, such as just 1 scalar per core, and measure the overall latency of dispatching all threads, blocking, and afterwards aggregating partial results.
+Assuming, some of the work scheduling happens at a cache-line granularity, instead of 1 scalar per core, we take 1 cache-line per core.
+
+> 128 bytes / 4 bytes per scalar * 12 cores = 384 scalars.
+
+```sh
+$ PARALLEL_REDUCTIONS_LENGTH=384 build_release/reduce_bench --benchmark_filter="(serial/f32)(.*)(openmp|fork_union|taskflow)"
+
+----------------------------------------------
+Benchmark                      UserCounters...
+----------------------------------------------
+serial/f32/av::fork_union      bytes/s=109.154M/s error,%=0
+serial/f32/tf::taskflow        bytes/s=71.5141M/s error,%=0
+serial/f32/openmp              bytes/s=17.5188M/s error,%=0
+```
+
+The timing methods between C++ and Rust implementation of the benchmark differ, but the relative timings are as expected, just like on [Graviton 4](#aws-graviton4-c8gmetal-24xl).
+What's different, is the core design and their count!
+With only 12 cores, Fork Union takes the lead over Taskflow and OpenMP.
+In Rust, it's 10x faster than [Rayon](https://github.com/rayon-rs/rayon), but slower than [Async-Executor](https://github.com/smol-rs/async-executor).
+
+```sh
+$ PARALLEL_REDUCTIONS_LENGTH=384 cargo +nightly bench -- --output-format bencher
+
+test serial ... bench:         33 ns/iter (+/- 0)
+test fork_union ... bench:  4,446 ns/iter (+/- 864)
+test rayon ... bench:      42,649 ns/iter (+/- 4,220)
+test tokio ... bench:      83,644 ns/iter (+/- 3,684)
+test smol ... bench:        3,346 ns/iter (+/- 86)
 ```
