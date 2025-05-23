@@ -336,13 +336,10 @@ int main(int argc, char **argv) {
     register_("unrolled/f64", unrolled_gt<double> {}, dataset);
     register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
     register_("std::accumulate/f64", stl_accumulate_gt<double> {}, dataset);
-    register_("serial/f32/av::fork_union", fork_union_gt<unrolled_gt<float>> {}, dataset);
-    register_("serial/f32/tf::taskflow", taskflow_gt<unrolled_gt<float>> {}, dataset);
-    register_("serial/f64/av::fork_union", fork_union_gt<unrolled_gt<double>> {}, dataset);
-    register_("serial/f64/tf::taskflow", taskflow_gt<unrolled_gt<double>> {}, dataset);
-#if defined(_OPENMP)
-    register_("serial/f32/openmp", openmp_t {}, dataset);
-#endif // defined(_OPENMP)
+    register_("unrolled/f32/av::fork_union", fork_union_gt<unrolled_gt<float>> {}, dataset);
+    register_("unrolled/f32/tf::taskflow", taskflow_gt<unrolled_gt<float>> {}, dataset);
+    register_("unrolled/f64/av::fork_union", fork_union_gt<unrolled_gt<double>> {}, dataset);
+    register_("unrolled/f64/tf::taskflow", taskflow_gt<unrolled_gt<double>> {}, dataset);
 
     // ! BLAS struggles with zero-strided arguments!
     // ! register_("blas/f32", blas_dot_t {}, dataset);
