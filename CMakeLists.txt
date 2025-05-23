@@ -40,13 +40,13 @@ endif ()
 # ------------------------------------------------------------------------------
 # Detect CUDA Support
 # ------------------------------------------------------------------------------
-set(ENABLE_CUDA OFF)
+set(_SUPPORTS_CUDA OFF)
 include(CheckLanguage)
 check_language(CUDA)
 
 if (CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
-    set(ENABLE_CUDA ON)
+    set(_SUPPORTS_CUDA ON)
     message(STATUS "CUDA detected! Using compiler: ${CMAKE_CUDA_COMPILER}")
 else ()
     message(STATUS "CUDA not detected. Skipping CUDA-specific builds.")
@@ -55,23 +55,35 @@ endif ()
 # ------------------------------------------------------------------------------
 # Options
 # ------------------------------------------------------------------------------
-option(USE_INTEL_TBB "Use Intel TBB for parallel STL algorithms" ON)
-option(USE_NVIDIA_CCCL "Use Nvidia CCCL for CUDA acceleration" ON)
-
-# Enable or disable options based on system and CUDA support
-if (ENABLE_CUDA)
-    set(USE_NVIDIA_CCCL ON)
-    set(USE_INTEL_TBB OFF) # Prioritize CUDA acceleration
+if (_SUPPORTS_CUDA)
+    set(_SHOULD_USE_NVIDIA_CCCL ON)
+    set(_SHOULD_USE_INTEL_TBB OFF) # Prioritize CUDA acceleration
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(USE_NVIDIA_CCCL OFF) # Can't compile CCCL w/o CUDA
-    set(USE_INTEL_TBB ON) # Default to TBB on Linux without CUDA
+    set(_SHOULD_USE_NVIDIA_CCCL OFF)
+    set(_SHOULD_USE_INTEL_TBB ON) # Default to TBB on Linux without CUDA
 else ()
-    set(USE_NVIDIA_CCCL OFF) # Disable CCCL on non-Linux systems
-    set(USE_INTEL_TBB OFF) # Disable TBB on non-Linux systems
+    set(_SHOULD_USE_NVIDIA_CCCL OFF)
+    set(_SHOULD_USE_INTEL_TBB OFF)
 endif ()
+
+# Probe for BLAS support
+set(CMAKE_FIND_LIBRARY_PREFIXES ";lib")
+if (NOT APPLE) # ! On Apple machines we prefer the `Accelerate`
+    find_package(BLAS QUIET)
+endif ()
+if (BLAS_FOUND)
+    set(_SHOULD_USE_BLAS ON)
+else ()
+    set(_SHOULD_USE_BLAS OFF)
+endif ()
+
+option(USE_INTEL_TBB "Use Intel TBB for parallel STL algorithms" ${_SHOULD_USE_INTEL_TBB})
+option(USE_NVIDIA_CCCL "Use Nvidia CCCL for CUDA acceleration" ${_SHOULD_USE_NVIDIA_CCCL})
+option(USE_BLAS "Use BLAS for linear algebra" ${_SHOULD_USE_BLAS})
 
 message(STATUS "USE_INTEL_TBB: ${USE_INTEL_TBB}")
 message(STATUS "USE_NVIDIA_CCCL: ${USE_NVIDIA_CCCL}")
+message(STATUS "USE_BLAS: ${USE_BLAS}")
 
 # ------------------------------------------------------------------------------
 # Dependencies
@@ -79,12 +91,30 @@ message(STATUS "USE_NVIDIA_CCCL: ${USE_NVIDIA_CCCL}")
 find_package(Threads REQUIRED)
 find_package(OpenMP QUIET)
 find_package(OpenCL QUIET)
-if (NOT APPLE)
-    find_package(BLAS REQUIRED)
-endif ()
 
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
+
+# Sadly, OpenBLAS compilation fails on some platforms
+#
+# ~~~
+# FetchContent_Declare( OpenBLAS GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git GIT_TAG v0.3.29 )
+# set(NOFORTRAN ON CACHE BOOL "Disable Fortran" FORCE)
+# set(BUILD_WITHOUT_LAPACK ON CACHE BOOL "Build without LAPACK" FORCE)
+# set(USE_THREAD ON CACHE BOOL "Use threading" FORCE)
+# FetchContent_MakeAvailable(OpenBLAS)
+# ~~~
+#
+# Moreover, CMake sometimes fails to find it on Windows: https://stackoverflow.com/a/78335726/2766161
+if (USE_BLAS)
+    find_package(BLAS REQUIRED)
+
+    include(CheckFunctionExists)
+    check_function_exists(openblas_set_num_threads LESS_SLOW_HAS_OPENBLAS_SET_NUM_THREADS)
+    if (LESS_SLOW_HAS_OPENBLAS_SET_NUM_THREADS)
+        add_definitions(-D LESS_SLOW_HAS_OPENBLAS_SET_NUM_THREADS)
+    endif ()
+endif ()
 
 FetchContent_Declare(
     fmt
@@ -292,3 +322,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR CMAKE_CXX_COMPILER_ID STREQUAL
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=1")
 endif ()
+
+target_compile_definitions(reduce_bench PRIVATE USE_INTEL_TBB=$<BOOL:${USE_INTEL_TBB}>)
+target_compile_definitions(reduce_bench PRIVATE USE_NVIDIA_CCCL=$<BOOL:${USE_NVIDIA_CCCL}>)
