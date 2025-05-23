@@ -381,7 +381,9 @@ int main(int argc, char **argv) {
     register_("neon/f32/av::fork_union", fork_union_gt<neon_f32_t> {}, dataset);
     register_("neon/f32/tf::taskflow", taskflow_gt<neon_f32_t> {}, dataset);
     register_("neon/f32/std::threads", threads_gt<neon_f32_t> {}, dataset);
+#if defined(_OPENMP)
     register_("neon/f32/openmp", openmp_gt<neon_f32_t> {}, dataset);
+#endif // defined(_OPENMP)
 #endif
 
 // Arm SVE
@@ -390,7 +392,9 @@ int main(int argc, char **argv) {
     register_("sve/f32/av::fork_union", fork_union_gt<sve_f32_t> {}, dataset);
     register_("sve/f32/tf::taskflow", taskflow_gt<sve_f32_t> {}, dataset);
     register_("sve/f32/std::threads", threads_gt<sve_f32_t> {}, dataset);
+#if defined(_OPENMP)
     register_("sve/f32/openmp", openmp_gt<sve_f32_t> {}, dataset);
+#endif // defined(_OPENMP)
 #endif // defined(__ARM_FEATURE_SVE__)
 
     // CUDA
