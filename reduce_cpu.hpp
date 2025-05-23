@@ -27,6 +27,11 @@
 #include <arm_sve.h> // ARM SVE intrinsics
 #endif
 
+#if defined(USE_INTEL_TBB)
+#include <oneapi/tbb/task_arena.h>
+#include <oneapi/tbb/task_group.h>
+#endif
+
 #include <fork_union.hpp>
 #include <taskflow/taskflow.hpp>
 
@@ -758,6 +763,76 @@ class taskflow_gt {
                                [](double acc, thread_result_t const &x) noexcept { return acc + x.partial_sum; });
     }
 };
+
+#if defined(USE_INTEL_TBB)
+
+/**
+ *  @brief Computes the sum of a sequence of float values using @b Intel OneAPI TBB
+ *         to manage NUMA-node-aware task scheduling and thread pools.
+ *  @see   https://uxlfoundation.github.io/oneTBB
+ */
+template <typename serial_at = stl_accumulate_gt<float>>
+class tbb_gt {
+    float const *const begin_ = nullptr;
+    float const *const end_ = nullptr;
+
+    struct alignas(std::hardware_destructive_interference_size) thread_result_t {
+        double partial_sum = 0.0;
+    };
+    std::vector<thread_result_t> sums_;
+
+    std::vector<oneapi::tbb::numa_node_id> numa_nodes_;
+    std::vector<oneapi::tbb::task_arena> arenas_;
+    std::vector<std::unique_ptr<oneapi::tbb::task_group>> task_groups_;
+
+  public:
+    tbb_gt() = default;
+    tbb_gt(float const *b, float const *e) : begin_ {b}, end_ {e} {
+
+        numa_nodes_ = oneapi::tbb::info::numa_nodes();
+        arenas_.resize(numa_nodes_.size());
+        for (std::size_t i = 0; i < numa_nodes_.size(); i++)
+            arenas_[i].initialize(oneapi::tbb::task_arena::constraints(numa_nodes_[i]));
+        task_groups_.resize(numa_nodes_.size());
+        for (auto &task_group : task_groups_) task_group = std::make_unique<oneapi::tbb::task_group>();
+
+        // Allocate enough space for every thread output:
+        auto const count_threads = std::accumulate(
+            arenas_.begin(), arenas_.end(), 0ul,
+            [](std::size_t acc, oneapi::tbb::task_arena const &arena) { return acc + arena.max_concurrency(); });
+        sums_.resize(count_threads);
+    }
+
+    double operator()() {
+        // ! In OneAPI, different NUMA nodes can have a different number of threads,
+        // ! and have different throughput. Our solution expects symmetry.
+        auto const count_nodes = numa_nodes_.size();
+        auto const count_threads = std::accumulate(
+            arenas_.begin(), arenas_.end(), 0ul,
+            [](std::size_t acc, oneapi::tbb::task_arena const &arena) { return acc + arena.max_concurrency(); });
+
+        auto const input_size = static_cast<std::size_t>(end_ - begin_);
+        auto const chunk_size = scalars_per_core(input_size, count_threads);
+
+        std::size_t global_thread_id = 0;
+        for (std::size_t i = 0; i < numa_nodes_.size(); i++)
+            // ! This `global_thread_id` is passed by reference, but the nested one is by value.
+            arenas_[i].execute([this, i, &global_thread_id, input_size, chunk_size] {
+                for (std::size_t j = 0; j < arenas_[i].max_concurrency(); j++, global_thread_id++)
+                    task_groups_[i]->run([this, global_thread_id, input_size, chunk_size] {
+                        std::size_t const start = std::min(global_thread_id * chunk_size, input_size);
+                        std::size_t const stop = std::min(start + chunk_size, input_size);
+                        sums_[global_thread_id].partial_sum = serial_at {begin_ + start, begin_ + stop}();
+                    });
+            });
+
+        for (std::size_t i = 0; i < numa_nodes_.size(); i++) arenas_[i].execute([this, i] { task_groups_[i]->wait(); });
+
+        return std::accumulate(sums_.begin(), sums_.end(), 0.0,
+                               [](double acc, thread_result_t const &x) noexcept { return acc + x.partial_sum; });
+    }
+};
+#endif
 
 #pragma endregion - Multicore
 
