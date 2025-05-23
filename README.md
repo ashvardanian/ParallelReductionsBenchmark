@@ -1,4 +1,6 @@
-# Parallel Reductions Benchmark for CPUs & GPUs
+# Parallel Reductions Benchmark
+
+__For CPUs and GPUs in C++, CUDA, and Rust__
 
 ![Parallel Reductions Benchmark](https://github.com/ashvardanian/ashvardanian/blob/master/repositories/ParallelReductionsBenchmark.jpg?raw=true)
 
@@ -10,7 +12,7 @@ This repository contains several educational examples showcasing the performance
 - Single-threaded but SIMD-accelerated code:
   - SSE, AVX, AVX-512 on x86.
   - NEON and SVE on Arm.
-- OpenMP `reduction` clause.
+- OpenMP `reduction` clause vs manual `omp parallel` scheduling.
 - Thrust with its `thrust::reduce`.
 - CUB with its `cub::DeviceReduce::Sum`.
 - CUDA kernels with and w/out [warp-primitives](https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/).
@@ -18,6 +20,8 @@ This repository contains several educational examples showcasing the performance
 - [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) and cuBLAS strided vector and matrix routines.
 - OpenCL kernels, eight of them.
 - Parallel STL `<algorithm>` in GCC with Intel oneTBB.
+- Reusable thread-pool libraries for C++, like [Taskflow](https://github.com/taskflow/taskflow).
+- Reusable thread-pool libraries for Rust, like [Rayon](https://github.com/rayon-rs/rayon) and [Tokio](https://github.com/tokio-rs/tokio).
 
 Notably:
 
@@ -34,79 +38,6 @@ Previously, it also included ArrayFire, Halide, and Vulkan queues for SPIR-V ker
 - [Lecture Slides](https://drive.google.com/file/d/16AicAl99t3ZZFnza04Wnw_Vuem0w8lc7/view?usp=sharing) from 2019.
 - [CppRussia Talk](https://youtu.be/AA4RI6o0h1U) in Russia in 2019.
 - [JetBrains Talk](https://youtu.be/BUtHOftDm_Y) in Germany & Russia in 2019.
-
-## Build & Run
-
-### C++
-
-This repository is a CMake project designed to be built on Linux with GCC, Clang, or NVCC.
-You may need to install the following dependencies for complete functionality:
-
-```sh
-sudo apt install libblas-dev            # For OpenBLAS on Linux
-sudo apt install libnuma1 libnuma-dev   # For NUMA allocators on Linux
-sudo apt install cuda-toolkit           # This may not be as easy 😈
-```
-
-The following script will, by default, generate a 1GB array of numbers and reduce them using every available backend.
-All the classical Google Benchmark arguments are supported, including `--benchmark_filter=opencl`.
-All the library dependencies, including GTest, GBench, Intel oneTBB, FMT, and Thrust with CUB, will be automatically fetched.
-You are expected to build this on an x86 machine with CUDA drivers installed.
-
-```sh
-cmake -B build_release -D CMAKE_BUILD_TYPE=Release         # Generate the build files
-cmake --build build_release --config Release -j            # Build the project
-build_release/reduce_bench                                 # Run all benchmarks
-build_release/reduce_bench --benchmark_filter="cuda"       # Only CUDA-related
-PARALLEL_REDUCTIONS_LENGTH=1024 build_release/reduce_bench # Set a different input size
-```
-
-Need a more fine-grained control to run only CUDA-based backends?
-
-```sh
-cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc-12 -D CMAKE_CXX_COMPILER=g++-12 -B build_release
-cmake --build build_release --config Release -j
-build_release/reduce_bench --benchmark_filter=cuda
-```
-
-Want to use the non-default Clang distribution on macOS?
-OpenBLAS will be superseded by Apple's `Accelerate.framework`, but LLVM and OpenMP should ideally be pulled from Homebrew:
-
-```sh
-brew install llvm libomp
-cmake -B build_release \
-  -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ \
-  -D OpenMP_ROOT=$(brew --prefix llvm)          \
-  -D CMAKE_BUILD_RPATH=$(brew --prefix llvm)/lib \
-  -D CMAKE_INSTALL_RPATH=$(brew --prefix llvm)/lib
-cmake --build build_release --config Release -j
-build_release/reduce_bench
-```
-
-To debug or introspect, the procedure is similar:
-
-```sh
-cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_BUILD_TYPE=Debug -B build_debug
-cmake --build build_debug --config Debug
-```
-
-And then run your favorite debugger.
-
-Optional backends:
-
-- To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md) on CPUs: `apt-get install intel-opencl-icd`.
-- To run on integrated Intel GPU, follow [this guide](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/prerequisites.html).
-
-### Rust
-
-Several basic kernels and CPU-oriented parallel reductions are also implemented in Rust.
-To build and run the Rust code, you need to have the Rust toolchain installed. You can use `rustup` to install it:
-
-```sh
-rustup toolchain install nightly
-cargo +nightly test --release
-cargo +nightly bench
-```
 
 ## Results
 
@@ -383,3 +314,85 @@ test rayon ... bench:      42,649 ns/iter (+/- 4,220)
 test tokio ... bench:      83,644 ns/iter (+/- 3,684)
 test smol ... bench:        3,346 ns/iter (+/- 86)
 ```
+
+## Build & Run
+
+### Rust
+
+Several basic kernels and CPU-oriented parallel reductions are also implemented in Rust.
+To build and run the Rust code, you need to have the Rust toolchain installed. You can use `rustup` to install it:
+
+```sh
+rustup toolchain install nightly
+cargo +nightly test --release
+cargo +nightly bench
+```
+
+### C++
+
+This repository is a CMake project designed to be built on Linux with GCC, Clang, or NVCC.
+You may need to install the following dependencies for complete functionality:
+
+```sh
+sudo apt install libblas-dev            # For OpenBLAS on Linux
+sudo apt install libnuma1 libnuma-dev   # For NUMA allocators on Linux
+sudo apt install cuda-toolkit           # This may not be as easy 😈
+```
+
+The following script will, by default, generate a 1GB array of numbers and reduce them using every available backend.
+All the classical Google Benchmark arguments are supported, including `--benchmark_filter=opencl`.
+All the library dependencies, including GTest, GBench, Intel oneTBB, FMT, and Thrust with CUB, will be automatically fetched.
+You are expected to build this on an x86 machine with CUDA drivers installed.
+
+```sh
+cmake -B build_release -D CMAKE_BUILD_TYPE=Release         # Generate the build files
+cmake --build build_release --config Release -j            # Build the project
+build_release/reduce_bench                                 # Run all benchmarks
+build_release/reduce_bench --benchmark_filter="cuda"       # Only CUDA-related
+PARALLEL_REDUCTIONS_LENGTH=1024 build_release/reduce_bench # Set a different input size
+```
+
+Need a more fine-grained control to run only CUDA-based backends?
+
+```sh
+cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc-12 -D CMAKE_CXX_COMPILER=g++-12 -B build_release
+cmake --build build_release --config Release -j
+build_release/reduce_bench --benchmark_filter=cuda
+```
+
+Need the opposite, to build & run only CPU-based backends on a CUDA-capable machine?
+
+```sh
+cmake -D USE_INTEL_TBB=1 -D USE_NVIDIA_CCCL=0 -B build_release
+cmake --build build_release --config Release -j
+build_release/reduce_bench --benchmark_filter=unrolled
+```
+
+Want to use the non-default Clang distribution on macOS?
+OpenBLAS will be superseded by Apple's `Accelerate.framework`, but LLVM and OpenMP should ideally be pulled from Homebrew:
+
+```sh
+brew install llvm libomp
+cmake -B build_release \
+  -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ \
+  -D OpenMP_ROOT=$(brew --prefix llvm)          \
+  -D CMAKE_BUILD_RPATH=$(brew --prefix llvm)/lib \
+  -D CMAKE_INSTALL_RPATH=$(brew --prefix llvm)/lib
+cmake --build build_release --config Release -j
+build_release/reduce_bench
+```
+
+To debug or introspect, the procedure is similar:
+
+```sh
+cmake -D CMAKE_CUDA_COMPILER=nvcc -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_BUILD_TYPE=Debug -B build_debug
+cmake --build build_debug --config Debug
+```
+
+And then run your favorite debugger.
+
+Optional backends:
+
+- To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md) on CPUs: `apt-get install intel-opencl-icd`.
+- To run on integrated Intel GPU, follow [this guide](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/prerequisites.html).
+

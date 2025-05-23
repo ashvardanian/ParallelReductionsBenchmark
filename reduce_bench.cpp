@@ -327,11 +327,14 @@ int main(int argc, char **argv) {
             tgt.language_version);
 #endif // defined(__OPENCL__)
 
-    // Memset is only useful as a baseline, but running it will corrupt our buffer
-    // register_("memset", memset_t {}, dataset);
-    // register_("memset/std::threads", threads_gt<memset_t> {}, dataset);
+    // ? Memset is only useful as a baseline, but running it will corrupt our buffer
+    // ? register_("memset", memset_t {}, dataset);
+    // ? register_("memset/std::threads", threads_gt<memset_t> {}, dataset);
 
     // Generic CPU benchmarks
+#if defined(_OPENMP)
+    register_("serial/f32/openmp", openmp_t {}, dataset);
+#endif // defined(_OPENMP)
     register_("unrolled/f32", unrolled_gt<float> {}, dataset);
     register_("unrolled/f64", unrolled_gt<double> {}, dataset);
     register_("std::accumulate/f32", stl_accumulate_gt<float> {}, dataset);
@@ -340,6 +343,10 @@ int main(int argc, char **argv) {
     register_("unrolled/f32/tf::taskflow", taskflow_gt<unrolled_gt<float>> {}, dataset);
     register_("unrolled/f64/av::fork_union", fork_union_gt<unrolled_gt<double>> {}, dataset);
     register_("unrolled/f64/tf::taskflow", taskflow_gt<unrolled_gt<double>> {}, dataset);
+#if defined(USE_INTEL_TBB)
+    register_("unrolled/f32/oneapi::tbb", tbb_gt<unrolled_gt<float>> {}, dataset);
+    register_("unrolled/f64/oneapi::tbb", tbb_gt<unrolled_gt<double>> {}, dataset);
+#endif // defined(USE_INTEL_TBB)
 
     // ! BLAS struggles with zero-strided arguments!
     // ! register_("blas/f32", blas_dot_t {}, dataset);
