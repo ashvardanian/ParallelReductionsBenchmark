@@ -13,6 +13,18 @@ use futures::future::join_all;
 const MAX_CACHE_LINE_SIZE: usize = 64; // bytes on x86; adjust if needed
 const SCALARS_PER_CACHE_LINE: usize = MAX_CACHE_LINE_SIZE / std::mem::size_of::<f32>();
 
+/// Wrapper that opt-in implements `Send`/`Sync` for a raw pointer.
+///
+/// Why? Rust deliberately withholds these auto-traits from raw pointers,
+/// so we must promise the compiler that the pointed-to memory really is
+/// shared-mutable and properly synchronized (which it is here: every thread
+/// writes its own unique slot).
+#[derive(Copy, Clone)]
+struct ChillOut<T>(*mut T);
+
+unsafe impl<T> Send for ChillOut<T> {}
+unsafe impl<T> Sync for ChillOut<T> {}
+
 #[inline(always)]
 fn divide_round_up(value: usize, divisor: usize) -> usize {
     (value + divisor - 1) / divisor
@@ -89,19 +101,18 @@ pub fn prepare_input() -> Vec<f32> {
 pub fn sum_fork_union(pool: &fork_union::ForkUnion, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = pool.thread_count();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let partial_sums_ptr = partial_sums.as_mut_ptr() as usize;
+    let partial_sums_ptr = ChillOut(partial_sums.as_mut_ptr());
 
-    pool.for_each_thread(|thread_index| unsafe {
+    pool.for_each_thread(move |thread_index| unsafe {
         let start = thread_index * chunk_size;
         if start >= data.len() {
             return;
         }
         let stop = usize::min(start + chunk_size, data.len());
         let partial_sum = sum_unrolled(&data[start..stop]);
-        ptr::write(
-            (partial_sums_ptr as *mut f64).add(thread_index),
-            partial_sum,
-        );
+        // Ensure the entire wrapper, not just `.0`, is moved into the closure
+        let partial_sums_ptr = partial_sums_ptr;
+        ptr::write(partial_sums_ptr.0.add(thread_index), partial_sum);
     });
 
     partial_sums.iter().copied().sum()
@@ -111,9 +122,9 @@ pub fn sum_fork_union(pool: &fork_union::ForkUnion, data: &[f32], partial_sums: 
 pub fn sum_rayon(pool: &rayon::ThreadPool, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = pool.current_num_threads();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let partial_sums_ptr = partial_sums.as_mut_ptr() as usize;
+    let partial_sums_ptr = ChillOut(partial_sums.as_mut_ptr());
 
-    pool.broadcast(|context: rayon::BroadcastContext<'_>| {
+    pool.broadcast(move |context: rayon::BroadcastContext<'_>| {
         let thread_index = context.index();
         let start = thread_index * chunk_size;
         if start >= data.len() {
@@ -121,11 +132,10 @@ pub fn sum_rayon(pool: &rayon::ThreadPool, data: &[f32], partial_sums: &mut [f64
         }
         let stop = std::cmp::min(start + chunk_size, data.len());
         let partial_sum = sum_unrolled(&data[start..stop]);
+        // Ensure the entire wrapper, not just `.0`, is moved into the closure
+        let partial_sums_ptr = partial_sums_ptr;
         unsafe {
-            ptr::write(
-                (partial_sums_ptr as *mut f64).add(thread_index),
-                partial_sum,
-            );
+            ptr::write(partial_sums_ptr.0.add(thread_index), partial_sum);
         }
     });
 
@@ -137,7 +147,7 @@ pub fn sum_rayon(pool: &rayon::ThreadPool, data: &[f32], partial_sums: &mut [f64
 pub fn sum_tokio(pool: &tokio::runtime::Runtime, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let partial_sums_ptr = partial_sums.as_mut_ptr() as usize;
+    let partial_sums_ptr = ChillOut(partial_sums.as_mut_ptr());
 
     // Raw parts of the slice – immutable, lives as long as `data`.
     let ptr = data.as_ptr() as usize;
@@ -154,10 +164,9 @@ pub fn sum_tokio(pool: &tokio::runtime::Runtime, data: &[f32], partial_sums: &mu
                 let stop = std::cmp::min(start + chunk_size, len);
                 let slice = std::slice::from_raw_parts((ptr as *mut f32).add(start), stop - start);
                 let partial_sum = sum_unrolled(slice);
-                ptr::write(
-                    (partial_sums_ptr as *mut f64).add(thread_index),
-                    partial_sum,
-                );
+                // Ensure the entire wrapper, not just `.0`, is moved into the closure
+                let partial_sums_ptr = partial_sums_ptr;
+                ptr::write(partial_sums_ptr.0.add(thread_index), partial_sum);
             });
             handles.push(handle);
         }
@@ -171,7 +180,7 @@ pub fn sum_tokio(pool: &tokio::runtime::Runtime, data: &[f32], partial_sums: &mu
 pub fn sum_smol(pool: &async_executor::Executor, data: &[f32], partial_sums: &mut [f64]) -> f64 {
     let cores = num_cpus::get();
     let chunk_size = scalars_per_core(data.len(), cores);
-    let partial_sums_ptr = partial_sums.as_mut_ptr() as usize;
+    let partial_sums_ptr = ChillOut(partial_sums.as_mut_ptr());
 
     let ptr = data.as_ptr() as usize;
     let len = data.len();
@@ -189,10 +198,9 @@ pub fn sum_smol(pool: &async_executor::Executor, data: &[f32], partial_sums: &mu
                     let slice =
                         std::slice::from_raw_parts((ptr as *mut f32).add(start), stop - start);
                     let partial_sum = sum_unrolled(slice);
-                    ptr::write(
-                        (partial_sums_ptr as *mut f64).add(thread_index),
-                        partial_sum,
-                    );
+                    // Ensure the entire wrapper, not just `.0`, is moved into the closure
+                    let partial_sums_ptr = partial_sums_ptr;
+                    ptr::write(partial_sums_ptr.0.add(thread_index), partial_sum);
                 }
             }));
         }
