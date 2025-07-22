@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.25.2 FATAL_ERROR)
 # ------------------------------------------------------------------------------
 project(
     ParallelReductionsBenchmark
-    VERSION 0.7.1
+    VERSION 0.7.2
     LANGUAGES CXX
     DESCRIPTION "Parallel Reductions Benchmark for CPUs & GPUs"
     HOMEPAGE_URL "https://github.com/ashvardanian/ParallelReductionsBenchmark"
