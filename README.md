@@ -392,6 +392,41 @@ cmake --build build_debug --config Debug
 
 And then run your favorite debugger.
 
+
+### Python (CUDA DSL/JIT via cuda.cccl)
+
+Python users can now benchmark parallel reductions on NVIDIA GPUs using the new `reduce_bench.py` script, which leverages the [cuda.cccl](https://pypi.org/project/cuda-cccl/) library for efficient CUDA reductions and kernel fusion from Python. This script compares the performance of naive CuPy reductions with the new Pythonic JIT-ed kernels.
+
+#### Requirements
+
+Install the required packages:
+
+```sh
+pip install cuda-cccl cupy numpy
+```
+
+#### Running the Python benchmark
+
+```sh
+python reduce_bench.py
+```
+
+You will see a table comparing the runtime (in microseconds) of naive CuPy reductions and the new cuda.cccl-based approach for various array sizes, along with the speedup factor.
+
+#### Example output
+
+```
+        Size |   Naive (us) |    CCCL (us) | Speedup
+--------------------------------------------------
+       10000 |      690.00 |       28.30 |  24.39x
+     1000000 |     6900.00 |      283.00 |  24.39x
+    ...
+```
+
+This demonstrates the impact of explicit kernel fusion and iterator-based reductions in Python, enabled by cuda.cccl.
+
+---
+
 Optional backends:
 
 - To enable [Intel OpenCL](https://github.com/intel/compute-runtime/blob/master/README.md) on CPUs: `apt-get install intel-opencl-icd`.
