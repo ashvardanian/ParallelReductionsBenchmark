@@ -320,12 +320,13 @@ test smol ... bench:        3,346 ns/iter (+/- 86)
 ### Rust
 
 Several basic kernels and CPU-oriented parallel reductions are also implemented in Rust.
-To build and run the Rust code, you need to have the Rust toolchain installed. You can use `rustup` to install it:
+To build and run the Rust code, you need to have the Rust toolchain installed.
+You can use `rustup` to install it:
 
 ```sh
-rustup toolchain install nightly
-cargo +nightly test --release
-cargo +nightly bench
+rustup toolchain install
+cargo test --release
+cargo bench
 ```
 
 ### C++
