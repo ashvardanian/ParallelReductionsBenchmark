@@ -1,5 +1,7 @@
 # GitHub's Linguist doesn't properly classify many languages
 # https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
 *.h linguist-language=C
-reduce_metal.h linguist-language=Objective-C
-*.cl linguist-language=OpenCL
+reduce_metal.h linguist-language=Metal
+reduce_metal.metal linguist-language=Metal
+reduce_opencl.hpp linguist-language=OpenCL
+reduce_opencl.cl linguist-language=OpenCL
