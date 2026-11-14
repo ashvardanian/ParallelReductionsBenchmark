@@ -329,6 +329,15 @@ cargo test --release
 cargo bench
 ```
 
+### Python
+
+`reduce_bench.py` compares NumPy against CuPy and CCCL's `cuda.compute` on the GPU:
+
+```sh
+pip install numpy cupy-cuda13x "cuda-cccl[cu13]"
+python reduce_bench.py
+```
+
 ### C++
 
 This repository is a CMake project designed to be built on Linux with GCC, Clang, or NVCC.
